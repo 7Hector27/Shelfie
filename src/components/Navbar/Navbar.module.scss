@@ -1,0 +1,142 @@
+.navbar {
+  width: 100%;
+  height: auto;
+  display: grid;
+  grid-template-columns: repeat(3, 2fr);
+  grid-template-rows: auto auto;
+  grid-template-areas:
+    ". one three"
+    ". . ."
+    "two two two";
+  padding: 10px 20px;
+
+  background-color: rgb(255, 252, 246);
+  color: rgb(0, 0, 0);
+  font-weight: 800;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+
+  .icon {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.4rem;
+    grid-area: one;
+
+    .img {
+      width: 30px;
+      height: 30px;
+    }
+  }
+
+  .searchbar {
+    display: none;
+  }
+
+  .mobileSearch {
+    cursor: pointer;
+    width: 30px;
+    height: 30px;
+
+    .icon {
+      width: 30px;
+      height: 30px;
+    }
+  }
+
+  .profile {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    grid-area: three;
+
+    button {
+      background-color: black;
+      color: white;
+      padding: 4px;
+      border: none;
+      cursor: pointer;
+    }
+  }
+}
+
+.mobileSearchbar {
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 0 10px 20px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+
+  input {
+    width: 250px;
+    height: 30px;
+    border-radius: 16px;
+  }
+
+  button {
+    background-color: #181818;
+    color: white;
+    padding: 4px;
+    border: none;
+    cursor: pointer;
+  }
+}
+@media (min-width: 768px) {
+  .navbar {
+    height: 75px;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, auto);
+    grid-template-areas:
+      "one two three"
+      "one two three"
+      "one two three";
+    padding: 10px 40px;
+
+    .searchbar {
+      display: flex;
+      grid-area: two;
+      margin-left: 30px;
+      justify-content: center;
+      align-items: center;
+
+      input {
+        width: 350px;
+        height: 2rem;
+        border-radius: 20px;
+        background-color: transparent;
+        border-color: #181818;
+      }
+    }
+
+    .mobileSearch {
+      display: none;
+    }
+  }
+
+  .mobileSearchbar {
+    padding: 4px 0 0 20px;
+
+    button {
+      background-color: white;
+    }
+  }
+}
+@media (min-width: 1200px) {
+  .navbar {
+    .icon {
+      font-size: 32px;
+
+      .img {
+        width: 35px;
+        height: 35px;
+      }
+    }
+
+    .searchbar input {
+      width: 650px;
+      height: 2.8rem;
+    }
+  }
+}
