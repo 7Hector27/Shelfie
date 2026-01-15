@@ -2,13 +2,13 @@ import React from "react";
 
 import Navbar from "@/components/Navbar";
 
-import styles from "./index.module.scss";
+import Layout from "@/components/Layout";
 
 const homepage = () => {
   return (
-    <div className={styles.homepage}>
-      <Navbar />
-    </div>
+    <>
+      <Layout></Layout>
+    </>
   );
 };
 

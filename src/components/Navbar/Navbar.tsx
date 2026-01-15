@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 
 import styles from "./Navbar.module.scss";
 
@@ -35,7 +36,7 @@ const Navbar = () => {
           <input type="search" name="search" id="search" autoFocus />
         </div>
         <div className={styles.profile}>
-          <button>sign in</button>
+          <Link href="/register">Sign Up</Link>
         </div>
       </div>
       {mobileSearchVisible && (
