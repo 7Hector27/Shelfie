@@ -48,6 +48,7 @@ const RegisterContent = () => {
             alt="Shelfie Logo"
             width={36}
             height={28}
+            className={styles.openBook}
           />
           Shelfie
         </h1>
@@ -94,7 +95,7 @@ const RegisterContent = () => {
         />
         <div className={styles.loginLink}>
           <span>
-            Already have an account? <Link href="/login"> Sign in</Link>
+            Already have an account? <Link href="/signin"> Sign in</Link>
           </span>
         </div>
       </div>
