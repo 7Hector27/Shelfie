@@ -1,5 +1,6 @@
 import React from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -75,8 +76,27 @@ const RegisterContent = () => {
             placeholder="Confirm password"
           />
           {errors.confirmPassword && <p>{errors.confirmPassword.message}</p>}
-          <button disabled={isSubmitting}>Create Account</button>
+          <button disabled={isSubmitting} className={styles.submitBtn}>
+            Create Account
+          </button>
         </form>
+        <div className={styles.tos}>
+          By creating an account, you agree to Shelfie&apos;s{" "}
+          <Link href="/terms">Terms of Service </Link>
+          and <Link href="/privacy">Privacy Policy</Link>.
+        </div>
+        <Image
+          src="/images/books.webp"
+          alt="Register Illustration"
+          width={150}
+          height={150}
+          className={styles.booksImg}
+        />
+        <div className={styles.loginLink}>
+          <span>
+            Already have an account? <Link href="/login"> Sign in</Link>
+          </span>
+        </div>
       </div>
     </div>
   );
