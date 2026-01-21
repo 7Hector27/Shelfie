@@ -20,3 +20,17 @@ export async function apiPost<T>(path: string, body: unknown): Promise<T> {
 
   return data as T;
 }
+export async function apiGet<T>(path: string): Promise<T> {
+  const res = await fetch(`${API_URL}${path}`, {
+    method: "GET",
+    credentials: "include",
+  });
+
+  const data = await res.json().catch(() => null);
+
+  if (!res.ok) {
+    throw new Error(data?.error ?? `Request failed (${res.status})`);
+  }
+
+  return data as T;
+}

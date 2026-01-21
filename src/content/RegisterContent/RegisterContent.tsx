@@ -6,8 +6,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { apiPost } from "../../lib/api";
 
-import styles from "./RegisterContent.module.scss";
+import { useAuth } from "../../context/AuthProvider";
+
 import Alert from "@/components/Alert";
+
+import styles from "./RegisterContent.module.scss";
 
 const registerSchema = z
   .object({
@@ -31,6 +34,7 @@ type RegisterFormValues = z.infer<typeof registerSchema>;
 const RegisterContent = () => {
   const [serverError, setServerError] = useState<string | null>(null);
   const [serverSuccess, setServerSuccess] = useState<string | null>(null);
+  const { setUser } = useAuth();
 
   const {
     register,
@@ -56,7 +60,7 @@ const RegisterContent = () => {
         "/auth/register",
         payload,
       );
-
+      setUser(res);
       setServerSuccess(`Account created for ${res.email}`);
     } catch (err) {
       setServerError(`${err}` || "Something went wrong");

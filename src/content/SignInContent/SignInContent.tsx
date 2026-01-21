@@ -8,6 +8,7 @@ import { z } from "zod";
 import Alert from "@/components/Alert";
 
 import { apiPost } from "../../lib/api";
+import { useAuth } from "../../context/AuthProvider";
 
 import styles from "./SignInContent.module.scss";
 
@@ -20,6 +21,7 @@ type SignInFormValues = z.infer<typeof signInSchema>;
 const SignInContent = () => {
   const [serverError, setServerError] = useState<string | null>(null);
   const [serverSuccess, setServerSuccess] = useState<string | null>(null);
+  const { setUser } = useAuth();
 
   const {
     register,
@@ -37,13 +39,13 @@ const SignInContent = () => {
         email: data.email,
         password: data.password,
       };
-      await apiPost<{ id: string; email: string }>(
+      const res = await apiPost<{ id: string; email: string }>(
         "/auth/signIn",
         payload,
-      ).then((res) => {
-        // TODO: redirect to dashboard / home page after sign in, Add came_from param support
-        setServerSuccess(`Welcome back, ${res.email}`);
-      });
+      );
+      // TODO: redirect to dashboard / home page after sign in, Add came_from param support
+
+      setUser(res);
     } catch (err) {
       setServerError(`${err}` || "An unexpected error occurred");
     }

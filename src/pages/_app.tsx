@@ -1,6 +1,7 @@
 import "@/styles/globals.css";
 import type { AppProps } from "next/app";
 import { Playfair_Display, Inter } from "next/font/google";
+import { AuthProvider } from "../context/AuthProvider";
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
@@ -16,7 +17,9 @@ const inter = Inter({
 export default function App({ Component, pageProps }: AppProps) {
   return (
     <div className={`${playfair.variable} ${inter.variable}`}>
-      <Component {...pageProps} />
+      <AuthProvider>
+        <Component {...pageProps} />{" "}
+      </AuthProvider>
     </div>
   );
 }
