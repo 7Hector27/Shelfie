@@ -1,13 +1,13 @@
-import React from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-
-import Layout from "@/components/Layout";
+import { apiPost } from "../../lib/api";
 
 import styles from "./RegisterContent.module.scss";
+import Alert from "@/components/Alert";
 
 const registerSchema = z
   .object({
@@ -25,8 +25,13 @@ const registerSchema = z
     message: "Passwords do not match",
     path: ["confirmPassword"], // show error under confirm field
   });
+
 type RegisterFormValues = z.infer<typeof registerSchema>;
+
 const RegisterContent = () => {
+  const [serverError, setServerError] = useState<string | null>(null);
+  const [serverSuccess, setServerSuccess] = useState<string | null>(null);
+
   const {
     register,
     handleSubmit,
@@ -36,11 +41,37 @@ const RegisterContent = () => {
   });
 
   const onSubmit = async (data: RegisterFormValues) => {
-    console.log(data);
+    setServerError(null);
+    setServerSuccess(null);
+
+    try {
+      const payload = {
+        firstName: data.firstName,
+        lastName: data.lastName,
+        email: data.email,
+        password: data.password,
+      };
+      console.log("Submitting registration:", payload);
+      const res = await apiPost<{ id: string; email: string }>(
+        "/auth/register",
+        payload,
+      );
+
+      setServerSuccess(`Account created for ${res.email}`);
+    } catch (err) {
+      setServerError(`${err}` || "Something went wrong");
+    }
   };
 
   return (
     <div className={styles.registerContent}>
+      {serverError && (
+        <Alert
+          message={serverError || ""}
+          duration={3500}
+          onClose={() => setServerError(null)}
+        />
+      )}
       <div className={styles.container}>
         <h1>
           <Image
@@ -61,25 +92,36 @@ const RegisterContent = () => {
           <input {...register("lastName")} placeholder="Last name" />
           {errors.lastName && <p>{errors.lastName.message}</p>}
           <label htmlFor="">Email</label>
-          <input {...register("email")} placeholder="Email" />
+          <input
+            {...register("email")}
+            placeholder="Email"
+            type="email"
+            autoComplete="email"
+          />
           {errors.email && <p>{errors.email.message}</p>}
           <label htmlFor="">Password</label>
           <input
             {...register("password")}
             type="password"
-            placeholder="Password"
+            autoComplete="new-password"
           />
+
           {errors.password && <p>{errors.password.message}</p>}
           <label htmlFor="">Confirm Password</label>
           <input
             {...register("confirmPassword")}
             type="password"
-            placeholder="Confirm password"
+            autoComplete="new-password"
           />
+
           {errors.confirmPassword && <p>{errors.confirmPassword.message}</p>}
           <button disabled={isSubmitting} className={styles.submitBtn}>
-            Create Account
+            {isSubmitting ? "Creating..." : "Create Account"}
           </button>
+
+          {serverSuccess && (
+            <p className={styles.serverSuccess}>{serverSuccess}</p>
+          )}
         </form>
         <div className={styles.tos}>
           By creating an account, you agree to Shelfie&apos;s{" "}

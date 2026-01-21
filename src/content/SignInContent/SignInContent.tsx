@@ -1,34 +1,63 @@
-import React from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 
+import Alert from "@/components/Alert";
+
+import { apiPost } from "../../lib/api";
+
 import styles from "./SignInContent.module.scss";
 
-const registerSchema = z.object({
+const signInSchema = z.object({
   email: z.string().email("Enter a valid email"),
-
   password: z.string().min(6, "Password must be at least 6 characters"),
 });
 
-type RegisterFormValues = z.infer<typeof registerSchema>;
+type SignInFormValues = z.infer<typeof signInSchema>;
 const SignInContent = () => {
+  const [serverError, setServerError] = useState<string | null>(null);
+  const [serverSuccess, setServerSuccess] = useState<string | null>(null);
+
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm<RegisterFormValues>({
-    resolver: zodResolver(registerSchema),
+  } = useForm<SignInFormValues>({
+    resolver: zodResolver(signInSchema),
   });
 
-  const onSubmit = async (data: RegisterFormValues) => {
-    console.log(data);
+  const onSubmit = async (data: SignInFormValues) => {
+    try {
+      setServerError(null);
+
+      const payload = {
+        email: data.email,
+        password: data.password,
+      };
+      await apiPost<{ id: string; email: string }>(
+        "/auth/signIn",
+        payload,
+      ).then((res) => {
+        // TODO: redirect to dashboard / home page after sign in, Add came_from param support
+        setServerSuccess(`Welcome back, ${res.email}`);
+      });
+    } catch (err) {
+      setServerError(`${err}` || "An unexpected error occurred");
+    }
   };
 
   return (
     <div className={styles.signInContent}>
+      {serverError && (
+        <Alert
+          message={serverError || ""}
+          duration={3500}
+          onClose={() => setServerError(null)}
+        />
+      )}
       <div className={styles.container}>
         <h1>
           <Image
