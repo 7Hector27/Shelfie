@@ -1,21 +1,30 @@
 .friendsContent {
+  padding-bottom: 30px;
   .banner {
     display: flex;
     justify-content: center;
     align-items: center;
     padding: 20px;
     box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+    position: relative;
+    z-index: 1;
+    margin: 0 auto;
+    background-color: #16101e;
+    width: 100%;
+    height: 170px;
     .bannerContent {
       width: 200px;
       h2 {
         font-size: 28px;
-        color: #3c424b;
+        color: #e6e7f0;
+
         font-family: var(--font-inter);
         font-weight: 500;
       }
       p {
         font-size: 14px;
-        color: #3c424b;
+        color: #e6e7f0;
+
         font-family: var(--font-inter);
         font-weight: 500;
         padding: 10px 0;
@@ -23,42 +32,69 @@
       }
       button {
         font-size: 14px;
-        background-color: transparent;
-        border: solid 1px rgb(107, 135, 133);
-        color: rgb(62, 109, 106);
-        padding: 5px;
-        border-radius: 6px;
+        color: #e6e7f0;
+        padding: 10px 18px;
+        border-radius: 12px;
+        background: linear-gradient(
+          180deg,
+          rgba(88, 150, 160, 0.22),
+          rgba(60, 120, 130, 0.18)
+        );
+        border: 1px solid rgba(120, 200, 210, 0.28);
+        color: #e6e7f0;
+        font-size: 14px;
+        font-weight: 500;
+        box-shadow:
+          inset 0 1px 0 rgba(255, 255, 255, 0.18),
+          0 6px 16px rgba(0, 0, 0, 0.35);
+
+        backdrop-filter: blur(6px);
+        cursor: pointer;
+
+        &:hover {
+          transform: translateY(-1px);
+
+          box-shadow:
+            0 10px 28px rgba(88, 150, 160, 0.35),
+            inset 0 1px 0 rgba(255, 255, 255, 0.25);
+        }
       }
     }
     .mobileShelfIcon {
-      width: 200px;
-      height: 80px;
+      width: 250px;
+      height: 170px;
+      margin-right: -45px;
     }
     .shelfIcon {
       display: none;
     }
-
-    .shelfIcon {
-    }
   }
   .friendsList {
-    background-color: rgb(221, 255, 221);
     width: 335px;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: flex-start;
     margin: 40px auto 0;
-    h2 {
-      color: #8a8f94;
+    .title {
+      color: #c8c2cd;
       text-align: left;
       width: 100%;
-      font-size: 18px;
+      font-size: 22px;
       font-family: var(--font-inter);
       font-weight: 500;
       text-transform: uppercase;
       letter-spacing: 1px;
-      box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+      border-bottom: solid 2px rgba(206, 205, 205, 0.1);
+      padding: 0 0 4px;
+      margin-bottom: 20px;
+    }
+    .cards {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      width: 100%;
+      gap: 10px;
     }
   }
   .addFriends {
@@ -71,37 +107,63 @@
     align-items: center;
     margin: 40px auto 0;
     padding: 10px;
-    color: #3c424b;
+    color: #c8c2cd;
     font-family: var(--font-inter);
     font-weight: 500;
-    border-radius: 6px;
-    border: 1px solid rgba(0, 0, 0, 0.04);
+    background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.04),
+      rgba(255, 255, 255, 0.01)
+    );
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
     box-shadow:
-      0 0 0 1px rgba(0, 0, 0, 0.035),
-      0 12px 32px rgba(0, 0, 0, 0.06);
+      0 8px 20px rgba(0, 0, 0, 0.45),
+      inset 0 1px 0 rgba(255, 255, 255, 0.05);
+
+    backdrop-filter: blur(6px); /* optional but nice */
+
     h2 {
       font-size: 22px;
-      color: #3c424b;
+      color: #e6e7f0;
       font-family: var(--font-sans);
       font-weight: 500;
     }
     p {
       font-size: 16px;
-      color: #3c424b;
+      color: #a9abc6;
       font-family: var(--font-inter);
       padding: 10px 0;
     }
 
     button {
-      border: solid 1px rgb(107, 135, 133);
-      color: rgb(62, 109, 106);
-      padding: 5px;
-      width: 120px;
-      border-radius: 6px;
-      font-family: var(--font-inter);
+      font-size: 14px;
+      color: #e6e7f0;
+      padding: 10px 18px;
+      border-radius: 12px;
+      background: linear-gradient(
+        180deg,
+        rgba(88, 150, 160, 0.22),
+        rgba(60, 120, 130, 0.18)
+      );
+      border: 1px solid rgba(120, 200, 210, 0.28);
+      color: #e6e7f0;
+      font-size: 14px;
       font-weight: 500;
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.18),
+        0 6px 16px rgba(0, 0, 0, 0.35);
 
-      background-color: white;
+      backdrop-filter: blur(6px);
+      cursor: pointer;
+
+      &:hover {
+        transform: translateY(-1px);
+
+        box-shadow:
+          0 10px 28px rgba(88, 150, 160, 0.35),
+          inset 0 1px 0 rgba(255, 255, 255, 0.25);
+      }
     }
   }
 }
@@ -109,46 +171,60 @@
 @media (min-width: 768px) {
   .friendsContent {
     .banner {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 20px;
-      box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+      justify-content: space-around;
+      height: 300px;
       .bannerContent {
-        width: 200px;
+        width: 150px;
         h2 {
-          font-size: 28px;
-          color: #3c424b;
-          font-family: var(--font-inter);
-          font-weight: 500;
+          font-size: 36px;
         }
         p {
-          font-size: 14px;
-          color: #3c424b;
-          font-family: var(--font-inter);
-          font-weight: 500;
-          padding: 10px 0;
-          width: 130px;
+          font-size: 20px;
+          padding: 15px 0;
+          width: 330px;
         }
         button {
-          font-size: 14px;
-          background-color: transparent;
-          border: solid 1px rgb(107, 135, 133);
-          color: rgb(62, 109, 106);
-          padding: 5px;
-          border-radius: 6px;
+          font-size: 16px;
+          padding: 14px 24px;
         }
+      }
+      .shelfIcon {
+        display: inline;
+        width: 470px;
+        height: 300px;
       }
       .mobileShelfIcon {
         display: none;
       }
-      .shelfIcon {
-        display: inline;
-        width: 320px;
-        height: 100px;
+    }
+    .friendsList {
+      width: 600px;
+      .title {
+        font-size: 24px;
+        border-bottom: solid 3px rgba(206, 205, 205, 0.1);
+        margin-bottom: 25px;
+      }
+      .cards {
+        width: 100%;
+        gap: 16px;
+      }
+    }
+    .addFriends {
+      width: 600px;
+      margin: 40px auto 0;
+      padding: 25px 20px;
+
+      h2 {
+        font-size: 24px;
+      }
+      p {
+        font-size: 18px;
+        padding: 20px 0;
       }
 
-      .shelfIcon {
+      button {
+        font-size: 16px;
+        padding: 14px 24px;
       }
     }
   }

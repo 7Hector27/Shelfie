@@ -3,27 +3,26 @@ import Image from "next/image";
 
 import { apiPost } from "../../lib/api";
 import { useAuth } from "@/context/AuthProvider";
-import { useRouter } from "next/router";
+import { redirectTo } from "@/util/clientUtils";
 
 import styles from "./ProfileMenu.module.scss";
 
 const ProfileMenu = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const { setUser } = useAuth();
-  const router = useRouter();
 
   const logout = async () => {
     try {
       await apiPost("/auth/logout", {});
       setUser(null);
-      router.push("/signin");
+      redirectTo("/signin");
     } catch (err) {
       console.error("Logout failed", err);
     }
   };
 
   const redirect = (path: string) => {
-    router.push(path);
+    redirectTo(path);
   };
 
   return (

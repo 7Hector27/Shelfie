@@ -1,0 +1,68 @@
+.friendCard {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 10px;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.04),
+    rgba(255, 255, 255, 0.01)
+  );
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  box-shadow:
+    0 8px 20px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(6px);
+  .userInfo {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    .profileImage {
+    }
+    .nameAndCurrent {
+      h2 {
+        text-transform: capitalize;
+        color: #e6e7f0;
+        font-size: 16px;
+        padding-bottom: 3px;
+      }
+      p {
+        font-size: 12px;
+        color: #a9abc6;
+      }
+    }
+  }
+  .booksAndFriends {
+    font-size: 12px;
+    color: #a9abc6;
+  }
+}
+@media (min-width: 768px) {
+  .friendCard {
+    height: 80px;
+    .userInfo {
+      gap: 14px;
+      .profileImage img {
+        width: 40px;
+        height: 40px;
+      }
+      .nameAndCurrent {
+        h2 {
+          font-size: 18px;
+          padding-bottom: 5px;
+        }
+        p {
+          font-size: 14px;
+        }
+      }
+    }
+    .booksAndFriends {
+      font-size: 14px;
+    }
+  }
+}
+@media (min-width: 1200px) {
+}

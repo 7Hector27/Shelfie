@@ -2,15 +2,16 @@ import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 
+import ProfileMenu from "../ProfileMenu";
+
 import { useAuth } from "../../context/AuthProvider";
 
 import styles from "./Navbar.module.scss";
-import ProfileMenu from "../ProfileMenu";
 
 const Navbar = () => {
   const [mobileSearchVisible, setMobileSearchVisible] = useState(false);
   const { user } = useAuth();
-  console.log(user);
+
   return (
     <>
       <div className={styles.navbar}>

@@ -2,8 +2,10 @@ import React from "react";
 import Image from "next/image";
 
 import FriendCard from "@/components/FriendCard";
+import { redirectTo } from "@/util/clientUtils";
 
 import styles from "./FriendsContent.module.scss";
+
 type FriendCardProps = {
   name: string;
   id: string;
@@ -11,6 +13,7 @@ type FriendCardProps = {
   books: number;
   friends: number;
 };
+
 export const mockFriends: FriendCardProps[] = [
   {
     id: "1",
@@ -42,43 +45,49 @@ const FriendsContent = () => {
         <div className={styles.bannerContent}>
           <h2>Friends</h2>
           <p>See what your friends are reading</p>
-          <button>+ Add Friends</button>
+          <button onClick={() => redirectTo("/friends/find")}>
+            + Add Friends
+          </button>
         </div>
         <Image
-          src={"/images/mobile_shelf_icon.webp"}
+          src={"/images/quiet-night.webp"}
           alt="shelf icon"
-          width={180}
-          height={40}
+          width={500}
+          height={500}
           className={styles.mobileShelfIcon}
         />
         <Image
-          src={"/images/shelf_icon.webp"}
+          src={"/images/quiet-night.webp"}
           alt="shelf icon"
-          width={180}
-          height={40}
+          width={1000}
+          height={1000}
           className={styles.shelfIcon}
         />
       </div>
       <div className={styles.friendsList}>
-        <h2>FRIENDS</h2>
-        {mockFriends.map((friend) => {
-          const { id, name, currentlyReading, books, friends } = friend;
-          return (
-            <FriendCard
-              key={id}
-              id={id}
-              name={name}
-              currentlyReading={currentlyReading}
-              books={books}
-              friends={friends}
-            />
-          );
-        })}
+        <h2 className={styles.title}>FRIENDS</h2>
+        <div className={styles.cards}>
+          {mockFriends.map((friend) => {
+            const { id, name, currentlyReading, books, friends } = friend;
+            return (
+              <FriendCard
+                key={id}
+                id={id}
+                name={name}
+                currentlyReading={currentlyReading}
+                books={books}
+                friends={friends}
+              />
+            );
+          })}
+        </div>
       </div>
       <div className={styles.addFriends}>
         <h2>No friends yet</h2>
         <p>Add friends to start sharing books</p>
-        <button>+ Add Friends</button>
+        <button onClick={() => redirectTo("/friends/find")}>
+          + Add Friends
+        </button>
       </div>
     </div>
   );
