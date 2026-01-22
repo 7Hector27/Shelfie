@@ -2,11 +2,15 @@ import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 
+import { useAuth } from "../../context/AuthProvider";
+
 import styles from "./Navbar.module.scss";
+import ProfileMenu from "../ProfileMenu";
 
 const Navbar = () => {
   const [mobileSearchVisible, setMobileSearchVisible] = useState(false);
-
+  const { user } = useAuth();
+  console.log(user);
   return (
     <>
       <div className={styles.navbar}>
@@ -35,9 +39,15 @@ const Navbar = () => {
         <div className={styles.searchbar}>
           <input type="search" name="search" id="search" autoFocus />
         </div>
-        <div className={styles.profile}>
-          <Link href="/register">Sign Up</Link>
-        </div>
+        {!user ? (
+          <div className={styles.profile}>
+            <Link href="/register">Sign Up</Link>
+          </div>
+        ) : (
+          <div className={styles.profile}>
+            <ProfileMenu />
+          </div>
+        )}
       </div>
       {mobileSearchVisible && (
         <div className={styles.mobileSearchbar}>

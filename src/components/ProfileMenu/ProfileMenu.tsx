@@ -1,0 +1,57 @@
+import React, { useState } from "react";
+import Image from "next/image";
+
+import { apiPost } from "../../lib/api";
+import { useAuth } from "@/context/AuthProvider";
+import { useRouter } from "next/router";
+
+import styles from "./ProfileMenu.module.scss";
+
+const ProfileMenu = () => {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const { setUser } = useAuth();
+  const router = useRouter();
+
+  const logout = async () => {
+    try {
+      await apiPost("/auth/logout", {});
+      setUser(null);
+      router.push("/signin");
+    } catch (err) {
+      console.error("Logout failed", err);
+    }
+  };
+
+  const redirect = (path: string) => {
+    router.push(path);
+  };
+
+  return (
+    <div className={styles.profileMenu}>
+      <div
+        className={styles.profileImage}
+        onClick={() => setMenuOpen(!menuOpen)}
+      >
+        <Image
+          src="/images/user_profile.webp"
+          alt="User Profile"
+          width={30}
+          height={30}
+        />
+      </div>
+      {menuOpen && (
+        <div className={styles.menuOptions}>
+          <ul>
+            <li onClick={() => redirect("/friends")}>Profile</li>
+            <li onClick={() => redirect("/friends")}>My Books</li>
+            <li onClick={() => redirect("/friends")}>Friends</li>
+            <li onClick={() => redirect("/friends")}>Messages</li>
+            <li onClick={logout}>Logout</li>
+          </ul>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default ProfileMenu;

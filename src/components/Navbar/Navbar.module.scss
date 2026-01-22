@@ -10,7 +10,6 @@
     "two two two";
   padding: 10px 20px;
 
-  background-color: rgb(255, 252, 246);
   color: rgb(0, 0, 0);
   font-weight: 800;
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
@@ -20,9 +19,10 @@
     display: flex;
     align-items: center;
     gap: 10px;
-    font-size: 1.4rem;
+    font-size: 1.6rem;
     grid-area: one;
-
+    color: #3c424b;
+    font-family: var(--font-playfair);
     .img {
       width: 30px;
       height: 30px;

@@ -1,0 +1,157 @@
+.friendsContent {
+  .banner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+    .bannerContent {
+      width: 200px;
+      h2 {
+        font-size: 28px;
+        color: #3c424b;
+        font-family: var(--font-inter);
+        font-weight: 500;
+      }
+      p {
+        font-size: 14px;
+        color: #3c424b;
+        font-family: var(--font-inter);
+        font-weight: 500;
+        padding: 10px 0;
+        width: 130px;
+      }
+      button {
+        font-size: 14px;
+        background-color: transparent;
+        border: solid 1px rgb(107, 135, 133);
+        color: rgb(62, 109, 106);
+        padding: 5px;
+        border-radius: 6px;
+      }
+    }
+    .mobileShelfIcon {
+      width: 200px;
+      height: 80px;
+    }
+    .shelfIcon {
+      display: none;
+    }
+
+    .shelfIcon {
+    }
+  }
+  .friendsList {
+    background-color: rgb(221, 255, 221);
+    width: 335px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    margin: 40px auto 0;
+    h2 {
+      color: #8a8f94;
+      text-align: left;
+      width: 100%;
+      font-size: 18px;
+      font-family: var(--font-inter);
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+    }
+  }
+  .addFriends {
+    background-color: transparent;
+    border-bottom: #3c424b solid 1px;
+    width: 335px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: 40px auto 0;
+    padding: 10px;
+    color: #3c424b;
+    font-family: var(--font-inter);
+    font-weight: 500;
+    border-radius: 6px;
+    border: 1px solid rgba(0, 0, 0, 0.04);
+    box-shadow:
+      0 0 0 1px rgba(0, 0, 0, 0.035),
+      0 12px 32px rgba(0, 0, 0, 0.06);
+    h2 {
+      font-size: 22px;
+      color: #3c424b;
+      font-family: var(--font-sans);
+      font-weight: 500;
+    }
+    p {
+      font-size: 16px;
+      color: #3c424b;
+      font-family: var(--font-inter);
+      padding: 10px 0;
+    }
+
+    button {
+      border: solid 1px rgb(107, 135, 133);
+      color: rgb(62, 109, 106);
+      padding: 5px;
+      width: 120px;
+      border-radius: 6px;
+      font-family: var(--font-inter);
+      font-weight: 500;
+
+      background-color: white;
+    }
+  }
+}
+
+@media (min-width: 768px) {
+  .friendsContent {
+    .banner {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+      .bannerContent {
+        width: 200px;
+        h2 {
+          font-size: 28px;
+          color: #3c424b;
+          font-family: var(--font-inter);
+          font-weight: 500;
+        }
+        p {
+          font-size: 14px;
+          color: #3c424b;
+          font-family: var(--font-inter);
+          font-weight: 500;
+          padding: 10px 0;
+          width: 130px;
+        }
+        button {
+          font-size: 14px;
+          background-color: transparent;
+          border: solid 1px rgb(107, 135, 133);
+          color: rgb(62, 109, 106);
+          padding: 5px;
+          border-radius: 6px;
+        }
+      }
+      .mobileShelfIcon {
+        display: none;
+      }
+      .shelfIcon {
+        display: inline;
+        width: 320px;
+        height: 100px;
+      }
+
+      .shelfIcon {
+      }
+    }
+  }
+}
+@media (min-width: 1200px) {
+}
