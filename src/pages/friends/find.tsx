@@ -1,7 +1,6 @@
-import React from "react";
-
+import FindFriendsContent from "@/content/FindFriendsContent";
 const find = () => {
-  return <div>find</div>;
+  return <FindFriendsContent />;
 };
 
 export default find;

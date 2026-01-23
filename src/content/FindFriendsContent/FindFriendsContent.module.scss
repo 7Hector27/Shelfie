@@ -1,0 +1,147 @@
+.findFriends {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 50px 20px;
+  .titles {
+    margin: 0 auto;
+    width: 320px;
+    padding-bottom: 20px;
+    h1 {
+      font-size: 28px;
+      color: #e6e7f0;
+      font-family: var(--font-inter);
+      font-weight: 500;
+    }
+    p {
+      font-size: 14px;
+      color: #e6e7f0;
+
+      font-family: var(--font-inter);
+      font-weight: 500;
+      padding: 10px 0;
+    }
+  }
+  .searchBarWrapper {
+    width: 320px;
+
+    padding: 10px 20px;
+    background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.04),
+      rgba(255, 255, 255, 0.01)
+    );
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    box-shadow:
+      0 8px 20px rgba(0, 0, 0, 0.45),
+      inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(6px);
+    .search {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+
+      height: 44px;
+      padding: 0 14px;
+      border-radius: 12px;
+
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(10px);
+
+      transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+
+      &:focus-within {
+        border-color: rgba(120, 110, 255, 0.45);
+        box-shadow: 0 0 0 2px rgba(120, 110, 255, 0.15);
+      }
+
+      .icon {
+        font-size: 14px;
+        color: var(--text-secondary);
+        opacity: 0.7;
+      }
+
+      input {
+        flex: 1;
+        background: none;
+        border: none;
+        outline: none;
+
+        color: var(--text-primary);
+        font-size: 14px;
+
+        &::placeholder {
+          color: var(--text-secondary);
+          opacity: 0.6;
+        }
+      }
+    }
+  }
+  .results {
+    width: 320px;
+    .resultsTitle {
+      font-size: 16px;
+      color: #e6e7f0;
+      font-family: var(--font-inter);
+      font-weight: 500;
+      padding: 30px 0 10px;
+    }
+    .cards {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      width: 100%;
+      gap: 10px;
+    }
+  }
+}
+@media (min-width: 768px) {
+  .findFriends {
+    .titles {
+      width: 600px;
+      padding: 80px 0 20px;
+      h1 {
+        font-size: 32px;
+      }
+      p {
+        font-size: 18px;
+        padding: 10px 0 0;
+      }
+    }
+    .searchBarWrapper {
+      width: 600px;
+      padding: 25px 35px;
+
+      .search {
+        gap: 10px;
+        height: 56px;
+        padding: 0 14px;
+        .icon {
+          width: 22px;
+          height: 22px;
+        }
+        input {
+          font-size: 18px;
+        }
+      }
+    }
+    .results {
+      width: 600px;
+      padding-top: 40px;
+      .resultsTitle {
+        font-size: 20px;
+        padding: 30px 0 10px;
+      }
+      .cards {
+        gap: 20px;
+      }
+    }
+  }
+}
+@media (min-width: 1200px) {
+}
