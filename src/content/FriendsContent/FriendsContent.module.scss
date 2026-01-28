@@ -76,18 +76,73 @@
     justify-content: center;
     align-items: flex-start;
     margin: 40px auto 0;
-    .title {
-      color: #c8c2cd;
-      text-align: left;
+
+    .sectionHeader {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
       width: 100%;
-      font-size: 22px;
-      font-family: var(--font-inter);
-      font-weight: 500;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      border-bottom: solid 2px rgba(206, 205, 205, 0.1);
-      padding: 0 0 4px;
-      margin-bottom: 20px;
+      .title {
+        color: #c8c2cd;
+        text-align: left;
+        width: 100%;
+        font-size: 22px;
+        font-family: var(--font-inter);
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        border-bottom: solid 2px rgba(206, 205, 205, 0.1);
+        padding: 0 0 4px;
+        margin-bottom: 20px;
+      }
+    }
+
+    .requestsBtn {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(10px);
+
+      color: #fff;
+      cursor: pointer;
+
+      transition:
+        background 0.2s ease,
+        border-color 0.2s ease;
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.1);
+        border-color: rgba(255, 255, 255, 0.18);
+      }
+    }
+
+    .badge {
+      position: absolute;
+      top: -6px;
+      right: -6px;
+
+      min-width: 18px;
+      height: 18px;
+      padding: 0 5px;
+
+      background: #e45858;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 600;
+
+      border-radius: 999px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
     .cards {
       display: flex;

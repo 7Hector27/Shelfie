@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import styles from "./FriendCard.module.scss";
 import { redirectTo } from "@/util/clientUtils";
@@ -21,6 +21,22 @@ const FriendCard = ({
   buttonCopy,
   buttonHandler,
 }: FriendCardProps) => {
+  const [requestStatus, setRequestStatus] = useState<
+    "idle" | "pending" | "sent"
+  >("idle");
+
+  const handleRequest = async () => {
+    if (!buttonHandler) return;
+
+    try {
+      setRequestStatus("pending");
+      await buttonHandler();
+      setRequestStatus("sent");
+    } catch (e) {
+      setRequestStatus("idle");
+    }
+  };
+
   return (
     <div className={styles.friendCard}>
       <div className={styles.userInfo}>
@@ -46,7 +62,17 @@ const FriendCard = ({
       )}
       {buttonCopy && (
         <div className={styles.button}>
-          <button onClick={buttonHandler}>{buttonCopy}</button>
+          {requestStatus === "idle" && (
+            <button onClick={handleRequest}>{buttonCopy}</button>
+          )}
+
+          {requestStatus === "pending" && (
+            <span className={styles.pending}>Sending…</span>
+          )}
+
+          {requestStatus === "sent" && (
+            <span className={styles.sent}>Request sent</span>
+          )}
         </div>
       )}
     </div>

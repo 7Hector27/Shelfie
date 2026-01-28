@@ -69,6 +69,15 @@
           inset 0 1px 0 rgba(255, 255, 255, 0.25);
       }
     }
+    .pending {
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+
+    .sent {
+      font-size: 14px;
+      color: #9ff0c9; // same green as accepted
+    }
   }
 }
 @media (min-width: 768px) {

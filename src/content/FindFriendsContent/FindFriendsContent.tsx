@@ -35,7 +35,7 @@ const FindFriendsContent = () => {
       const data = await apiGet<{
         users: FriendSearchResult[];
       }>(`/friends/search?q=${encodeURIComponent(query)}`);
-
+      console.log(data, "data");
       setResults(data.users);
     } catch (err) {
       console.error(err);

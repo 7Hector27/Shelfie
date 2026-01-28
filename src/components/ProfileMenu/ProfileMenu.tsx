@@ -9,7 +9,7 @@ import styles from "./ProfileMenu.module.scss";
 
 const ProfileMenu = () => {
   const [menuOpen, setMenuOpen] = useState(false);
-  const { setUser } = useAuth();
+  const { setUser, user } = useAuth();
 
   const logout = async () => {
     try {
@@ -41,6 +41,7 @@ const ProfileMenu = () => {
       {menuOpen && (
         <div className={styles.menuOptions}>
           <ul>
+            {user && <li>{user?.first_name}</li>}{" "}
             <li onClick={() => redirect("/friends")}>Profile</li>
             <li onClick={() => redirect("/friends")}>My Books</li>
             <li onClick={() => redirect("/friends")}>Friends</li>

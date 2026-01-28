@@ -2,6 +2,9 @@ import "@/styles/globals.css";
 import type { AppProps } from "next/app";
 import { Playfair_Display, Inter } from "next/font/google";
 import { AuthProvider } from "../context/AuthProvider";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+const queryClient = new QueryClient();
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
@@ -18,7 +21,9 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <div className={`${playfair.variable} ${inter.variable}`}>
       <AuthProvider>
-        <Component {...pageProps} />{" "}
+        <QueryClientProvider client={queryClient}>
+          <Component {...pageProps} />{" "}
+        </QueryClientProvider>
       </AuthProvider>
     </div>
   );
