@@ -24,3 +24,14 @@ export type RequestType = {
 export type GetRequestsResponse = {
   requests: RequestType[];
 };
+
+export type FriendList = {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  profilePictureUrl: string;
+};
+export type GetFriendListResponse = {
+  friends: FriendList[];
+};

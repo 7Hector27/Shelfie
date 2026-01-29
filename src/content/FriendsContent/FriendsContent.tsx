@@ -7,16 +7,19 @@ import FriendRequestsModal from "@/components/FriendRequestsModal/FriendRequests
 
 import { redirectTo } from "@/util/clientUtils";
 import { apiGet, apiPost } from "@/lib/api";
+import { useAuth } from "@/context/AuthProvider";
 import {
   FriendCardProps,
   RequestType,
   GetRequestsResponse,
+  GetFriendListResponse,
 } from "@/util/types";
 
 import styles from "./FriendsContent.module.scss";
 
 const FriendsContent = () => {
   const [displayModal, setDisplayModal] = useState<boolean>(false);
+  const { user } = useAuth();
 
   const mockFriends: FriendCardProps[] = [
     {
@@ -42,6 +45,7 @@ const FriendsContent = () => {
     },
   ];
 
+  // Fetch friend requests
   const fetchFriendRequests = async () => {
     const data = await apiGet<GetRequestsResponse>("/friends/requests");
     return data.requests;
@@ -50,6 +54,18 @@ const FriendsContent = () => {
   const { data: friendRequests = [], isLoading } = useQuery({
     queryKey: ["friendRequests"],
     queryFn: fetchFriendRequests,
+  });
+
+  // Fetching Friends list
+  const fetchFriendList = async () => {
+    const data = await apiGet<GetFriendListResponse>("/friends/list");
+    console.log(data);
+    return data.friends;
+  };
+
+  const { data: friendList = [], isLoading: isLoadingFriendList } = useQuery({
+    queryKey: ["friendList"],
+    queryFn: fetchFriendList,
   });
 
   return (
@@ -80,19 +96,23 @@ const FriendsContent = () => {
       <div className={styles.friendsList}>
         <div className={styles.sectionHeader}>
           <h2 className={styles.title}>FRIENDS</h2>
-          <button
-            className={styles.requestsBtn}
-            title="Friend requests"
-            onClick={() => setDisplayModal(true)}
-          >
-            <Image
-              src="/images/bell-notification.webp"
-              alt="Friend requests"
-              width={24}
-              height={24}
-            />
-            <span className={styles.badge}>{friendRequests?.length || 0}</span>
-          </button>
+          {friendRequests.length > 0 && (
+            <button
+              className={styles.requestsBtn}
+              title="Friend requests"
+              onClick={() => setDisplayModal(true)}
+            >
+              <Image
+                src="/images/bell-notification.webp"
+                alt="Friend requests"
+                width={24}
+                height={24}
+              />
+              <span className={styles.badge}>
+                {friendRequests?.length || 0}
+              </span>
+            </button>
+          )}
         </div>
         {/* <div>
           <input
@@ -104,18 +124,19 @@ const FriendsContent = () => {
           />
         </div> */}
 
-        {mockFriends.length ? (
+        {friendList.length ? (
           <div className={styles.cards}>
-            {mockFriends.map((friend) => {
-              const { id, name, currentlyReading, books, friends } = friend;
+            {friendList.map((friend) => {
+              const { id, firstName, lastName, email, profilePictureUrl } =
+                friend;
               return (
                 <FriendCard
                   key={id}
                   id={id}
-                  name={name}
-                  currentlyReading={currentlyReading}
-                  books={books}
-                  friends={friends}
+                  name={`${firstName} ${lastName}`}
+                  currentlyReading={"Nothing"}
+                  books={1}
+                  friends={1}
                 />
               );
             })}

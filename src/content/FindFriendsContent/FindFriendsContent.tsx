@@ -106,7 +106,7 @@ const FindFriendsContent = () => {
             <h2 className={styles.resultsTitle}>Results for: {query}</h2>
             <div className={styles.cards}>
               {results.map((friend) => {
-                const { id, firstName, lastName, email } = friend;
+                const { id, firstName, lastName } = friend;
                 return (
                   <FriendCard
                     key={id}
