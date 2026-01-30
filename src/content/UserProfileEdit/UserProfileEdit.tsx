@@ -6,7 +6,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
 import Layout from "@/components/Layout";
+
 import { useAuth } from "../../context/AuthProvider";
+import { apiPost } from "@/lib/api";
+
 import styles from "./UserProfileEdit.module.scss";
 
 const editProfileSchema = z.object({
@@ -106,7 +109,17 @@ const UserProfileEdit = () => {
   /* ---------- form ---------- */
 
   const onSubmit = async (data: EditProfileValues) => {
-    console.log("Profile data:", data);
+    try {
+      await apiPost("/user/profile", {
+        first_name: data.firstName,
+        last_name: data.lastName,
+        birthdate: data.birthdate,
+        bio: data.bio,
+      });
+    } catch (error) {
+      alert("Error updating profile. Please try again.");
+      console.error("Error updating profile:", error);
+    }
   };
 
   useEffect(() => {

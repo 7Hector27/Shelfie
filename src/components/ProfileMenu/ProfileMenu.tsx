@@ -42,8 +42,10 @@ const ProfileMenu = () => {
         <div className={styles.menuOptions}>
           <ul>
             {user && <li>{user?.first_name}</li>}{" "}
-            <li onClick={() => redirect(`/user/${user?.id}`)}>Profile</li>
-            <li onClick={() => redirect(`/user/${user?.id}/books`)}>
+            <li onClick={() => redirect(`/user/profile/${user?.user_id}`)}>
+              Profile
+            </li>
+            <li onClick={() => redirect(`/user/books/${user?.user_id}`)}>
               My Books
             </li>
             <li onClick={() => redirect("/friends")}>Friends</li>

@@ -2,7 +2,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { apiGet } from "../lib/api";
 
 type User = {
-  id: string;
+  user_id: string;
   email: string;
   first_name?: string;
   last_name?: string;
