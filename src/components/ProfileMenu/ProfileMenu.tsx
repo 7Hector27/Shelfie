@@ -42,10 +42,12 @@ const ProfileMenu = () => {
         <div className={styles.menuOptions}>
           <ul>
             {user && <li>{user?.first_name}</li>}{" "}
-            <li onClick={() => redirect("/friends")}>Profile</li>
-            <li onClick={() => redirect("/friends")}>My Books</li>
+            <li onClick={() => redirect(`/user/${user?.id}`)}>Profile</li>
+            <li onClick={() => redirect(`/user/${user?.id}/books`)}>
+              My Books
+            </li>
             <li onClick={() => redirect("/friends")}>Friends</li>
-            <li onClick={() => redirect("/friends")}>Messages</li>
+            <li onClick={() => redirect("/messages")}>Messages</li>
             <li onClick={logout}>Logout</li>
           </ul>
         </div>

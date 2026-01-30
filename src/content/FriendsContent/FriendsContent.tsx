@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import { useQuery } from "@tanstack/react-query";
 
@@ -6,44 +6,13 @@ import FriendCard from "@/components/FriendCard";
 import FriendRequestsModal from "@/components/FriendRequestsModal/FriendRequestsModal";
 
 import { redirectTo } from "@/util/clientUtils";
-import { apiGet, apiPost } from "@/lib/api";
-import { useAuth } from "@/context/AuthProvider";
-import {
-  FriendCardProps,
-  RequestType,
-  GetRequestsResponse,
-  GetFriendListResponse,
-} from "@/util/types";
+import { apiGet } from "@/lib/api";
+import { GetRequestsResponse, GetFriendListResponse } from "@/util/types";
 
 import styles from "./FriendsContent.module.scss";
 
 const FriendsContent = () => {
   const [displayModal, setDisplayModal] = useState<boolean>(false);
-  const { user } = useAuth();
-
-  const mockFriends: FriendCardProps[] = [
-    {
-      id: "1",
-      name: "Alex Walker",
-      currentlyReading: "Dune",
-      books: 12,
-      friends: 8,
-    },
-    {
-      id: "2",
-      name: "Jenny Adams",
-      currentlyReading: "Atomic Habits",
-      books: 20,
-      friends: 15,
-    },
-    {
-      id: "3",
-      name: "Chris Morgan",
-      currentlyReading: "The Midnight Library",
-      books: 8,
-      friends: 5,
-    },
-  ];
 
   // Fetch friend requests
   const fetchFriendRequests = async () => {
