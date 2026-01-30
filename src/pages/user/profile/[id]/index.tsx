@@ -1,10 +1,8 @@
+import UserProfileContent from "@/content/UserProfileContent";
 import React from "react";
-import { useRouter } from "next/router";
 
 const UserProfile = () => {
-  const { query } = useRouter();
-
-  return <div>{query.id}</div>;
+  return <UserProfileContent />;
 };
 
 export default UserProfile;
