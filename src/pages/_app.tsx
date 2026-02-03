@@ -20,11 +20,11 @@ const inter = Inter({
 export default function App({ Component, pageProps }: AppProps) {
   return (
     <div className={`${playfair.variable} ${inter.variable}`}>
-      <AuthProvider>
-        <QueryClientProvider client={queryClient}>
-          <Component {...pageProps} />{" "}
-        </QueryClientProvider>
-      </AuthProvider>
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider>
+          <Component {...pageProps} />
+        </AuthProvider>
+      </QueryClientProvider>
     </div>
   );
 }

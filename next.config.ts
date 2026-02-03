@@ -7,7 +7,7 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "profile-images-shelfie.s3.us-west-1.amazonaws.com",
+        hostname: "shelfie-profile-images.s3.us-west-1.amazonaws.com",
         pathname: "/**",
       },
     ],

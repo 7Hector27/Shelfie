@@ -1,4 +1,5 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { apiGet } from "../lib/api";
 
 type User = {
@@ -14,24 +15,19 @@ type User = {
 type AuthContextType = {
   user: User | null;
   loading: boolean;
-  setUser: (user: User | null) => void;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    apiGet<User>("/auth/me")
-      .then(setUser)
-      .catch(() => setUser(null))
-      .finally(() => setLoading(false));
-  }, []);
+  const { data: user, isLoading: loading } = useQuery<User>({
+    queryKey: ["me"],
+    queryFn: () => apiGet<User>("/auth/me"),
+    retry: false,
+  });
 
   return (
-    <AuthContext.Provider value={{ user, loading, setUser }}>
+    <AuthContext.Provider value={{ user: user ?? null, loading }}>
       {children}
     </AuthContext.Provider>
   );

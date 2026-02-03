@@ -4,11 +4,13 @@ import Cropper, { Area } from "react-easy-crop";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { useQueryClient } from "@tanstack/react-query";
 
 import Layout from "@/components/Layout";
 
 import { useAuth } from "../../context/AuthProvider";
-import { apiPost } from "@/lib/api";
+import { apiPost, apiGet } from "@/lib/api";
+import { API_URL } from "../..//lib/api";
 
 import styles from "./UserProfileEdit.module.scss";
 
@@ -32,6 +34,7 @@ const UserProfileEdit = () => {
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null);
+  const queryClient = useQueryClient();
 
   const {
     register,
@@ -87,13 +90,14 @@ const UserProfileEdit = () => {
       const formData = new FormData();
       formData.append("image", blob, "profile.jpg");
 
-      await fetch("/user/profile-image", {
+      await fetch(`${API_URL}/user/profile-image`, {
         method: "POST",
         body: formData,
         credentials: "include",
       });
+      queryClient.invalidateQueries({ queryKey: ["me"] });
 
-      setPreview(null); // close cropper
+      setPreview(null);
     } finally {
       setUploading(false);
     }
@@ -148,6 +152,7 @@ const UserProfileEdit = () => {
         <div className={styles.editProfileSection}>
           <div className={styles.avatarSection}>
             <NextImage
+              key={user?.profile_image}
               src={user?.profile_image ?? "/images/user_profile.webp"}
               width={80}
               height={80}
