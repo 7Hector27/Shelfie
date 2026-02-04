@@ -1,15 +1,16 @@
 import React, { useRef, useState, useEffect } from "react";
 import NextImage from "next/image";
 import Cropper, { Area } from "react-easy-crop";
-import { z } from "zod";
+import { set, z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useQueryClient } from "@tanstack/react-query";
 
 import Layout from "@/components/Layout";
+import Alert from "@/components/Alert";
 
 import { useAuth } from "../../context/AuthProvider";
-import { apiPost, apiGet } from "@/lib/api";
+import { apiPost } from "@/lib/api";
 import { API_URL } from "../..//lib/api";
 
 import styles from "./UserProfileEdit.module.scss";
@@ -25,6 +26,7 @@ type EditProfileValues = z.infer<typeof editProfileSchema>;
 
 const UserProfileEdit = () => {
   const { user } = useAuth();
+  const queryClient = useQueryClient();
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -34,7 +36,8 @@ const UserProfileEdit = () => {
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null);
-  const queryClient = useQueryClient();
+
+  const [alert, setAlert] = useState<string | null>(null);
 
   const {
     register,
@@ -95,6 +98,7 @@ const UserProfileEdit = () => {
         body: formData,
         credentials: "include",
       });
+      setAlert("Profile image updated successfully.");
       queryClient.invalidateQueries({ queryKey: ["me"] });
 
       setPreview(null);
@@ -120,9 +124,10 @@ const UserProfileEdit = () => {
         birthdate: data.birthdate,
         bio: data.bio,
       });
+      setAlert("Profile updated successfully.");
+      queryClient.invalidateQueries({ queryKey: ["me"] });
     } catch (error) {
-      alert("Error updating profile. Please try again.");
-      console.error("Error updating profile:", error);
+      setAlert("Error updating profile. Please try again.");
     }
   };
 
@@ -147,6 +152,7 @@ const UserProfileEdit = () => {
 
   return (
     <Layout>
+      {alert && <Alert message={alert} onClose={() => setAlert(null)} />}{" "}
       <div className={styles.editProfile}>
         <h1 className={styles.title}>Edit Profile</h1>
         <div className={styles.editProfileSection}>

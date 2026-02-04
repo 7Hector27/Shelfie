@@ -1,14 +1,14 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { useQueryClient } from "@tanstack/react-query";
 
 import Alert from "@/components/Alert";
-
 import { apiPost } from "../../lib/api";
-import { useAuth } from "../../context/AuthProvider";
 
 import styles from "./SignInContent.module.scss";
 
@@ -18,10 +18,11 @@ const signInSchema = z.object({
 });
 
 type SignInFormValues = z.infer<typeof signInSchema>;
+
 const SignInContent = () => {
   const [serverError, setServerError] = useState<string | null>(null);
-  const [serverSuccess, setServerSuccess] = useState<string | null>(null);
-  const { setUser } = useAuth();
+  const queryClient = useQueryClient();
+  const router = useRouter();
 
   const {
     register,
@@ -35,19 +36,21 @@ const SignInContent = () => {
     try {
       setServerError(null);
 
-      const payload = {
+      await apiPost("/auth/signIn", {
         email: data.email,
         password: data.password,
-      };
-      const res = await apiPost<{ id: string; email: string }>(
-        "/auth/signIn",
-        payload,
-      );
-      // TODO: redirect to dashboard / home page after sign in, Add came_from param support
+      });
 
-      setUser(res);
+      // refresh "me" after cookie is set
+      await queryClient.invalidateQueries({ queryKey: ["me"] });
+
+      router.push("/"); // or /friends etc
     } catch (err) {
-      setServerError(`${err}` || "An unexpected error occurred");
+      if (err instanceof Error) {
+        setServerError(err.message);
+      } else {
+        setServerError("Sign in failed");
+      }
     }
   };
 
@@ -60,6 +63,7 @@ const SignInContent = () => {
           onClose={() => setServerError(null)}
         />
       )}
+
       <div className={styles.container}>
         <h1>
           <Image
@@ -70,12 +74,15 @@ const SignInContent = () => {
           />
           Shelfie
         </h1>
+
         <h2>Sign In</h2>
+
         <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
-          <label htmlFor="">Email</label>
+          <label>Email</label>
           <input {...register("email")} placeholder="Email" />
           {errors.email && <p>{errors.email.message}</p>}
-          <label htmlFor="">Password</label>
+
+          <label>Password</label>
           <input
             {...register("password")}
             type="password"
@@ -84,9 +91,10 @@ const SignInContent = () => {
           {errors.password && <p>{errors.password.message}</p>}
 
           <button disabled={isSubmitting} className={styles.submitBtn}>
-            Sign In
+            {isSubmitting ? "Signing in..." : "Sign In"}
           </button>
         </form>
+
         <div className={styles.tos}>
           By signing in, you agree to the{" "}
           <Link href="/terms">Terms of Service</Link> and{" "}
@@ -105,4 +113,5 @@ const SignInContent = () => {
     </div>
   );
 };
+
 export default SignInContent;

@@ -5,9 +5,17 @@ const nextConfig: NextConfig = {
 
   images: {
     remotePatterns: [
+      // Shelfie profile images (existing)
       {
         protocol: "https",
         hostname: "shelfie-profile-images.s3.us-west-1.amazonaws.com",
+        pathname: "/**",
+      },
+
+      // Open Library book covers (ADD THIS)
+      {
+        protocol: "https",
+        hostname: "covers.openlibrary.org",
         pathname: "/**",
       },
     ],

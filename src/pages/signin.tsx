@@ -3,11 +3,7 @@ import React from "react";
 import SignInContent from "@/content/SignInContent";
 
 const SignInPage = () => {
-  return (
-    <div>
-      <SignInContent />
-    </div>
-  );
+  return <SignInContent />;
 };
 
 export default SignInPage;
