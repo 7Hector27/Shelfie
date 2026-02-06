@@ -1,9 +1,8 @@
 .profileMenu {
   .profileImage {
-    width: 30px;
-    height: 30px;
+    width: 35px;
+    height: 35px;
     border-radius: 50%;
-    background-color: lightblue;
     cursor: pointer;
   }
   .menuOptions {
@@ -19,6 +18,7 @@
         border-bottom: 1px solid #ccc;
         font-size: 12px;
         font-weight: 500;
+        color: #181818;
         cursor: pointer;
         &:hover {
           background-color: #f0f0f0;

@@ -61,7 +61,7 @@ const Navbar = () => {
     setQuery(value);
     searchBooks(value);
   };
-
+  console.log(results);
   return (
     <>
       <div className={styles.navbar}>
@@ -70,10 +70,10 @@ const Navbar = () => {
             src="/images/shelfie_icon.webp"
             alt="Shelfie Icon"
             className={styles.img}
-            width={40}
-            height={40}
+            width={100}
+            height={100}
           />
-          Shelfie
+          <p>Shelfie</p>
         </div>
         {/* Mobile search icon */}
         <div
@@ -81,9 +81,9 @@ const Navbar = () => {
           onClick={() => setMobileSearchVisible(!mobileSearchVisible)}
         >
           <Image
-            src="/images/magnifying_glass.png"
+            src="/images/magnifying_glass_white.webp"
             alt="Search"
-            className={styles.icon}
+            className={styles.magnifyingIcon}
             width={24}
             height={24}
           />
@@ -100,28 +100,32 @@ const Navbar = () => {
 
           {results.length > 0 && (
             <div className={styles.searchResults}>
-              {results.map((book) => (
-                <Link
-                  key={book.key}
-                  href={`/book${book.key}`}
-                  className={styles.searchResultItem}
-                >
-                  <Image
-                    src={
-                      book.cover_i
-                        ? `https://covers.openlibrary.org/b/id/${book.cover_i}-M.jpg`
-                        : "/images/book_placeholder.webp"
-                    }
-                    alt={book.title}
-                    width={40}
-                    height={60}
-                  />
-                  <div>
-                    <p>{book.title}</p>
-                    <span>{book.author_name?.[0]}</span>
-                  </div>
-                </Link>
-              ))}
+              {results.map((book) => {
+                const BookId = book.key.split("/").pop();
+                console.log(BookId);
+                return (
+                  <Link
+                    key={book.key}
+                    href={`/book/${BookId}`}
+                    className={styles.searchResultItem}
+                  >
+                    <Image
+                      src={
+                        book.cover_i
+                          ? `https://covers.openlibrary.org/b/id/${book.cover_i}-M.jpg`
+                          : "/images/book_placeholder.webp"
+                      }
+                      alt={book.title}
+                      width={40}
+                      height={60}
+                    />
+                    <div>
+                      <p>{book.title}</p>
+                      <span>{book.author_name?.[0]}</span>
+                    </div>
+                  </Link>
+                );
+              })}
             </div>
           )}
 
@@ -153,28 +157,31 @@ const Navbar = () => {
 
           {results.length > 0 && (
             <div className={styles.searchResults}>
-              {results.map((book) => (
-                <Link
-                  key={book.key}
-                  href={`/book${book.key}`}
-                  className={styles.searchResultItem}
-                >
-                  <Image
-                    src={
-                      book.cover_i
-                        ? `https://covers.openlibrary.org/b/id/${book.cover_i}-M.jpg`
-                        : "/images/book_placeholder.webp"
-                    }
-                    alt={book.title}
-                    width={40}
-                    height={60}
-                  />
-                  <div>
-                    <p>{book.title}</p>
-                    <span>{book.author_name?.[0]}</span>
-                  </div>
-                </Link>
-              ))}
+              {results.map((book) => {
+                const BookId = book.key.split("/").pop();
+                return (
+                  <Link
+                    key={book.key}
+                    href={`/book/${BookId}`}
+                    className={styles.searchResultItem}
+                  >
+                    <Image
+                      src={
+                        book.cover_i
+                          ? `https://covers.openlibrary.org/b/id/${book.cover_i}-M.jpg`
+                          : "/images/book_placeholder.webp"
+                      }
+                      alt={book.title}
+                      width={40}
+                      height={60}
+                    />
+                    <div>
+                      <p>{book.title}</p>
+                      <span>{book.author_name?.[0]}</span>
+                    </div>
+                  </Link>
+                );
+              })}
             </div>
           )}
         </div>

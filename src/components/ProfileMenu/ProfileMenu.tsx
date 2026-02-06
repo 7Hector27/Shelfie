@@ -43,10 +43,10 @@ const ProfileMenu = () => {
         onClick={() => setMenuOpen(!menuOpen)}
       >
         <Image
-          src="/images/user_profile.webp"
+          src={user?.profile_image ?? "/images/user_profile.webp"}
           alt="User Profile"
-          width={30}
-          height={30}
+          width={35}
+          height={35}
         />
       </div>
       {menuOpen && (
