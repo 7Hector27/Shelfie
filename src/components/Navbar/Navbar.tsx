@@ -4,28 +4,20 @@ import Link from "next/link";
 
 import ProfileMenu from "../ProfileMenu";
 import { useAuth } from "../../context/AuthProvider";
+import { apiGet } from "@/lib/api";
 
 import styles from "./Navbar.module.scss";
 
-/* =====================
-   Types (Open Library)
-===================== */
 type OpenLibraryDoc = {
-  key: string; // "/works/OLxxxxW"
+  key: string;
   title: string;
   author_name?: string[];
   cover_i?: number;
 };
 
-/* =====================
-   Helpers
-===================== */
 const formatSearchQuery = (q: string) =>
   encodeURIComponent(q.replace(/[\[\]]/g, "").trim()).replace(/%20/g, "+");
 
-/* =====================
-   Component
-===================== */
 const Navbar = () => {
   const { user } = useAuth();
 
@@ -43,11 +35,11 @@ const Navbar = () => {
     setLoading(true);
 
     try {
-      const res = await fetch(
-        `https://openlibrary.org/search.json?q=${formatSearchQuery(q)}&limit=5`,
-      );
+      const res = await apiGet<{
+        docs: OpenLibraryDoc[];
+      }>(`/openlibrary/search?q=${formatSearchQuery(q)}&limit=5`);
 
-      const data: { docs: OpenLibraryDoc[] } = await res.json();
+      const data: { docs: OpenLibraryDoc[] } = await res;
       setResults(data.docs || []);
     } catch (err) {
       console.error("Book search failed", err);
@@ -61,7 +53,7 @@ const Navbar = () => {
     setQuery(value);
     searchBooks(value);
   };
-  console.log(results);
+
   return (
     <>
       <div className={styles.navbar}>

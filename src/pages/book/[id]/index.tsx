@@ -1,5 +1,5 @@
 import React from "react";
-import BookContent from "@/components/BookContent";
+import BookContent from "@/content/BookContent";
 
 const BookPage = () => {
   return <BookContent />;
