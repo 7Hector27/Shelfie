@@ -94,7 +94,6 @@ const Navbar = () => {
             <div className={styles.searchResults}>
               {results.map((book) => {
                 const BookId = book.key.split("/").pop();
-                console.log(BookId);
                 return (
                   <Link
                     key={book.key}

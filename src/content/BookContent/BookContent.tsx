@@ -5,7 +5,34 @@ import { useQuery } from "@tanstack/react-query";
 
 import Layout from "../../components/Layout";
 
+import { apiGet } from "@/lib/api";
+
 import styles from "./BookContent.module.scss";
+
+type OpenLibraryWork = {
+  title?: string;
+  description?: string | { value?: string };
+  covers?: number[];
+  authors?: {
+    author?: {
+      key?: string;
+    };
+  }[];
+};
+
+type OpenLibraryAuthor = {
+  name?: string;
+  birth_date?: string;
+  bio?: string | { value?: string };
+  photos?: number[];
+};
+const formatAuthorBio = (
+  bio: string | { value?: string } | undefined,
+): string | null => {
+  if (!bio) return null;
+  if (typeof bio === "string") return bio.trim();
+  return bio.value?.trim() || null;
+};
 
 const BookContent = () => {
   const { query } = useRouter();
@@ -14,17 +41,16 @@ const BookContent = () => {
     React.useState(false);
   const [isAuthorExpanded, setIsAuthorExpanded] = React.useState(false);
 
-  const fetchWork = async (id: string) => {
-    const res = await fetch(`https://openlibrary.org/works/${id}.json`);
-    if (!res.ok) throw new Error("Failed to fetch work");
-    return res.json();
+  const fetchWork = async (id: string): Promise<OpenLibraryWork> => {
+    return apiGet<OpenLibraryWork>(`/openlibrary/works/${id}`);
   };
 
-  const fetchAuthor = async (authorKey: string) => {
-    const res = await fetch(`https://openlibrary.org${authorKey}.json`);
-    if (!res.ok) throw new Error("Failed to fetch author");
-    return res.json();
+  const fetchAuthor = async (key: string): Promise<OpenLibraryAuthor> => {
+    return apiGet<OpenLibraryAuthor>(
+      `/openlibrary/authors?key=${encodeURIComponent(key)}`,
+    );
   };
+
   type OpenLibraryDescription = string | { value?: string } | undefined;
 
   const formatDescription = (
@@ -47,7 +73,7 @@ const BookContent = () => {
     isLoading,
     isError,
     error,
-  } = useQuery({
+  } = useQuery<OpenLibraryWork>({
     queryKey: ["bookData", id],
     queryFn: () => fetchWork(id as string),
     enabled: !!id,
@@ -59,6 +85,7 @@ const BookContent = () => {
   const bookImageUrl = coverId
     ? `https://covers.openlibrary.org/b/id/${coverId}-L.jpg`
     : null;
+
   const { data: authorData, isLoading: isLoadingAuthor } = useQuery({
     queryKey: ["author", authorId],
     queryFn: () => fetchAuthor(authorId as string),
@@ -78,8 +105,10 @@ const BookContent = () => {
 
   if (isLoading || isLoadingAuthor) return <p>Loading…</p>;
   if (isError) return <p>{(error as Error).message}</p>;
+
   console.log(bookData);
   console.log(authorData, "authorData");
+
   return (
     <Layout>
       <div className={styles.bookContent}>
@@ -152,7 +181,9 @@ const BookContent = () => {
             isAuthorExpanded ? styles.expanded : ""
           }`}
         >
-          <p className={styles.aboutTheAuthor}>About the Author</p>
+          <p className={styles.aboutTheAuthor}>
+            {!!formatAuthorBio(authorBio) ? "About the Author" : "Author"}
+          </p>
 
           <div className={styles.authorDetails}>
             <div className={styles.authorPhoto}>
@@ -164,20 +195,21 @@ const BookContent = () => {
                 unoptimized={!!authorImageUrl}
               />
             </div>
-
             <div className={styles.authorText}>
               <p>{authorName}</p>
               <p>{authorBirthDate}</p>
             </div>
           </div>
-          <p className={styles.authorBio}>{authorBio?.value ?? authorBio}</p>
+          <p className={styles.authorBio}>{formatAuthorBio(authorBio)}</p>
 
-          <button
-            className={styles.readMore}
-            onClick={() => setIsAuthorExpanded((prev) => !prev)}
-          >
-            {isAuthorExpanded ? "Read less" : "Read more"}
-          </button>
+          {!!formatAuthorBio(authorBio) && (
+            <button
+              className={styles.readMore}
+              onClick={() => setIsAuthorExpanded((prev) => !prev)}
+            >
+              {isAuthorExpanded ? "Read less" : "Read more"}
+            </button>
+          )}
         </div>
       </div>
     </Layout>

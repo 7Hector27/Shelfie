@@ -28,7 +28,6 @@ const FriendsContent = () => {
   // Fetching Friends list
   const fetchFriendList = async () => {
     const data = await apiGet<GetFriendListResponse>("/friends/list");
-    console.log(data);
     return data.friends;
   };
 
