@@ -37,7 +37,9 @@ const Navbar = () => {
     try {
       const res = await apiGet<{
         docs: OpenLibraryDoc[];
-      }>(`/openlibrary/search?q=${formatSearchQuery(q)}&limit=5`);
+      }>(`/openlibrary/search?q=${formatSearchQuery(q)}&limit=5`, {
+        silent: true,
+      });
 
       const data: { docs: OpenLibraryDoc[] } = await res;
       setResults(data.docs || []);
@@ -104,7 +106,7 @@ const Navbar = () => {
                       src={
                         book.cover_i
                           ? `https://covers.openlibrary.org/b/id/${book.cover_i}-M.jpg`
-                          : "/images/book_placeholder.webp"
+                          : "/images/book-placeholder.webp"
                       }
                       alt={book.title}
                       width={40}
@@ -160,7 +162,7 @@ const Navbar = () => {
                       src={
                         book.cover_i
                           ? `https://covers.openlibrary.org/b/id/${book.cover_i}-M.jpg`
-                          : "/images/book_placeholder.webp"
+                          : "/images/book-placeholder.webp"
                       }
                       alt={book.title}
                       width={40}

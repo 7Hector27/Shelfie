@@ -188,7 +188,7 @@ const BookContent = () => {
           <div className={styles.authorDetails}>
             <div className={styles.authorPhoto}>
               <Image
-                src={authorImageUrl || "/images/bopk-placeholder.webp"}
+                src={authorImageUrl || "/images/book-placeholder.webp"}
                 alt="Author Photo"
                 width={100}
                 height={150}
