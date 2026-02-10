@@ -49,3 +49,25 @@ export async function apiGet<T>(
 
   return data as T;
 }
+
+export async function apiDelete<T>(
+  path: string,
+  options?: { silent?: boolean },
+): Promise<T> {
+  const res = await fetch(`${API_URL}${path}`, {
+    method: "DELETE",
+    credentials: "include",
+  });
+
+  const data = await res.json().catch(() => null);
+
+  if (!res.ok) {
+    if (options?.silent) {
+      return data as T;
+    }
+
+    throw new Error(data?.error ?? `Request failed (${res.status})`);
+  }
+
+  return data as T;
+}

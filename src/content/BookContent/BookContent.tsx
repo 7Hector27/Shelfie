@@ -1,31 +1,19 @@
-import React, { useEffect, useState } from "react";
+import React, { useMemo, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { useQuery } from "@tanstack/react-query";
-
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  Status,
+  OpenLibraryWork,
+  OpenLibraryAuthor,
+  OpenLibraryDescription,
+} from "@/util/types";
 import Layout from "../../components/Layout";
 
-import { apiGet, apiPost } from "@/lib/api";
+import { apiGet, apiPost, apiDelete } from "@/lib/api";
 
 import styles from "./BookContent.module.scss";
 
-type OpenLibraryWork = {
-  title?: string;
-  description?: string | { value?: string };
-  covers?: number[];
-  authors?: {
-    author?: {
-      key?: string;
-    };
-  }[];
-};
-
-type OpenLibraryAuthor = {
-  name?: string;
-  birth_date?: string;
-  bio?: string | { value?: string };
-  photos?: number[];
-};
 const formatAuthorBio = (
   bio: string | { value?: string } | undefined,
 ): string | null => {
@@ -34,156 +22,183 @@ const formatAuthorBio = (
   return bio.value?.trim() || null;
 };
 
-const BookContent = () => {
-  const { query } = useRouter();
-  const [isOpen, setIsOpen] = useState(false);
-  const [status, setStatus] = useState<
-    "want_to_read" | "reading" | "completed"
-  >("want_to_read");
+const formatDescription = (
+  description: OpenLibraryDescription,
+): string | null => {
+  if (!description) return null;
+  if (typeof description === "string") return description.trim();
+  return description.value?.trim() || null;
+};
 
-  const labelMap = {
+const isStatus = (value: unknown): value is Status =>
+  value === "want_to_read" || value === "reading" || value === "completed";
+
+/* =====================
+   Component
+===================== */
+
+const BookContent = () => {
+  const router = useRouter();
+  const queryClient = useQueryClient();
+
+  const [isOpen, setIsOpen] = useState(false);
+  const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
+  const [isAuthorExpanded, setIsAuthorExpanded] = useState(false);
+
+  const labelMap: Record<Status, string> = {
     want_to_read: "Want to Read",
     reading: "Currently Reading",
     completed: "Read",
   };
 
-  const id = Array.isArray(query.id) ? query.id[0] : query.id;
+  const id = useMemo(() => {
+    const raw = router.query.id;
+    return Array.isArray(raw) ? raw[0] : raw;
+  }, [router.query.id]);
 
-  const [isDescriptionExpanded, setIsDescriptionExpanded] =
-    React.useState(false);
-  const [isAuthorExpanded, setIsAuthorExpanded] = React.useState(false);
+  /* =====================
+     Fetchers
+  ===================== */
 
-  const fetchWork = async (id: string): Promise<OpenLibraryWork> => {
-    return apiGet<OpenLibraryWork>(`/openlibrary/works/${id}`);
-  };
+  const fetchWork = async (workId: string): Promise<OpenLibraryWork> =>
+    apiGet(`/openlibrary/works/${workId}`);
 
-  const fetchAuthor = async (key: string): Promise<OpenLibraryAuthor> => {
-    return apiGet<OpenLibraryAuthor>(
-      `/openlibrary/authors?key=${encodeURIComponent(key)}`,
-    );
-  };
+  const fetchAuthor = async (key: string): Promise<OpenLibraryAuthor> =>
+    apiGet(`/openlibrary/authors?key=${encodeURIComponent(key)}`);
 
-  type OpenLibraryDescription = string | { value?: string } | undefined;
-
-  const formatDescription = (
-    description: OpenLibraryDescription,
-  ): string | null => {
-    if (!description) return null;
-
-    if (typeof description === "string") {
-      return description.trim();
+  const fetchUserBookStatus = async (
+    bookId: string,
+  ): Promise<Status | null> => {
+    try {
+      const res = await apiGet<{ status: string | null }>(
+        `/userbooks/getBookById/${bookId}`,
+      );
+      return isStatus(res.status) ? res.status : null;
+    } catch {
+      return null;
     }
-
-    if (typeof description === "object" && "value" in description) {
-      return description.value?.trim() || null;
-    }
-
-    return null;
   };
+
+  const removeUserBook = async (bookId: string) => {
+    try {
+      await apiDelete(`/userbooks/${bookId}`);
+      queryClient.invalidateQueries({
+        queryKey: ["userBookStatus", bookId],
+      });
+    } catch (error) {
+      console.error("Failed to remove book:", error);
+    }
+  };
+
+  /* =====================
+     Queries
+  ===================== */
 
   const {
     data: bookData,
     isLoading,
     isError,
     error,
-  } = useQuery<OpenLibraryWork>({
+  } = useQuery({
     queryKey: ["bookData", id],
     queryFn: () => fetchWork(id as string),
-    enabled: !!id,
+    enabled: typeof id === "string",
   });
 
   const authorId = bookData?.authors?.[0]?.author?.key;
-  const { title, description } = bookData || {};
+
+  const { data: authorData, isLoading: isLoadingAuthor } = useQuery({
+    queryKey: ["author", authorId],
+    queryFn: () => fetchAuthor(authorId as string),
+    enabled: typeof authorId === "string",
+  });
+
+  const { data: userBookStatus } = useQuery({
+    queryKey: ["userBookStatus", id],
+    queryFn: () => fetchUserBookStatus(id as string),
+    enabled: typeof id === "string",
+  });
+
+  const status: Status = userBookStatus ?? "want_to_read";
+
+  /* =====================
+     Mutation
+  ===================== */
+
+  const upsertUserBook = useMutation({
+    mutationFn: (nextStatus: Status) =>
+      apiPost("/userbooks", {
+        external_book_id: id,
+        external_source: "open_library",
+        status: nextStatus,
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["userBookStatus", id],
+      });
+    },
+  });
+
+  const saveStatus = (nextStatus: Status) => {
+    setIsOpen(false);
+    upsertUserBook.mutate(nextStatus);
+  };
+
+  /* =====================
+     Guards
+  ===================== */
+
+  if (isLoading || isLoadingAuthor) return <p>Loading…</p>;
+  if (isError) return <p>{(error as Error).message}</p>;
+
+  /* =====================
+     Derived UI
+  ===================== */
+
   const coverId = bookData?.covers?.[0];
   const bookImageUrl = coverId
     ? `https://covers.openlibrary.org/b/id/${coverId}-L.jpg`
     : null;
 
-  const { data: authorData, isLoading: isLoadingAuthor } = useQuery({
-    queryKey: ["author", authorId],
-    queryFn: () => fetchAuthor(authorId as string),
-    enabled: !!authorId,
-  });
-
-  const {
-    bio: authorBio,
-    birth_date: authorBirthDate,
-    name: authorName,
-    photos: authorPhotos,
-  } = authorData || {};
-  const authorPhotoId = authorPhotos?.[0];
+  const authorPhotoId = authorData?.photos?.[0];
   const authorImageUrl = authorPhotoId
     ? `https://covers.openlibrary.org/b/id/${authorPhotoId}-L.jpg`
     : null;
 
-  if (isLoading || isLoadingAuthor) return <p>Loading…</p>;
-  if (isError) return <p>{(error as Error).message}</p>;
-
-  console.log(bookData);
-  console.log(authorData, "authorData");
-
-  const AddUserBook = async (bookStatus: string) => {
-    try {
-      const res = await apiPost(`/userbooks`, {
-        external_book_id: id,
-        external_source: "open_library",
-        status: bookStatus,
-      });
-      console.log(res);
-    } catch (error) {
-      console.log("Error adding book", error);
-    }
-  };
+  /* =====================
+     Render
+  ===================== */
 
   return (
     <Layout>
       <div className={styles.bookContent}>
         <div className={styles.bookDetailsWrapper}>
-          {bookImageUrl ? (
-            <Image
-              src={bookImageUrl}
-              alt="Book Cover"
-              width={200}
-              height={300}
-              unoptimized
-            />
-          ) : (
-            <Image
-              src="/images/book-placeholder.webp"
-              alt="Book Cover"
-              width={200}
-              height={300}
-            />
-          )}
+          <Image
+            src={bookImageUrl || "/images/book-placeholder.webp"}
+            alt="Book Cover"
+            width={200}
+            height={300}
+            unoptimized={!!bookImageUrl}
+          />
 
           <div className={styles.bookDetails}>
-            <h2> {title}</h2>
+            <h2>{bookData?.title}</h2>
             <p>{authorData?.name}</p>
-            <div className={styles.ratingTop}>
-              <div className={styles.starsRow}>
-                <div className={styles.stars}>
-                  <span className={styles.filled}>★</span>
-                  <span className={styles.filled}>★</span>
-                  <span className={styles.filled}>★</span>
-                  <span className={styles.filled}>★</span>
-                  <span className={styles.empty}>★</span>
-                </div>
 
-                <span className={styles.ratingNumber}>4.09</span>
-              </div>
-            </div>
             <div className={styles.statusWrapper}>
               <div className={`${styles.buttons} ${styles[status]}`}>
                 <button
                   className={styles.actionBtn}
-                  onClick={() => AddUserBook(status)}
+                  onClick={() => saveStatus(status)}
+                  disabled={upsertUserBook.isPending}
                 >
                   {labelMap[status]}
                 </button>
 
                 <button
                   className={styles.dropdownBtn}
-                  onClick={() => setIsOpen((prev) => !prev)}
+                  onClick={() => setIsOpen((p) => !p)}
+                  disabled={upsertUserBook.isPending}
                 >
                   ▼
                 </button>
@@ -191,52 +206,37 @@ const BookContent = () => {
 
               {isOpen && (
                 <div className={styles.dropdown}>
-                  <button
-                    className={status === "want_to_read" ? styles.active : ""}
-                    onClick={() => {
-                      setStatus("want_to_read");
-                      setIsOpen(false);
-                      AddUserBook("want_to_read");
-                    }}
-                  >
-                    Want to Read
-                  </button>
-
-                  <button
-                    className={status === "reading" ? styles.active : ""}
-                    onClick={() => {
-                      setStatus("reading");
-                      setIsOpen(false);
-                      AddUserBook("reading");
-                    }}
-                  >
-                    Currently Reading
-                  </button>
-                  <button
-                    className={status === "completed" ? styles.active : ""}
-                    onClick={() => {
-                      setStatus("completed");
-                      setIsOpen(false);
-                      AddUserBook("completed");
-                    }}
-                  >
-                    Read
-                  </button>
+                  {(["want_to_read", "reading", "completed"] as Status[]).map(
+                    (s) => (
+                      <button
+                        key={s}
+                        className={status === s ? styles.active : ""}
+                        onClick={() => saveStatus(s)}
+                      >
+                        {labelMap[s]}
+                      </button>
+                    ),
+                  )}
+                  {userBookStatus && (
+                    <button onClick={() => removeUserBook(id as string)}>
+                      Remove from my shelf
+                    </button>
+                  )}
                 </div>
               )}
             </div>
           </div>
         </div>
+
         <div
           className={`${styles.description} ${
             isDescriptionExpanded ? styles.expanded : ""
           }`}
         >
-          <p>{formatDescription(description)}</p>
-
+          <p>{formatDescription(bookData?.description)}</p>
           <button
             className={styles.readMore}
-            onClick={() => setIsDescriptionExpanded((prev) => !prev)}
+            onClick={() => setIsDescriptionExpanded((p) => !p)}
           >
             {isDescriptionExpanded ? "Read less" : "Read more"}
           </button>
@@ -257,30 +257,31 @@ const BookContent = () => {
           }`}
         >
           <p className={styles.aboutTheAuthor}>
-            {!!formatAuthorBio(authorBio) ? "About the Author" : "Author"}
+            {!!formatAuthorBio(authorData?.bio) ? "About the Author" : "Author"}
           </p>
 
           <div className={styles.authorDetails}>
             <div className={styles.authorPhoto}>
               <Image
                 src={authorImageUrl || "/images/book-placeholder.webp"}
-                alt="Author Photo"
+                alt="Author"
                 width={100}
                 height={150}
                 unoptimized={!!authorImageUrl}
               />
             </div>
-            <div className={styles.authorText}>
-              <p>{authorName}</p>
-              <p>{authorBirthDate}</p>
+            <div>
+              <p>{authorData?.name}</p>
+              <p>{authorData?.birth_date}</p>
             </div>
           </div>
-          <p className={styles.authorBio}>{formatAuthorBio(authorBio)}</p>
 
-          {!!formatAuthorBio(authorBio) && (
+          <p className={styles.authorBio}>{formatAuthorBio(authorData?.bio)}</p>
+
+          {!!formatAuthorBio(authorData?.bio) && (
             <button
               className={styles.readMore}
-              onClick={() => setIsAuthorExpanded((prev) => !prev)}
+              onClick={() => setIsAuthorExpanded((p) => !p)}
             >
               {isAuthorExpanded ? "Read less" : "Read more"}
             </button>
