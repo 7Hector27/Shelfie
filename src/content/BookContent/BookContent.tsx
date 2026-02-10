@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { useQuery } from "@tanstack/react-query";
 
 import Layout from "../../components/Layout";
 
-import { apiGet } from "@/lib/api";
+import { apiGet, apiPost } from "@/lib/api";
 
 import styles from "./BookContent.module.scss";
 
@@ -36,7 +36,19 @@ const formatAuthorBio = (
 
 const BookContent = () => {
   const { query } = useRouter();
+  const [isOpen, setIsOpen] = useState(false);
+  const [status, setStatus] = useState<
+    "want_to_read" | "reading" | "completed"
+  >("want_to_read");
+
+  const labelMap = {
+    want_to_read: "Want to Read",
+    reading: "Currently Reading",
+    completed: "Read",
+  };
+
   const id = Array.isArray(query.id) ? query.id[0] : query.id;
+
   const [isDescriptionExpanded, setIsDescriptionExpanded] =
     React.useState(false);
   const [isAuthorExpanded, setIsAuthorExpanded] = React.useState(false);
@@ -68,6 +80,7 @@ const BookContent = () => {
 
     return null;
   };
+
   const {
     data: bookData,
     isLoading,
@@ -109,6 +122,19 @@ const BookContent = () => {
   console.log(bookData);
   console.log(authorData, "authorData");
 
+  const AddUserBook = async (bookStatus: string) => {
+    try {
+      const res = await apiPost(`/userbooks`, {
+        external_book_id: id,
+        external_source: "open_library",
+        status: bookStatus,
+      });
+      console.log(res);
+    } catch (error) {
+      console.log("Error adding book", error);
+    }
+  };
+
   return (
     <Layout>
       <div className={styles.bookContent}>
@@ -146,9 +172,58 @@ const BookContent = () => {
                 <span className={styles.ratingNumber}>4.09</span>
               </div>
             </div>
-            <div className={`${styles.buttons} ${styles.want}`}>
-              <button className={styles.actionBtn}>Want to Read</button>
-              <button className={styles.dropdownBtn}>▼</button>
+            <div className={styles.statusWrapper}>
+              <div className={`${styles.buttons} ${styles[status]}`}>
+                <button
+                  className={styles.actionBtn}
+                  onClick={() => AddUserBook(status)}
+                >
+                  {labelMap[status]}
+                </button>
+
+                <button
+                  className={styles.dropdownBtn}
+                  onClick={() => setIsOpen((prev) => !prev)}
+                >
+                  ▼
+                </button>
+              </div>
+
+              {isOpen && (
+                <div className={styles.dropdown}>
+                  <button
+                    className={status === "want_to_read" ? styles.active : ""}
+                    onClick={() => {
+                      setStatus("want_to_read");
+                      setIsOpen(false);
+                      AddUserBook("want_to_read");
+                    }}
+                  >
+                    Want to Read
+                  </button>
+
+                  <button
+                    className={status === "reading" ? styles.active : ""}
+                    onClick={() => {
+                      setStatus("reading");
+                      setIsOpen(false);
+                      AddUserBook("reading");
+                    }}
+                  >
+                    Currently Reading
+                  </button>
+                  <button
+                    className={status === "completed" ? styles.active : ""}
+                    onClick={() => {
+                      setStatus("completed");
+                      setIsOpen(false);
+                      AddUserBook("completed");
+                    }}
+                  >
+                    Read
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </div>
