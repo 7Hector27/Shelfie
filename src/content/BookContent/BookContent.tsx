@@ -8,7 +8,9 @@ import {
   OpenLibraryAuthor,
   OpenLibraryDescription,
 } from "@/util/types";
+
 import Layout from "../../components/Layout";
+import ConfirmationModal from "@/components/ConfirmationModal";
 
 import { apiGet, apiPost, apiDelete } from "@/lib/api";
 
@@ -44,6 +46,7 @@ const BookContent = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
   const [isAuthorExpanded, setIsAuthorExpanded] = useState(false);
+  const [showRemoveModal, setShowRemoveModal] = useState(false);
 
   const labelMap: Record<Status, string> = {
     want_to_read: "Want to Read",
@@ -171,6 +174,20 @@ const BookContent = () => {
 
   return (
     <Layout>
+      {showRemoveModal && (
+        <ConfirmationModal
+          isOpen={showRemoveModal}
+          onClose={() => setShowRemoveModal(false)}
+          title="Remove from shelf?"
+          copy="This will remove the book from all your shelves."
+          confirmCopy="Remove"
+          cancelCopy="Cancel"
+          onConfirm={() => {
+            removeUserBook(id as string);
+            setShowRemoveModal(false);
+          }}
+        />
+      )}
       <div className={styles.bookContent}>
         <div className={styles.bookDetailsWrapper}>
           <Image
@@ -184,9 +201,21 @@ const BookContent = () => {
           <div className={styles.bookDetails}>
             <h2>{bookData?.title}</h2>
             <p>{authorData?.name}</p>
+            <div className={styles.ratingTop}>
+              <div className={styles.starsRow}>
+                <div className={styles.stars}>
+                  <span className={styles.filled}>★</span>
+                  <span className={styles.filled}>★</span>
+                  <span className={styles.filled}>★</span>
+                  <span className={styles.filled}>★</span>
+                  <span className={styles.empty}>★</span>
+                </div>
 
+                <span className={styles.ratingNumber}>4.09</span>
+              </div>
+            </div>
             <div className={styles.statusWrapper}>
-              <div className={`${styles.buttons} ${styles[status]}`}>
+              <div className={`${styles.status} ${styles[status]}`}>
                 <button
                   className={styles.actionBtn}
                   onClick={() => saveStatus(status)}
@@ -218,7 +247,7 @@ const BookContent = () => {
                     ),
                   )}
                   {userBookStatus && (
-                    <button onClick={() => removeUserBook(id as string)}>
+                    <button onClick={() => setShowRemoveModal(true)}>
                       Remove from my shelf
                     </button>
                   )}
