@@ -131,9 +131,14 @@ const BookContent = () => {
   const upsertUserBook = useMutation({
     mutationFn: (nextStatus: Status) =>
       apiPost("/userbooks", {
-        external_book_id: id,
+        book_id: id,
         external_source: "open_library",
         status: nextStatus,
+        title: bookData?.title,
+        author: authorData?.name,
+        description: formatDescription(bookData?.description),
+        cover_url: bookImageUrl,
+        author_id: authorId,
       }),
     onSuccess: () => {
       queryClient.invalidateQueries({
@@ -197,7 +202,6 @@ const BookContent = () => {
             height={300}
             unoptimized={!!bookImageUrl}
           />
-
           <div className={styles.bookDetails}>
             <h2>{bookData?.title}</h2>
             <p>{authorData?.name}</p>
@@ -210,7 +214,6 @@ const BookContent = () => {
                   <span className={styles.filled}>★</span>
                   <span className={styles.empty}>★</span>
                 </div>
-
                 <span className={styles.ratingNumber}>4.09</span>
               </div>
             </div>

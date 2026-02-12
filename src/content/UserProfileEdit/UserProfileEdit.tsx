@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect } from "react";
-import NextImage from "next/image";
+import Image from "next/image";
 import Cropper, { Area } from "react-easy-crop";
-import { set, z } from "zod";
+import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useQueryClient } from "@tanstack/react-query";
@@ -157,7 +157,7 @@ const UserProfileEdit = () => {
         <h1 className={styles.title}>Edit Profile</h1>
         <div className={styles.editProfileSection}>
           <div className={styles.avatarSection}>
-            <NextImage
+            <Image
               key={user?.profile_image}
               src={user?.profile_image ?? "/images/user_profile.webp"}
               width={80}
