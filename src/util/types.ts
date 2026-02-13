@@ -13,16 +13,19 @@ export type FriendCardProps = {
   friends: number;
 };
 
-export type RequestType = {
+export type UserType = {
   first_name: string;
   id: string;
   last_name: string;
   profile_image: null;
   user_id: string;
+  bio?: string;
+  created_at?: string;
+  birthdate?: string;
 };
 
 export type GetRequestsResponse = {
-  requests: RequestType[];
+  requests: UserType[];
 };
 
 export type FriendList = {
@@ -57,3 +60,40 @@ export type OpenLibraryAuthor = {
 };
 
 export type OpenLibraryDescription = string | { value?: string } | undefined;
+export type ProfileStats = {
+  friendsCount: number;
+  currentlyReadingCount: number;
+  readCount: number;
+};
+export type CurrentlyReadingBook = {
+  user_book_id: string; // comes back as string from PG
+  book_id: string;
+  status: "want_to_read" | "reading" | "read" | "dropped";
+  shelf_updated_at: string; // ISO date
+  title: string;
+  cover_url: string | null;
+  author: string;
+};
+export type ShelfCounts = {
+  wantToRead: number;
+  currentlyReading: number;
+  read: number;
+  dropped: number;
+  favorites: number;
+};
+export type FriendPreview = {
+  user_id: string;
+  first_name: string;
+  last_name: string;
+  profile_image: string | null;
+  friends_count?: number;
+  books_count?: number;
+};
+
+export type UserProfileResponse = {
+  user: UserType;
+  stats: ProfileStats;
+  currentlyReading: CurrentlyReadingBook[];
+  shelves: ShelfCounts;
+  friendsPreview: FriendPreview[];
+};
