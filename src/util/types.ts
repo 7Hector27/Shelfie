@@ -97,3 +97,34 @@ export type UserProfileResponse = {
   shelves: ShelfCounts;
   friendsPreview: FriendPreview[];
 };
+export type UserBook = {
+  id: string;
+  user_id: string;
+  book_id: string;
+  external_source: string;
+  status: "want_to_read" | "reading" | "completed" | "dropped";
+  date_started: string | null;
+  date_finished: string | null;
+  rating: number | null;
+  review: string | null;
+  created_at: string;
+  updated_at: string;
+  favorite: boolean;
+  title: string;
+  author?: string;
+  cover_url?: string | null;
+  description?: string | null;
+};
+export type Pagination = {
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+  hasNextPage: boolean;
+  hasPrevPage: boolean;
+};
+
+export type GetUserBooksResponse = {
+  data: UserBook[];
+  pagination: Pagination;
+};

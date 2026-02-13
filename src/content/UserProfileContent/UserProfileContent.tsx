@@ -105,7 +105,10 @@ const UserProfileContent = () => {
         <div className={styles.shelves}>
           <h2>Book Shelves</h2>
           <div className={styles.shelfGrid}>
-            <Link href="/" className={styles.shelfCard}>
+            <Link
+              href={`/user/books/${profileId}?shelf=want_to_read`}
+              className={styles.shelfCard}
+            >
               <Image
                 src="/images/want-to-read.webp"
                 alt="Want to Read"
@@ -117,7 +120,10 @@ const UserProfileContent = () => {
               <span className={styles.label}>Want to Read</span>
             </Link>
 
-            <Link href="/" className={styles.shelfCard}>
+            <Link
+              href={`/user/books/${profileId}?shelf=currently_reading`}
+              className={styles.shelfCard}
+            >
               <Image
                 src="/images/reading.webp"
                 alt="Currently Reading"
@@ -131,7 +137,10 @@ const UserProfileContent = () => {
               <span className={styles.label}>Currently Reading</span>
             </Link>
 
-            <Link href="/" className={styles.shelfCard}>
+            <Link
+              href={`/user/books/${profileId}?shelf=read`}
+              className={styles.shelfCard}
+            >
               <Image
                 src="/images/read.webp"
                 alt="Read"
@@ -143,7 +152,10 @@ const UserProfileContent = () => {
               <span className={styles.label}>Read</span>
             </Link>
 
-            <Link href="/" className={styles.shelfCard}>
+            <Link
+              href={`/user/books/${profileId}?shelf=dropped`}
+              className={styles.shelfCard}
+            >
               <Image
                 src="/images/dropped.webp"
                 alt="Dropped"
@@ -155,7 +167,10 @@ const UserProfileContent = () => {
               <span className={styles.label}>Dropped</span>
             </Link>
 
-            <Link href="/" className={styles.shelfCard}>
+            <Link
+              href={`/user/books/${profileId}?shelf=favorites`}
+              className={styles.shelfCard}
+            >
               <Image
                 src="/images/favorite.webp"
                 alt="Favorites"
@@ -167,7 +182,10 @@ const UserProfileContent = () => {
               <span className={styles.label}>Favorites</span>
             </Link>
 
-            <Link href="/" className={styles.shelfCard}>
+            <Link
+              href={`/user/books/${profileId}`}
+              className={styles.shelfCard}
+            >
               <Image
                 src="/images/all-books.webp"
                 alt="all-books"

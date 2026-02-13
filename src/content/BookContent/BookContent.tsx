@@ -218,15 +218,21 @@ const BookContent = () => {
               </div>
             </div>
             <div className={styles.statusWrapper}>
-              <div className={`${styles.status} ${styles[status]}`}>
+              <div
+                className={`${styles.status} ${
+                  userBookStatus ? styles[userBookStatus] : ""
+                }`}
+              >
                 <button
                   className={styles.actionBtn}
                   onClick={() => saveStatus(status)}
                   disabled={upsertUserBook.isPending}
                 >
+                  {userBookStatus && (
+                    <span className={styles.checkmark}>✓</span>
+                  )}
                   {labelMap[status]}
                 </button>
-
                 <button
                   className={styles.dropdownBtn}
                   onClick={() => setIsOpen((p) => !p)}
@@ -260,19 +266,21 @@ const BookContent = () => {
           </div>
         </div>
 
-        <div
-          className={`${styles.description} ${
-            isDescriptionExpanded ? styles.expanded : ""
-          }`}
-        >
-          <p>{formatDescription(bookData?.description)}</p>
-          <button
-            className={styles.readMore}
-            onClick={() => setIsDescriptionExpanded((p) => !p)}
+        {bookData?.description && (
+          <div
+            className={`${styles.description} ${
+              isDescriptionExpanded ? styles.expanded : ""
+            }`}
           >
-            {isDescriptionExpanded ? "Read less" : "Read more"}
-          </button>
-        </div>
+            <p>{formatDescription(bookData?.description)}</p>
+            <button
+              className={styles.readMore}
+              onClick={() => setIsDescriptionExpanded((p) => !p)}
+            >
+              {isDescriptionExpanded ? "Read less" : "Read more"}
+            </button>
+          </div>
+        )}
         <div className={styles.shelves}>
           <div>
             <p className={styles.count}>1248</p>

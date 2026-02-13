@@ -35,6 +35,7 @@ export const formatMonthYear = (isoDate: string | null): string | null => {
     year: "numeric",
   });
 };
+
 export const getBirthdayMonthDay = (isoDate: string | null): string | null => {
   if (!isoDate) return null;
 
