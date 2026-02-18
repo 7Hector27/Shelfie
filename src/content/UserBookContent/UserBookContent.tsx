@@ -1,10 +1,22 @@
 import React from "react";
+import Image from "next/image";
 import { useRouter } from "next/router";
 import { useQuery } from "@tanstack/react-query";
 
 import Layout from "@/components/Layout";
+import StarRatingDisplay from "@/components/StarRatingDisplay";
+
 import { GetUserBooksResponse } from "@/util/types";
 import { apiGet } from "@/lib/api";
+
+import styles from "./UserBookContent.module.scss";
+
+const SHELVES = [
+  { label: "All", value: "", icon: "📚" },
+  { label: "Reading", value: "reading", icon: "🟢" },
+  { label: "Want", value: "want_to_read", icon: "🩷" },
+  { label: "Read", value: "completed", icon: "🟣" },
+];
 
 const UserBookContent = () => {
   const router = useRouter();
@@ -20,6 +32,8 @@ const UserBookContent = () => {
     enabled: !!userId,
   });
 
+  const { data: booksList, pagination } = data || {};
+
   const changeShelf = (newShelf: string) => {
     router.push({
       pathname: `/user/books/${userId}`,
@@ -33,115 +47,161 @@ const UserBookContent = () => {
       query: { shelf: currentShelf, page: newPage },
     });
   };
-  console.log(data);
+
   return (
     <Layout>
-      <div
-        style={{
-          padding: "40px",
-          maxWidth: "1100px",
-          margin: "0 auto",
-        }}
-      >
-        <h1 style={{ marginBottom: "30px" }}>My Books</h1>
-
-        {/* Shelf Tabs */}
-        <div style={{ display: "flex", gap: "16px", marginBottom: "30px" }}>
-          {["", "want_to_read", "reading", "completed"].map((s) => (
-            <button
-              key={s}
-              onClick={() => changeShelf(s)}
-              style={{
-                padding: "8px 16px",
-                borderRadius: "20px",
-                border: "1px solid #ccc",
-                background: currentShelf === s ? "#111" : "transparent",
-                color: currentShelf === s ? "#fff" : "#000",
-                cursor: "pointer",
-              }}
-            >
-              {s.replaceAll("_", " ")}
-            </button>
-          ))}
-
-          <button
-            onClick={() =>
-              router.push({
-                pathname: `/user/books/${userId}`,
-                query: { favorite: true, page: 1 },
-              })
-            }
-          >
-            Favorites
-          </button>
-        </div>
-
-        {isLoading && <p>Loading...</p>}
-        {isError && <p>Something went wrong.</p>}
-
-        {/* Books Grid */}
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fill, minmax(160px, 1fr))",
-            gap: "20px",
-          }}
-        >
-          {data?.data.map((book) => (
-            <div
-              key={book.id}
-              style={{
-                border: "1px solid #e5e5e5",
-                padding: "12px",
-                borderRadius: "12px",
-              }}
-            >
-              <div
-                style={{
-                  height: "200px",
-                  background: "#f3f3f3",
-                  marginBottom: "10px",
-                }}
-              >
-                {/* Later: OpenLibrary cover image */}
-              </div>
-
-              <p style={{ fontWeight: 600 }}>{book.book_id}</p>
-              <p style={{ fontSize: "12px", opacity: 0.6 }}>{book.status}</p>
-              {book.favorite && (
-                <p style={{ fontSize: "12px", color: "gold" }}>★ Favorite</p>
-              )}
+      <div className={styles.libraryPage}>
+        <div className={styles.libraryContainer}>
+          {/* ================= LEFT ================= */}
+          <div className={styles.libraryMain}>
+            {/* Header */}
+            <div className={styles.libraryHeader}>
+              <h1>My Library</h1>
+              <p>
+                {pagination?.total || 0} books ·{" "}
+                {booksList?.filter((b) => b.status === "reading").length || 0}{" "}
+                currently reading
+              </p>
             </div>
-          ))}
-        </div>
 
-        {/* Pagination */}
-        {data?.pagination && (
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              gap: "16px",
-              marginTop: "40px",
-            }}
-          >
-            {data.pagination.hasPrevPage && (
-              <button onClick={() => changePage(data.pagination.page - 1)}>
-                Prev
+            {/* Shelf Tabs */}
+            <div className={styles.shelfTabs}>
+              {SHELVES.map((s) => (
+                <button
+                  key={s.value}
+                  onClick={() => changeShelf(s.value)}
+                  className={`${styles.tab} ${
+                    currentShelf === s.value ? styles.active : ""
+                  }`}
+                >
+                  <span className={styles.icon}>{s.icon}</span>
+                  <span>{s.label}</span>
+                </button>
+              ))}
+
+              <button
+                onClick={() =>
+                  router.push({
+                    pathname: `/user/books/${userId}`,
+                    query: { favorite: true, page: 1 },
+                  })
+                }
+                className={`${styles.tab} ${
+                  router.query.favorite ? styles.active : ""
+                }`}
+              >
+                <span className={styles.icon}>⭐</span>
+                <span>Favorites</span>
               </button>
-            )}
+            </div>
 
-            <span>
-              Page {data.pagination.page} of {data.pagination.totalPages}
-            </span>
+            {isLoading && <p>Loading...</p>}
+            {isError && <p>Something went wrong.</p>}
 
-            {data.pagination.hasNextPage && (
-              <button onClick={() => changePage(data.pagination.page + 1)}>
-                Next
-              </button>
+            {/* ================= BOOK CARDS ================= */}
+            <div className={styles.bookList}>
+              {booksList?.map((book) => {
+                const {
+                  author,
+                  book_id,
+                  cover_url,
+                  date_finished,
+                  date_started,
+                  favorite,
+                  rating,
+                  review,
+                  status,
+                  title,
+                } = book;
+
+                return (
+                  <div key={book_id} className={styles.bookCard}>
+                    {/* TOP ROW */}
+                    <div className={styles.topRow}>
+                      <div className={styles.bookCover}>
+                        <Image
+                          src={cover_url || "/images/book-placeholder.webp"}
+                          alt={title}
+                          width={110}
+                          height={160}
+                          unoptimized={!!cover_url}
+                        />
+                      </div>
+                      <div className={styles.cardBody}>
+                        <h2 className={styles.titleRow}>{title}</h2>
+                        <p className={styles.largeAuthor}>{author}</p>
+                        <span
+                          className={`${styles.statusPill} ${styles[status]}`}
+                        >
+                          {status.replaceAll("_", " ")}
+                        </span>
+                      </div>{" "}
+                    </div>{" "}
+                    <div className={styles.ratingBlock}>
+                      <StarRatingDisplay rating={rating} />
+                    </div>
+                    {(date_started || date_finished) && (
+                      <p className={styles.dateMeta}>
+                        {date_started && `Started ${date_started}`}
+                        {date_started && date_finished && " · "}
+                        {date_finished && `Finished ${date_finished}`}
+                      </p>
+                    )}
+                    {/* RATING */}
+                    <div className={styles.cardDivider} />
+                    {/* REVIEW SECTION */}
+                    <div className={styles.reviewSection}>
+                      {review ? (
+                        <p>{review}</p>
+                      ) : (
+                        <>
+                          <h4>No review yet</h4>
+                        </>
+                      )}
+                    </div>
+                    {/* FOOTER AREA */}
+                    <div className={styles.cardFooter}>
+                      <button className={styles.quickEditBtn}>
+                        Quick Edit
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* ================= PAGINATION ================= */}
+            {pagination && (
+              <div className={styles.pagination}>
+                {pagination.hasPrevPage && (
+                  <button onClick={() => changePage(pagination.page - 1)}>
+                    Prev
+                  </button>
+                )}
+
+                <span>
+                  Page {pagination.page} of {pagination.totalPages}
+                </span>
+
+                {pagination.hasNextPage && (
+                  <button onClick={() => changePage(pagination.page + 1)}>
+                    Next
+                  </button>
+                )}
+              </div>
             )}
           </div>
-        )}
+
+          {/* ================= RIGHT SIDEBAR ================= */}
+          <aside className={styles.librarySidebar}>
+            <div className={styles.statsCard}>
+              <p>Books this year: 23</p>
+              <p>Reading streak: 33 days</p>
+              <p>Avg rating: 4.2</p>
+              <p>Friends reading: 18</p>
+            </div>
+          </aside>
+        </div>
       </div>
     </Layout>
   );

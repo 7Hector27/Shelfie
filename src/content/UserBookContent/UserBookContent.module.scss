@@ -1,0 +1,335 @@
+.libraryPage {
+  background: linear-gradient(180deg, #f8fafc 0%, #eef2f7 100%);
+  min-height: 100vh;
+  padding: 24px 16px 100px;
+
+  .libraryContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+  }
+
+  /* ===================== */
+  /* HEADER */
+  /* ===================== */
+
+  .libraryHeader {
+    margin-bottom: 18px;
+    h1 {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 4px;
+      color: #111827;
+    }
+    p {
+      font-size: 16px;
+      color: #6b7280;
+    }
+  }
+
+  /* ===================== */
+  /* SHELF TABS */
+  /* ===================== */
+
+  .shelfTabs {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    padding-bottom: 6px;
+    margin-bottom: 22px;
+    scrollbar-width: none;
+    &::-webkit-scrollbar {
+      display: none;
+    }
+    .tab {
+      flex-shrink: 0;
+      padding: 8px 16px;
+      border-radius: 999px;
+      border: none;
+      background: #e9edf3;
+      font-size: 14px;
+      font-weight: 500;
+      color: #4b5563;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+      &.active {
+        background: #111827;
+        color: #ffffff;
+      }
+    }
+    .icon {
+      font-size: 14px;
+    }
+  }
+
+  /* ===================== */
+  /* BOOK LIST */
+  /* ===================== */
+
+  .bookList {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    .bookCard {
+      background: #ffffff;
+      border-radius: 34px;
+      padding: 26px 22px;
+      box-shadow:
+        0 18px 55px rgba(15, 23, 42, 0.08),
+        0 2px 10px rgba(15, 23, 42, 0.03);
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+
+      /* ================= TOP ROW ================= */
+
+      .topRow {
+        display: flex;
+        gap: 20px;
+        align-items: flex-start;
+      }
+      .bookCover img {
+        width: 110px;
+        height: 160px;
+        border-radius: 22px;
+        object-fit: cover;
+        box-shadow: 0 12px 28px rgba(15, 23, 42, 0.15);
+      }
+      .cardBody {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        .titleRow {
+          font-size: 28px;
+          font-weight: 800;
+          letter-spacing: -0.02em;
+          color: #1c1c1e;
+          margin: 0;
+          line-height: 1.05;
+        }
+        .largeAuthor {
+          font-size: 20px;
+          color: #6e6e73;
+          font-weight: 500;
+          margin: 0;
+        }
+        .statusPill {
+          align-self: flex-start;
+          font-size: 12px;
+          font-weight: 800;
+          letter-spacing: 0.08em;
+          text-transform: uppercase;
+          padding: 10px 18px;
+          border-radius: 999px;
+          margin-top: 6px;
+        }
+
+        .want_to_read {
+          background: #ead3d8;
+          color: #a6535f;
+        }
+
+        .reading {
+          background: #d6f5ee;
+          color: #0f7f6e;
+        }
+
+        .completed {
+          background: #e3dcff;
+          color: #4c39c9;
+        }
+      }
+
+      /* ================= RATING ================= */
+
+      .ratingBlock {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .dateMeta {
+        font-size: 16px;
+        color: #8e8e93; // iOS secondary gray
+        margin-top: 4px;
+      }
+      /* ================= DIVIDER ================= */
+
+      .cardDivider {
+        height: 1px;
+        background: #e5e7eb;
+      }
+
+      /* ================= REVIEW SECTION ================= */
+
+      .reviewSection {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        h4 {
+          font-size: 22px;
+          font-weight: 800;
+          color: #1c1c1e;
+          margin: 0;
+        }
+      }
+
+      /* ================= FOOTER ================= */
+
+      .cardFooter {
+        margin-top: 8px;
+        background: #f3f4f6;
+        border-radius: 24px;
+        padding: 12px;
+        display: flex;
+        justify-content: flex-end;
+        .quickEditBtn {
+          background: #63666a;
+          color: #ffffff;
+          border: none;
+          padding: 8px 28px;
+          border-radius: 24px;
+          font-size: 14px;
+          font-weight: 700;
+          cursor: pointer;
+          box-shadow:
+            inset 0 1px 0 rgba(255, 255, 255, 0.25),
+            0 10px 22px rgba(15, 23, 42, 0.18);
+
+          &:active {
+            transform: translateY(1px);
+            box-shadow:
+              inset 0 1px 0 rgba(255, 255, 255, 0.18),
+              0 6px 14px rgba(15, 23, 42, 0.16);
+          }
+        }
+      }
+    }
+  }
+
+  /* ===================== */
+  /* PAGINATION */
+  /* ===================== */
+
+  .pagination {
+    margin-top: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 14px;
+    button {
+      font-size: 13px;
+      padding: 6px 14px;
+      border-radius: 12px;
+      border: none;
+      background: #111827;
+      color: white;
+      cursor: pointer;
+    }
+    span {
+      font-size: 13px;
+      color: #6b7280;
+    }
+  }
+
+  /* ===================== */
+  /* SIDEBAR (Mobile Hidden) */
+  /* ===================== */
+
+  .librarySidebar {
+    display: none;
+  }
+
+  /* ===================== */
+  /* DESKTOP */
+  /* ===================== */
+}
+
+/* ===================== */
+/* TABLET (keep mobile untouched) */
+/* ===================== */
+@media (min-width: 768px) {
+  .libraryPage {
+    .bookList {
+      .bookCard {
+        display: grid;
+        grid-template-columns: 150px 1fr;
+        column-gap: 28px;
+        row-gap: 12px;
+        align-items: start;
+
+        .topRow {
+          grid-column: 1 / -1;
+          display: contents;
+        }
+
+        .bookCover {
+          grid-column: 1;
+          grid-row: 1 / span 6;
+        }
+
+        .cardBody {
+          grid-column: 2;
+
+          display: grid;
+          grid-template-columns: max-content max-content;
+          justify-content: start;
+
+          grid-template-rows: auto auto;
+          column-gap: 12px;
+          row-gap: 6px;
+          align-items: center;
+        }
+
+        .titleRow {
+          grid-column: 1;
+          grid-row: 1;
+        }
+
+        .statusPill {
+          grid-column: 2;
+          grid-row: 1;
+          justify-self: start;
+          margin-top: 0;
+        }
+
+        .largeAuthor {
+          grid-column: 1 / -1;
+          grid-row: 2;
+        }
+
+        .ratingBlock {
+          grid-column: 2;
+          display: flex;
+          align-items: flex-start;
+          gap: 18px;
+          margin-top: 2px;
+        }
+
+        .dateMeta {
+          grid-column: 2;
+          margin-top: 0;
+        }
+
+        .reviewSection {
+          grid-column: 2;
+        }
+        .cardDivider {
+          display: none;
+        }
+
+        .cardFooter {
+          grid-column: 2;
+          background: none;
+          padding: 0;
+          margin-top: 0;
+          justify-self: end;
+          align-self: end;
+        }
+      }
+    }
+  }
+}
