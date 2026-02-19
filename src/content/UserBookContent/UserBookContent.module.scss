@@ -35,12 +35,20 @@
     display: flex;
     gap: 10px;
     overflow-x: auto;
+    overflow-y: hidden;
+
     padding-bottom: 6px;
     margin-bottom: 22px;
+
     scrollbar-width: none;
+    -ms-overflow-style: none;
+
     &::-webkit-scrollbar {
       display: none;
     }
+
+    -webkit-overflow-scrolling: touch; // smooth momentum scroll on iOS
+    scroll-behavior: smooth;
     .tab {
       flex-shrink: 0;
       padding: 8px 16px;
@@ -110,6 +118,10 @@
           color: #1c1c1e;
           margin: 0;
           line-height: 1.05;
+          cursor: pointer;
+          &:hover {
+            text-decoration: underline;
+          }
         }
         .largeAuthor {
           font-size: 20px;
@@ -129,18 +141,21 @@
         }
 
         .want_to_read {
-          background: #ead3d8;
-          color: #a6535f;
+          background: #fff1db; // soft peach
+          color: #c96b1a; // warm amber
         }
 
         .reading {
-          background: #d6f5ee;
-          color: #0f7f6e;
+          background: #d8f4ee;
+          color: #0e8a78;
         }
-
         .completed {
-          background: #e3dcff;
-          color: #4c39c9;
+          background: #ece6ff;
+          color: #5a3dd6;
+        }
+        .dropped {
+          background: #f3d9dc;
+          color: #9c3e4e;
         }
       }
 
@@ -245,25 +260,30 @@
   .librarySidebar {
     display: none;
   }
-
-  /* ===================== */
-  /* DESKTOP */
-  /* ===================== */
 }
 
-/* ===================== */
-/* TABLET (keep mobile untouched) */
-/* ===================== */
 @media (min-width: 768px) {
   .libraryPage {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    .shelfTabs {
+      cursor: grab;
+
+      &:active {
+        cursor: grabbing;
+      }
+    }
+
     .bookList {
       .bookCard {
         display: grid;
-        grid-template-columns: 150px 1fr;
+        grid-template-columns: 120px 1fr;
         column-gap: 28px;
         row-gap: 12px;
         align-items: start;
-
+        max-width: 850px;
         .topRow {
           grid-column: 1 / -1;
           display: contents;

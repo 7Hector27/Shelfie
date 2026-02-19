@@ -219,7 +219,18 @@ const BookContent = () => {
           <div className={styles.bookDetails}>
             <h2>{bookData?.title}</h2>
             <p>{authorData?.name}</p>
-
+            <div className={styles.ratingTop}>
+              <div className={styles.starsRow}>
+                <div className={styles.stars}>
+                  <span className={styles.filled}>★</span>
+                  <span className={styles.filled}>★</span>
+                  <span className={styles.filled}>★</span>
+                  <span className={styles.filled}>★</span>
+                  <span className={styles.empty}>★</span>
+                </div>
+                <span className={styles.ratingNumber}>4.09</span>
+              </div>
+            </div>
             <div className={styles.statusWrapper}>
               <div
                 className={`${styles.status} ${
@@ -291,6 +302,52 @@ const BookContent = () => {
             </button>
           </div>
         )}
+        <div className={styles.shelves}>
+          <div>
+            <p className={styles.count}>1248</p>
+            <p className={styles.text}>Currently Reading </p>
+          </div>
+          <div>
+            <p className={styles.count}>5321</p>
+            <p className={styles.text}>Want to read</p>
+          </div>
+        </div>
+        <div
+          className={`${styles.authorInfo} ${
+            isAuthorExpanded ? styles.expanded : ""
+          }`}
+        >
+          <p className={styles.aboutTheAuthor}>
+            {!!formatAuthorBio(authorData?.bio) ? "About the Author" : "Author"}
+          </p>
+
+          <div className={styles.authorDetails}>
+            <div className={styles.authorPhoto}>
+              <Image
+                src={authorImageUrl || "/images/book-placeholder.webp"}
+                alt="Author"
+                width={100}
+                height={150}
+                unoptimized={!!authorImageUrl}
+              />
+            </div>
+            <div>
+              <p>{authorData?.name}</p>
+              <p>{authorData?.birth_date}</p>
+            </div>
+          </div>
+
+          <p className={styles.authorBio}>{formatAuthorBio(authorData?.bio)}</p>
+
+          {!!formatAuthorBio(authorData?.bio) && (
+            <button
+              className={styles.readMore}
+              onClick={() => setIsAuthorExpanded((p) => !p)}
+            >
+              {isAuthorExpanded ? "Read less" : "Read more"}
+            </button>
+          )}
+        </div>
       </div>
     </Layout>
   );

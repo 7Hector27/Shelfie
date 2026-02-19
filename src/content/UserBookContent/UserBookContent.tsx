@@ -1,8 +1,7 @@
-import React, { useMemo, useState } from "react";
-import { useQueryClient } from "@tanstack/react-query";
+import React, { useMemo, useState, useRef, useEffect } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { useQuery } from "@tanstack/react-query";
 
 import Layout from "@/components/Layout";
 import StarRatingDisplay from "@/components/StarRatingDisplay";
@@ -10,22 +9,34 @@ import EditBookModal from "@/components/EditBookModal";
 
 import { GetUserBooksResponse } from "@/util/types";
 import { apiGet, apiPatch } from "@/lib/api";
-import { formatMonthYear } from "@/util/clientUtils";
+import { formatMonthYear, redirectTo } from "@/util/clientUtils";
 
 import styles from "./UserBookContent.module.scss";
 
 const UserBookContent = () => {
+  /* ================================
+     Router + Query Params
+  ================================= */
   const router = useRouter();
   const { id: userId, shelf, page, favorite } = router.query;
-  const isFavorite = favorite === "true";
-
-  const queryClient = useQueryClient();
-  const [isEditOpen, setIsEditOpen] = useState(false);
-  const [selectedBookId, setSelectedBookId] = useState<string | null>(null);
 
   const currentShelf = (shelf as string) || "";
   const currentPage = (page as string) || "1";
+  const isFavorite = favorite === "true";
 
+  /* ================================
+     Local State
+  ================================= */
+  const queryClient = useQueryClient();
+
+  const [isEditOpen, setIsEditOpen] = useState(false);
+  const [selectedBookId, setSelectedBookId] = useState<string | null>(null);
+
+  const tabsRef = useRef<HTMLDivElement>(null);
+
+  /* ================================
+     Data Fetching
+  ================================= */
   const { data, isLoading, isError } = useQuery<GetUserBooksResponse>({
     queryKey: ["userBooks", userId, currentShelf, currentPage, isFavorite],
     queryFn: () =>
@@ -38,6 +49,15 @@ const UserBookContent = () => {
   });
 
   const { data: booksList, pagination, counts } = data || {};
+
+  /* ================================
+     Derived Values
+  ================================= */
+  const selectedBook = useMemo(() => {
+    if (!selectedBookId) return null;
+    return booksList?.find((b) => b.book_id === selectedBookId) ?? null;
+  }, [booksList, selectedBookId]);
+
   const SHELVES = [
     { label: "All", value: "", icon: "📚", count: counts?.total || 0 },
     {
@@ -65,6 +85,17 @@ const UserBookContent = () => {
       count: counts?.dropped || 0,
     },
   ];
+
+  const statusLabel: Record<string, string> = {
+    reading: "Reading",
+    want_to_read: "Want to Read",
+    completed: "Read",
+    dropped: "Dropped",
+  };
+
+  /* ================================
+     Navigation Handlers
+  ================================= */
   const changeShelf = (newShelf: string) => {
     router.push({
       pathname: `/user/books/${userId}`,
@@ -78,10 +109,6 @@ const UserBookContent = () => {
       query: { shelf: currentShelf, page: newPage },
     });
   };
-  const selectedBook = useMemo(() => {
-    if (!selectedBookId) return null;
-    return booksList?.find((b) => b.book_id === selectedBookId) ?? null;
-  }, [booksList, selectedBookId]);
 
   const openEdit = (bookId: string) => {
     setSelectedBookId(bookId);
@@ -92,7 +119,48 @@ const UserBookContent = () => {
     setIsEditOpen(false);
     setSelectedBookId(null);
   };
-  console.log(data);
+
+  /* ================================
+     Drag Scroll Logic (Shelf Tabs)
+  ================================= */
+  useEffect(() => {
+    const el = tabsRef.current;
+    if (!el) return;
+
+    let isDown = false;
+    let startX = 0;
+    let scrollLeft = 0;
+
+    const handleMouseDown = (e: MouseEvent) => {
+      isDown = true;
+      startX = e.pageX - el.offsetLeft;
+      scrollLeft = el.scrollLeft;
+    };
+
+    const handleMouseUp = () => (isDown = false);
+    const handleMouseLeave = () => (isDown = false);
+
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!isDown) return;
+      e.preventDefault();
+      const x = e.pageX - el.offsetLeft;
+      const walk = (x - startX) * 1.5;
+      el.scrollLeft = scrollLeft - walk;
+    };
+
+    el.addEventListener("mousedown", handleMouseDown);
+    el.addEventListener("mouseup", handleMouseUp);
+    el.addEventListener("mouseleave", handleMouseLeave);
+    el.addEventListener("mousemove", handleMouseMove);
+
+    return () => {
+      el.removeEventListener("mousedown", handleMouseDown);
+      el.removeEventListener("mouseup", handleMouseUp);
+      el.removeEventListener("mouseleave", handleMouseLeave);
+      el.removeEventListener("mousemove", handleMouseMove);
+    };
+  }, []);
+
   return (
     <Layout>
       {selectedBook && (
@@ -147,7 +215,7 @@ const UserBookContent = () => {
             </div>
 
             {/* Shelf Tabs */}
-            <div className={styles.shelfTabs}>
+            <div className={styles.shelfTabs} ref={tabsRef}>
               {SHELVES.map((s) => (
                 <button
                   key={s.value}
@@ -198,6 +266,7 @@ const UserBookContent = () => {
                   review,
                   status,
                   title,
+                  created_at,
                 } = book;
 
                 return (
@@ -214,25 +283,34 @@ const UserBookContent = () => {
                         />
                       </div>
                       <div className={styles.cardBody}>
-                        <h2 className={styles.titleRow}>{title}</h2>
+                        <h2
+                          className={styles.titleRow}
+                          onClick={() => {
+                            redirectTo(`/book/${book_id}`);
+                          }}
+                        >
+                          {title}
+                        </h2>
                         <p className={styles.largeAuthor}>{author}</p>
                         <span
                           className={`${styles.statusPill} ${styles[status]}`}
                         >
-                          {status.replaceAll("_", " ")}
+                          {statusLabel[status]}
                         </span>
                       </div>{" "}
                     </div>{" "}
                     <div className={styles.ratingBlock}>
                       <StarRatingDisplay rating={rating} />
                     </div>
-                    {(date_started || date_finished) && (
+                    {(date_started || date_finished || created_at) && (
                       <p className={styles.dateMeta}>
                         {date_started &&
                           `Started ${formatMonthYear(date_started)}`}
                         {date_started && date_finished && " · "}
                         {date_finished &&
                           `Finished ${formatMonthYear(date_finished)}`}
+                        {(date_started || date_finished) && " · "}
+                        {created_at && `Saved ${formatMonthYear(created_at)}`}
                       </p>
                     )}
                     {/* RATING */}
