@@ -14,7 +14,6 @@ const StarRatingDisplay = ({ rating, onClick, max = 5 }: Props) => {
   const rounded = hasRating ? roundToQuarter(rating as number) : 0;
 
   const fillPercent = hasRating ? (rounded / max) * 100 : 0;
-
   return (
     <button type="button" onClick={onClick} className={styles.starsButton}>
       <div className={styles.starContainer}>

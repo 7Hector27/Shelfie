@@ -1,39 +1,70 @@
-import React from "react";
+import React, { useMemo, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { useQuery } from "@tanstack/react-query";
 
 import Layout from "@/components/Layout";
 import StarRatingDisplay from "@/components/StarRatingDisplay";
+import EditBookModal from "@/components/EditBookModal";
 
 import { GetUserBooksResponse } from "@/util/types";
-import { apiGet } from "@/lib/api";
+import { apiGet, apiPatch } from "@/lib/api";
+import { formatMonthYear } from "@/util/clientUtils";
 
 import styles from "./UserBookContent.module.scss";
 
-const SHELVES = [
-  { label: "All", value: "", icon: "📚" },
-  { label: "Reading", value: "reading", icon: "🟢" },
-  { label: "Want", value: "want_to_read", icon: "🩷" },
-  { label: "Read", value: "completed", icon: "🟣" },
-];
-
 const UserBookContent = () => {
   const router = useRouter();
-  const { id: userId, shelf, page } = router.query;
+  const { id: userId, shelf, page, favorite } = router.query;
+  const isFavorite = favorite === "true";
+
+  const queryClient = useQueryClient();
+  const [isEditOpen, setIsEditOpen] = useState(false);
+  const [selectedBookId, setSelectedBookId] = useState<string | null>(null);
 
   const currentShelf = (shelf as string) || "";
   const currentPage = (page as string) || "1";
 
   const { data, isLoading, isError } = useQuery<GetUserBooksResponse>({
-    queryKey: ["userBooks", userId, currentShelf, currentPage],
+    queryKey: ["userBooks", userId, currentShelf, currentPage, isFavorite],
     queryFn: () =>
-      apiGet(`/user/${userId}/books?shelf=${currentShelf}&page=${currentPage}`),
+      apiGet(
+        `/user/${userId}/books?shelf=${currentShelf}${
+          isFavorite ? "&favorite=true" : ""
+        }&page=${currentPage}`,
+      ),
     enabled: !!userId,
   });
 
-  const { data: booksList, pagination } = data || {};
-
+  const { data: booksList, pagination, counts } = data || {};
+  const SHELVES = [
+    { label: "All", value: "", icon: "📚", count: counts?.total || 0 },
+    {
+      label: "Currently Reading",
+      value: "reading",
+      icon: "🟢",
+      count: counts?.currentlyReading || 0,
+    },
+    {
+      label: "Want to Read",
+      value: "want_to_read",
+      icon: "🩷",
+      count: counts?.wantToRead || 0,
+    },
+    {
+      label: "Read",
+      value: "completed",
+      icon: "🟣",
+      count: counts?.read || 0,
+    },
+    {
+      label: "DNF",
+      value: "dropped", // IMPORTANT: keep backend value
+      icon: "🛑",
+      count: counts?.dropped || 0,
+    },
+  ];
   const changeShelf = (newShelf: string) => {
     router.push({
       pathname: `/user/books/${userId}`,
@@ -47,9 +78,60 @@ const UserBookContent = () => {
       query: { shelf: currentShelf, page: newPage },
     });
   };
+  const selectedBook = useMemo(() => {
+    if (!selectedBookId) return null;
+    return booksList?.find((b) => b.book_id === selectedBookId) ?? null;
+  }, [booksList, selectedBookId]);
 
+  const openEdit = (bookId: string) => {
+    setSelectedBookId(bookId);
+    setIsEditOpen(true);
+  };
+
+  const closeEdit = () => {
+    setIsEditOpen(false);
+    setSelectedBookId(null);
+  };
+  console.log(data);
   return (
     <Layout>
+      {selectedBook && (
+        <EditBookModal
+          isOpen={isEditOpen}
+          onClose={closeEdit}
+          book={{
+            title: selectedBook.title,
+            author: selectedBook.author || "",
+            cover_url: selectedBook.cover_url,
+            status: selectedBook.status,
+            rating: selectedBook.rating,
+            review: selectedBook.review,
+            date_started: selectedBook.date_started
+              ? selectedBook.date_started.slice(0, 10)
+              : null,
+            date_finished: selectedBook.date_finished
+              ? selectedBook.date_finished.slice(0, 10)
+              : null,
+            favorite: selectedBook.favorite,
+          }}
+          onSave={async (values) => {
+            // TODO: adjust endpoint/body keys to match your backend
+            await apiPatch(`/userbooks/${selectedBook.id}`, {
+              status: values.status,
+              rating: values.rating,
+              review: values.review,
+              date_started: values.date_started,
+              date_finished: values.date_finished,
+              favorite: values.favorite,
+            });
+
+            await queryClient.invalidateQueries({
+              queryKey: ["userBooks", userId, currentShelf, currentPage],
+            });
+          }}
+        />
+      )}
+
       <div className={styles.libraryPage}>
         <div className={styles.libraryContainer}>
           {/* ================= LEFT ================= */}
@@ -71,11 +153,15 @@ const UserBookContent = () => {
                   key={s.value}
                   onClick={() => changeShelf(s.value)}
                   className={`${styles.tab} ${
-                    currentShelf === s.value ? styles.active : ""
+                    currentShelf === s.value && !router.query.favorite
+                      ? styles.active
+                      : ""
                   }`}
                 >
                   <span className={styles.icon}>{s.icon}</span>
-                  <span>{s.label}</span>
+                  <span>
+                    {s.label} ({s.count})
+                  </span>
                 </button>
               ))}
 
@@ -91,7 +177,7 @@ const UserBookContent = () => {
                 }`}
               >
                 <span className={styles.icon}>⭐</span>
-                <span>Favorites</span>
+                <span>Favorites ({counts?.favorites || 0})</span>
               </button>
             </div>
 
@@ -142,9 +228,11 @@ const UserBookContent = () => {
                     </div>
                     {(date_started || date_finished) && (
                       <p className={styles.dateMeta}>
-                        {date_started && `Started ${date_started}`}
+                        {date_started &&
+                          `Started ${formatMonthYear(date_started)}`}
                         {date_started && date_finished && " · "}
-                        {date_finished && `Finished ${date_finished}`}
+                        {date_finished &&
+                          `Finished ${formatMonthYear(date_finished)}`}
                       </p>
                     )}
                     {/* RATING */}
@@ -152,7 +240,7 @@ const UserBookContent = () => {
                     {/* REVIEW SECTION */}
                     <div className={styles.reviewSection}>
                       {review ? (
-                        <p>{review}</p>
+                        <p> {review}</p>
                       ) : (
                         <>
                           <h4>No review yet</h4>
@@ -161,7 +249,10 @@ const UserBookContent = () => {
                     </div>
                     {/* FOOTER AREA */}
                     <div className={styles.cardFooter}>
-                      <button className={styles.quickEditBtn}>
+                      <button
+                        className={styles.quickEditBtn}
+                        onClick={() => openEdit(book_id)}
+                      >
                         Quick Edit
                       </button>
                     </div>

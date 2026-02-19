@@ -71,3 +71,25 @@ export async function apiDelete<T>(
 
   return data as T;
 }
+export async function apiPatch<T>(
+  path: string,
+  body: unknown,
+  options?: { isMultipart?: boolean },
+): Promise<T> {
+  const res = await fetch(`${API_URL}${path}`, {
+    method: "PATCH",
+    credentials: "include",
+    headers: options?.isMultipart
+      ? undefined
+      : { "Content-Type": "application/json" },
+    body: options?.isMultipart ? (body as FormData) : JSON.stringify(body),
+  });
+
+  const data = await res.json().catch(() => null);
+
+  if (!res.ok) {
+    throw new Error(data?.error ?? `Request failed (${res.status})`);
+  }
+
+  return data as T;
+}

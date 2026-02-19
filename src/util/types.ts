@@ -124,7 +124,17 @@ export type Pagination = {
   hasPrevPage: boolean;
 };
 
+export type UserBooksCountResponse = {
+  total: number;
+  wantToRead: number;
+  currentlyReading: number;
+  read: number;
+  dropped: number;
+  favorites: number;
+};
+
 export type GetUserBooksResponse = {
   data: UserBook[];
   pagination: Pagination;
+  counts: UserBooksCountResponse;
 };
