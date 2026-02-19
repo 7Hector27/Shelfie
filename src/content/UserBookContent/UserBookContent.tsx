@@ -60,7 +60,7 @@ const UserBookContent = () => {
     },
     {
       label: "DNF",
-      value: "dropped", // IMPORTANT: keep backend value
+      value: "dropped",
       icon: "🛑",
       count: counts?.dropped || 0,
     },

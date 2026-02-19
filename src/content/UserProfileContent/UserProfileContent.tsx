@@ -38,9 +38,8 @@ const UserProfileContent = () => {
     refetchOnMount: false,
   });
 
-  const { user, stats, shelves, friendsPreview, currentlyReading } =
-    profileData || {};
-
+  const { user, shelves, friendsPreview, currentlyReading } = profileData || {};
+  console.log(profileData);
   const { first_name, last_name, profile_image, birthdate, bio } = user || {};
 
   return (
@@ -121,7 +120,7 @@ const UserProfileContent = () => {
             </Link>
 
             <Link
-              href={`/user/books/${profileId}?shelf=currently_reading`}
+              href={`/user/books/${profileId}?shelf=reading`}
               className={styles.shelfCard}
             >
               <Image
@@ -138,7 +137,7 @@ const UserProfileContent = () => {
             </Link>
 
             <Link
-              href={`/user/books/${profileId}?shelf=read`}
+              href={`/user/books/${profileId}?shelf=completed`}
               className={styles.shelfCard}
             >
               <Image
@@ -168,7 +167,7 @@ const UserProfileContent = () => {
             </Link>
 
             <Link
-              href={`/user/books/${profileId}?shelf=favorites`}
+              href={`/user/books/${profileId}?favorite=true`}
               className={styles.shelfCard}
             >
               <Image
