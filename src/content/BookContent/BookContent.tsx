@@ -16,6 +16,10 @@ import { apiGet, apiPost, apiDelete } from "@/lib/api";
 
 import styles from "./BookContent.module.scss";
 
+/* =====================
+   Helpers
+===================== */
+
 const formatAuthorBio = (
   bio: string | { value?: string } | undefined,
 ): string | null => {
@@ -32,8 +36,15 @@ const formatDescription = (
   return description.value?.trim() || null;
 };
 
+/* =====================
+   Status Guard (UPDATED)
+===================== */
+
 const isStatus = (value: unknown): value is Status =>
-  value === "want_to_read" || value === "reading" || value === "completed";
+  value === "want_to_read" ||
+  value === "reading" ||
+  value === "completed" ||
+  value === "dropped";
 
 /* =====================
    Component
@@ -48,10 +59,15 @@ const BookContent = () => {
   const [isAuthorExpanded, setIsAuthorExpanded] = useState(false);
   const [showRemoveModal, setShowRemoveModal] = useState(false);
 
+  /* =====================
+     Label Map (UPDATED)
+  ===================== */
+
   const labelMap: Record<Status, string> = {
     want_to_read: "Want to Read",
     reading: "Currently Reading",
     completed: "Read",
+    dropped: "DNF (Did Not Finish)",
   };
 
   const id = useMemo(() => {
@@ -128,6 +144,11 @@ const BookContent = () => {
      Mutation
   ===================== */
 
+  const coverId = bookData?.covers?.[0];
+  const bookImageUrl = coverId
+    ? `https://covers.openlibrary.org/b/id/${coverId}-L.jpg`
+    : null;
+
   const upsertUserBook = useMutation({
     mutationFn: (nextStatus: Status) =>
       apiPost("/userbooks", {
@@ -159,15 +180,6 @@ const BookContent = () => {
   if (isLoading || isLoadingAuthor) return <p>Loading…</p>;
   if (isError) return <p>{(error as Error).message}</p>;
 
-  /* =====================
-     Derived UI
-  ===================== */
-
-  const coverId = bookData?.covers?.[0];
-  const bookImageUrl = coverId
-    ? `https://covers.openlibrary.org/b/id/${coverId}-L.jpg`
-    : null;
-
   const authorPhotoId = authorData?.photos?.[0];
   const authorImageUrl = authorPhotoId
     ? `https://covers.openlibrary.org/b/id/${authorPhotoId}-L.jpg`
@@ -193,6 +205,7 @@ const BookContent = () => {
           }}
         />
       )}
+
       <div className={styles.bookContent}>
         <div className={styles.bookDetailsWrapper}>
           <Image
@@ -202,21 +215,11 @@ const BookContent = () => {
             height={300}
             unoptimized={!!bookImageUrl}
           />
+
           <div className={styles.bookDetails}>
             <h2>{bookData?.title}</h2>
             <p>{authorData?.name}</p>
-            <div className={styles.ratingTop}>
-              <div className={styles.starsRow}>
-                <div className={styles.stars}>
-                  <span className={styles.filled}>★</span>
-                  <span className={styles.filled}>★</span>
-                  <span className={styles.filled}>★</span>
-                  <span className={styles.filled}>★</span>
-                  <span className={styles.empty}>★</span>
-                </div>
-                <span className={styles.ratingNumber}>4.09</span>
-              </div>
-            </div>
+
             <div className={styles.statusWrapper}>
               <div
                 className={`${styles.status} ${
@@ -233,6 +236,7 @@ const BookContent = () => {
                   )}
                   {labelMap[status]}
                 </button>
+
                 <button
                   className={styles.dropdownBtn}
                   onClick={() => setIsOpen((p) => !p)}
@@ -244,17 +248,23 @@ const BookContent = () => {
 
               {isOpen && (
                 <div className={styles.dropdown}>
-                  {(["want_to_read", "reading", "completed"] as Status[]).map(
-                    (s) => (
-                      <button
-                        key={s}
-                        className={status === s ? styles.active : ""}
-                        onClick={() => saveStatus(s)}
-                      >
-                        {labelMap[s]}
-                      </button>
-                    ),
-                  )}
+                  {(
+                    [
+                      "want_to_read",
+                      "reading",
+                      "completed",
+                      "dropped",
+                    ] as Status[]
+                  ).map((s) => (
+                    <button
+                      key={s}
+                      className={status === s ? styles.active : ""}
+                      onClick={() => saveStatus(s)}
+                    >
+                      {labelMap[s]}
+                    </button>
+                  ))}
+
                   {userBookStatus && (
                     <button onClick={() => setShowRemoveModal(true)}>
                       Remove from my shelf
@@ -281,52 +291,6 @@ const BookContent = () => {
             </button>
           </div>
         )}
-        <div className={styles.shelves}>
-          <div>
-            <p className={styles.count}>1248</p>
-            <p className={styles.text}>Currently Reading </p>
-          </div>
-          <div>
-            <p className={styles.count}>5321</p>
-            <p className={styles.text}>Want to read</p>
-          </div>
-        </div>
-        <div
-          className={`${styles.authorInfo} ${
-            isAuthorExpanded ? styles.expanded : ""
-          }`}
-        >
-          <p className={styles.aboutTheAuthor}>
-            {!!formatAuthorBio(authorData?.bio) ? "About the Author" : "Author"}
-          </p>
-
-          <div className={styles.authorDetails}>
-            <div className={styles.authorPhoto}>
-              <Image
-                src={authorImageUrl || "/images/book-placeholder.webp"}
-                alt="Author"
-                width={100}
-                height={150}
-                unoptimized={!!authorImageUrl}
-              />
-            </div>
-            <div>
-              <p>{authorData?.name}</p>
-              <p>{authorData?.birth_date}</p>
-            </div>
-          </div>
-
-          <p className={styles.authorBio}>{formatAuthorBio(authorData?.bio)}</p>
-
-          {!!formatAuthorBio(authorData?.bio) && (
-            <button
-              className={styles.readMore}
-              onClick={() => setIsAuthorExpanded((p) => !p)}
-            >
-              {isAuthorExpanded ? "Read less" : "Read more"}
-            </button>
-          )}
-        </div>
       </div>
     </Layout>
   );

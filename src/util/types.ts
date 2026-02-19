@@ -39,7 +39,7 @@ export type GetFriendListResponse = {
   friends: FriendList[];
 };
 
-export type Status = "want_to_read" | "reading" | "completed";
+export type Status = "want_to_read" | "reading" | "completed" | "dropped";
 
 export type OpenLibraryWork = {
   title?: string;
