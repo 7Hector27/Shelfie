@@ -112,6 +112,7 @@ export type UserBook = {
   favorite: boolean;
   title: string;
   author?: string;
+  author_id?: string;
   cover_url?: string | null;
   description?: string | null;
 };

@@ -1,0 +1,286 @@
+.authorPage {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  max-width: 750px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* =========================
+   GLASS CARD BASE
+========================= */
+
+.authorInfo,
+.topPicks,
+.identifiers {
+  border-radius: 16px;
+  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.12);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.12),
+    0 6px 16px rgba(0, 0, 0, 0.25);
+}
+
+/* =========================
+   AUTHOR CARD
+========================= */
+
+.authorInfo {
+  position: relative;
+  padding: 18px 20px;
+
+  .sectionTitle {
+    font-size: 13px;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+    opacity: 0.7;
+  }
+
+  .authorDetails {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+  }
+
+  .authorPhoto {
+    border-radius: 14px;
+    overflow: hidden;
+    width: 140px;
+    height: 180px;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+
+  .authorMeta {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+
+    .authorName {
+      font-size: 24px;
+      font-weight: 600;
+      margin: 0;
+    }
+
+    .birthDate {
+      font-size: 14px;
+      opacity: 0.65;
+      margin: 0;
+    }
+  }
+
+  .authorBio {
+    padding-top: 14px;
+    font-size: 14px;
+    line-height: 1.6;
+
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  &.expanded .authorBio {
+    -webkit-line-clamp: unset;
+  }
+
+  .readMore {
+    position: absolute;
+    bottom: 10px;
+    right: 18px;
+    background: none;
+    border: none;
+    font-size: 12px;
+    color: #8fd0c2;
+    cursor: pointer;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+/* =========================
+   TOP PICKS CAROUSEL
+========================= */
+
+.topPicks {
+  padding: 20px;
+
+  .topPicksHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+
+    h2 {
+      font-size: 20px;
+      margin: 0;
+    }
+  }
+
+  .carouselControls {
+    display: flex;
+    gap: 8px;
+
+    button {
+      background: rgba(255, 255, 255, 0.12);
+      border: none;
+      padding: 6px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      color: #fff;
+      transition: all 200ms ease;
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.25);
+        transform: translateY(-1px);
+      }
+    }
+  }
+
+  .topPicksRow {
+    display: flex;
+    gap: 18px;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    padding-bottom: 10px;
+
+    scrollbar-width: none;
+  }
+
+  .topPicksRow::-webkit-scrollbar {
+    display: none;
+  }
+
+  .bookCard {
+    flex: 0 0 auto;
+    width: 180px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    cursor: pointer;
+
+    img {
+      border-radius: 16px;
+      transition:
+        transform 200ms ease,
+        box-shadow 200ms ease;
+    }
+
+    &:hover img {
+      transform: scale(1.05);
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
+    }
+  }
+
+  .bookTitle {
+    font-size: 13px;
+    text-align: center;
+    line-height: 1.4;
+    opacity: 0.9;
+  }
+}
+
+/* =========================
+   IDENTIFIERS
+========================= */
+
+.identifiers {
+  padding: 20px;
+
+  h2 {
+    margin-bottom: 14px;
+  }
+
+  .idGrid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .idRow {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+  }
+
+  .idKey {
+    opacity: 0.6;
+  }
+
+  .idValue {
+    opacity: 0.9;
+  }
+}
+
+/* =========================
+   TABLET
+========================= */
+
+@media (min-width: 768px) {
+  .authorPage {
+    max-width: 950px;
+  }
+
+  .authorInfo {
+    padding: 24px;
+
+    .authorPhoto {
+      width: 160px;
+      height: 220px;
+    }
+
+    .authorName {
+      font-size: 30px;
+    }
+
+    .authorBio {
+      font-size: 16px;
+    }
+  }
+
+  .topPicks {
+    padding: 24px;
+
+    .bookCard {
+      width: 200px;
+    }
+  }
+
+  .identifiers .idGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* =========================
+   DESKTOP
+========================= */
+
+@media (min-width: 1200px) {
+  .authorPage {
+    max-width: 1100px;
+  }
+
+  .authorInfo {
+    .authorName {
+      font-size: 36px;
+    }
+
+    .authorBio {
+      font-size: 18px;
+    }
+  }
+
+  .topPicks {
+    .bookCard {
+      width: 220px;
+    }
+  }
+}

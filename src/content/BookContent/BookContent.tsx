@@ -15,6 +15,7 @@ import ConfirmationModal from "@/components/ConfirmationModal";
 import { apiGet, apiPost, apiDelete } from "@/lib/api";
 
 import styles from "./BookContent.module.scss";
+import { redirectTo } from "@/util/clientUtils";
 
 /* =====================
    Helpers
@@ -131,7 +132,7 @@ const BookContent = () => {
     queryFn: () => fetchAuthor(authorId as string),
     enabled: typeof authorId === "string",
   });
-
+  console.log(authorData);
   const { data: userBookStatus } = useQuery({
     queryKey: ["userBookStatus", id],
     queryFn: () => fetchUserBookStatus(id as string),
@@ -188,7 +189,7 @@ const BookContent = () => {
   /* =====================
      Render
   ===================== */
-
+  console.log(authorId);
   return (
     <Layout>
       {showRemoveModal && (
@@ -218,7 +219,7 @@ const BookContent = () => {
 
           <div className={styles.bookDetails}>
             <h2>{bookData?.title}</h2>
-            <p>{authorData?.name}</p>
+            <p onClick={() => redirectTo(`${authorId}`)}>{authorData?.name}</p>
             <div className={styles.ratingTop}>
               <div className={styles.starsRow}>
                 <div className={styles.stars}>

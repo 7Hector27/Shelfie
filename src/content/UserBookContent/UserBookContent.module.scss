@@ -128,6 +128,10 @@
           color: #6e6e73;
           font-weight: 500;
           margin: 0;
+          &:hover {
+            text-decoration: underline;
+            cursor: pointer;
+          }
         }
         .statusPill {
           align-self: flex-start;
@@ -266,7 +270,6 @@
   .libraryPage {
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
     .shelfTabs {
       cursor: grab;

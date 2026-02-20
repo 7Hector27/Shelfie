@@ -267,6 +267,7 @@ const UserBookContent = () => {
                   status,
                   title,
                   created_at,
+                  author_id,
                 } = book;
 
                 return (
@@ -291,7 +292,14 @@ const UserBookContent = () => {
                         >
                           {title}
                         </h2>
-                        <p className={styles.largeAuthor}>{author}</p>
+                        <p
+                          className={styles.largeAuthor}
+                          onClick={() => {
+                            redirectTo(`${author_id}`);
+                          }}
+                        >
+                          {author}
+                        </p>
                         <span
                           className={`${styles.statusPill} ${styles[status]}`}
                         >
