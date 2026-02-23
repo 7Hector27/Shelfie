@@ -57,6 +57,7 @@ export type OpenLibraryAuthor = {
   birth_date?: string;
   bio?: string | { value?: string };
   photos?: number[];
+  by_statement?: string;
 };
 
 export type OpenLibraryDescription = string | { value?: string } | undefined;

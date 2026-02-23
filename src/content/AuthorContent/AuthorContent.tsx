@@ -5,8 +5,8 @@ import { useQuery } from "@tanstack/react-query";
 
 import Layout from "@/components/Layout";
 import { apiGet } from "@/lib/api";
-
 import styles from "./AuthorContent.module.scss";
+import { redirectTo } from "@/util/clientUtils";
 
 /* =========================
    TYPES
@@ -25,18 +25,18 @@ export interface OpenLibraryAuthor {
   last_modified?: { value: string };
 }
 
-interface OpenLibrarySearchDoc {
-  key: string;
+interface OpenLibraryAuthorWork {
+  key: string; // "/works/OLxxxxxW"
   title: string;
-  cover_i?: number;
+  covers?: number[];
+  first_publish_date?: string;
   edition_count?: number;
-  ratings_count?: number;
-  want_to_read_count?: number;
-  author_key?: string[];
 }
 
-interface OpenLibrarySearchResponse {
-  docs: OpenLibrarySearchDoc[];
+interface OpenLibraryAuthorWorksResponse {
+  entries: OpenLibraryAuthorWork[];
+  size?: number;
+  links?: { next?: string; prev?: string };
 }
 
 /* =========================
@@ -46,15 +46,19 @@ interface OpenLibrarySearchResponse {
 const fetchAuthor = async (key: string): Promise<OpenLibraryAuthor> =>
   apiGet(`/openlibrary/authors?key=${encodeURIComponent(key)}`);
 
-const fetchAuthorTopPicks = async (
-  authorName: string,
-): Promise<OpenLibrarySearchResponse> => {
+const fetchAuthorWorks = async (
+  authorId: string,
+  limit = 100,
+  offset = 0,
+): Promise<OpenLibraryAuthorWorksResponse> => {
   const res = await fetch(
-    `https://openlibrary.org/search.json?author=${encodeURIComponent(authorName)}`,
+    `https://openlibrary.org/authors/${encodeURIComponent(
+      authorId,
+    )}/works.json?limit=${limit}&offset=${offset}`,
   );
 
   if (!res.ok) {
-    throw new Error("Failed to fetch top picks");
+    throw new Error("Failed to fetch author works");
   }
 
   return res.json();
@@ -92,14 +96,14 @@ const AuthorPage = () => {
   });
 
   /* -------------------------
-     TOP PICKS QUERY
+     AUTHOR WORKS QUERY
   ------------------------- */
-  const { data: topPicksData } = useQuery({
-    queryKey: ["authorTopPicks", authorData?.name],
-    queryFn: () => fetchAuthorTopPicks(authorData!.name),
-    enabled: !!authorData?.name,
+  const { data: authorWorksData } = useQuery({
+    queryKey: ["authorWorks", id],
+    queryFn: () => fetchAuthorWorks(id as string, 100, 0),
+    enabled: !!id,
   });
-
+  console.log(authorWorksData);
   /* -------------------------
      DERIVED DATA
   ------------------------- */
@@ -116,25 +120,13 @@ const AuthorPage = () => {
   }, [authorData]);
 
   const topPicks = useMemo(() => {
-    if (!topPicksData?.docs || !id) return [];
+    if (!authorWorksData?.entries) return [];
 
-    return topPicksData.docs
-      .filter((book) => book.cover_i && book.author_key?.includes(id as string))
-      .sort((a, b) => {
-        const scoreA =
-          (a.ratings_count || 0) * 3 +
-          (a.want_to_read_count || 0) * 2 +
-          (a.edition_count || 0);
-
-        const scoreB =
-          (b.ratings_count || 0) * 3 +
-          (b.want_to_read_count || 0) * 2 +
-          (b.edition_count || 0);
-
-        return scoreB - scoreA;
-      })
+    return authorWorksData.entries
+      .filter((work) => work.covers?.length)
+      .sort((a, b) => (b.edition_count || 0) - (a.edition_count || 0))
       .slice(0, 12);
-  }, [topPicksData, id]);
+  }, [authorWorksData]);
 
   /* -------------------------
      CAROUSEL CONTROLS
@@ -239,18 +231,26 @@ const AuthorPage = () => {
             </div>
 
             <div ref={carouselRef} className={styles.topPicksRow}>
-              {topPicks.map((book) => (
-                <div key={book.key} className={styles.bookCard}>
-                  <Image
-                    src={`https://covers.openlibrary.org/b/id/${book.cover_i}-L.jpg`}
-                    alt={book.title}
-                    width={180}
-                    height={270}
-                    unoptimized
-                  />
-                  <p className={styles.bookTitle}>{book.title}</p>
-                </div>
-              ))}
+              {topPicks.map((work) => {
+                const workId = work.key.replace("/works/", "");
+
+                return (
+                  <div
+                    key={work.key}
+                    className={styles.bookCard}
+                    onClick={() => redirectTo(`/book/${workId}`)}
+                  >
+                    <Image
+                      src={`https://covers.openlibrary.org/b/id/${work.covers?.[0]}-L.jpg`}
+                      alt={work.title}
+                      width={180}
+                      height={270}
+                      unoptimized
+                    />
+                    <p className={styles.bookTitle}>{work.title}</p>
+                  </div>
+                );
+              })}
             </div>
           </section>
         )}

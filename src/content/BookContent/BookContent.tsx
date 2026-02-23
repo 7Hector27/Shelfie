@@ -13,9 +13,9 @@ import Layout from "../../components/Layout";
 import ConfirmationModal from "@/components/ConfirmationModal";
 
 import { apiGet, apiPost, apiDelete } from "@/lib/api";
+import { redirectTo } from "@/util/clientUtils";
 
 import styles from "./BookContent.module.scss";
-import { redirectTo } from "@/util/clientUtils";
 
 /* =====================
    Helpers
@@ -124,15 +124,14 @@ const BookContent = () => {
     queryFn: () => fetchWork(id as string),
     enabled: typeof id === "string",
   });
-
   const authorId = bookData?.authors?.[0]?.author?.key;
-
+  console.log(bookData);
   const { data: authorData, isLoading: isLoadingAuthor } = useQuery({
     queryKey: ["author", authorId],
     queryFn: () => fetchAuthor(authorId as string),
     enabled: typeof authorId === "string",
   });
-  console.log(authorData);
+  console.log(authorId, "authorId");
   const { data: userBookStatus } = useQuery({
     queryKey: ["userBookStatus", id],
     queryFn: () => fetchUserBookStatus(id as string),
@@ -189,7 +188,7 @@ const BookContent = () => {
   /* =====================
      Render
   ===================== */
-  console.log(authorId);
+
   return (
     <Layout>
       {showRemoveModal && (
@@ -313,42 +312,48 @@ const BookContent = () => {
             <p className={styles.text}>Want to read</p>
           </div>
         </div>
-        <div
-          className={`${styles.authorInfo} ${
-            isAuthorExpanded ? styles.expanded : ""
-          }`}
-        >
-          <p className={styles.aboutTheAuthor}>
-            {!!formatAuthorBio(authorData?.bio) ? "About the Author" : "Author"}
-          </p>
+        {authorData?.bio && (
+          <div
+            className={`${styles.authorInfo} ${
+              isAuthorExpanded ? styles.expanded : ""
+            }`}
+          >
+            <p className={styles.aboutTheAuthor}>
+              {!!formatAuthorBio(authorData?.bio)
+                ? "About the Author"
+                : "Author"}
+            </p>
 
-          <div className={styles.authorDetails}>
-            <div className={styles.authorPhoto}>
-              <Image
-                src={authorImageUrl || "/images/book-placeholder.webp"}
-                alt="Author"
-                width={100}
-                height={150}
-                unoptimized={!!authorImageUrl}
-              />
+            <div className={styles.authorDetails}>
+              <div className={styles.authorPhoto}>
+                <Image
+                  src={authorImageUrl || "/images/book-placeholder.webp"}
+                  alt="Author"
+                  width={100}
+                  height={150}
+                  unoptimized={!!authorImageUrl}
+                />
+              </div>
+              <div>
+                <p>{authorData?.name}</p>
+                <p>{authorData?.birth_date}</p>
+              </div>
             </div>
-            <div>
-              <p>{authorData?.name}</p>
-              <p>{authorData?.birth_date}</p>
-            </div>
+
+            <p className={styles.authorBio}>
+              {formatAuthorBio(authorData?.bio)}
+            </p>
+
+            {!!formatAuthorBio(authorData?.bio) && (
+              <button
+                className={styles.readMore}
+                onClick={() => setIsAuthorExpanded((p) => !p)}
+              >
+                {isAuthorExpanded ? "Read less" : "Read more"}
+              </button>
+            )}
           </div>
-
-          <p className={styles.authorBio}>{formatAuthorBio(authorData?.bio)}</p>
-
-          {!!formatAuthorBio(authorData?.bio) && (
-            <button
-              className={styles.readMore}
-              onClick={() => setIsAuthorExpanded((p) => !p)}
-            >
-              {isAuthorExpanded ? "Read less" : "Read more"}
-            </button>
-          )}
-        </div>
+        )}
       </div>
     </Layout>
   );

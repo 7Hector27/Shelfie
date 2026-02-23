@@ -49,7 +49,7 @@ const FriendCard = ({
           />
         </div>
         <div className={styles.nameAndCurrent}>
-          <h2 onClick={() => redirectTo(`/profile/view/${id}`)}>{name}</h2>
+          <h2 onClick={() => redirectTo(`/user/profile/${id}`)}>{name}</h2>
           {currentlyReading && <p>Reading: {currentlyReading}</p>}{" "}
         </div>
       </div>

@@ -39,7 +39,7 @@ const UserProfileContent = () => {
   });
 
   const { user, shelves, friendsPreview, currentlyReading } = profileData || {};
-  console.log(profileData);
+
   const { first_name, last_name, profile_image, birthdate, bio } = user || {};
 
   return (
