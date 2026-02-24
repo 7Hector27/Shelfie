@@ -46,3 +46,15 @@ export const getBirthdayMonthDay = (isoDate: string | null): string | null => {
     day: "numeric",
   });
 };
+
+export const toPossessive = (name: string) => {
+  if (!name) return "";
+
+  const trimmed = name.trim();
+
+  if (trimmed.toLowerCase().endsWith("s")) {
+    return `${trimmed}'`;
+  }
+
+  return `${trimmed}'s`;
+};

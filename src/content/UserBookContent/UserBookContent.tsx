@@ -9,16 +9,20 @@ import EditBookModal from "@/components/EditBookModal";
 
 import { GetUserBooksResponse } from "@/util/types";
 import { apiGet, apiPatch } from "@/lib/api";
-import { formatMonthYear, redirectTo } from "@/util/clientUtils";
+import { formatMonthYear, redirectTo, toPossessive } from "@/util/clientUtils";
+import { useAuth } from "@/context/AuthProvider";
 
 import styles from "./UserBookContent.module.scss";
 
 const UserBookContent = () => {
+  const { user: owner, loading } = useAuth();
+
   /* ================================
      Router + Query Params
   ================================= */
   const router = useRouter();
   const { id: userId, shelf, page, favorite } = router.query;
+  const isOwner = userId === owner?.user_id;
 
   const currentShelf = (shelf as string) || "";
   const currentPage = (page as string) || "1";
@@ -48,8 +52,9 @@ const UserBookContent = () => {
     enabled: !!userId,
   });
 
-  const { data: booksList, pagination, counts } = data || {};
-
+  const { data: booksList, pagination, counts, profile } = data || {};
+  console.log(profile);
+  const { first_name, last_name } = profile || {};
   /* ================================
      Derived Values
   ================================= */
@@ -206,7 +211,11 @@ const UserBookContent = () => {
           <div className={styles.libraryMain}>
             {/* Header */}
             <div className={styles.libraryHeader}>
-              <h1>My Library</h1>
+              <h1>
+                {!isOwner
+                  ? ` ${first_name && toPossessive(first_name)} Library`
+                  : "My Library"}
+              </h1>
               <p>
                 {pagination?.total || 0} books ·{" "}
                 {booksList?.filter((b) => b.status === "reading").length || 0}{" "}
@@ -334,14 +343,16 @@ const UserBookContent = () => {
                       )}
                     </div>
                     {/* FOOTER AREA */}
-                    <div className={styles.cardFooter}>
-                      <button
-                        className={styles.quickEditBtn}
-                        onClick={() => openEdit(book_id)}
-                      >
-                        Quick Edit
-                      </button>
-                    </div>
+                    {isOwner && (
+                      <div className={styles.cardFooter}>
+                        <button
+                          className={styles.quickEditBtn}
+                          onClick={() => openEdit(book_id)}
+                        >
+                          Quick Edit
+                        </button>
+                      </div>
+                    )}
                   </div>
                 );
               })}

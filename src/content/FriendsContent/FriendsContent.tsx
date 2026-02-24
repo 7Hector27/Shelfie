@@ -36,6 +36,8 @@ const FriendsContent = () => {
     queryFn: fetchFriendList,
   });
 
+  console.log(friendList);
+
   return (
     <div className={styles.friendsContent}>
       <div className={styles.banner}>
@@ -95,16 +97,28 @@ const FriendsContent = () => {
         {friendList.length ? (
           <div className={styles.cards}>
             {friendList.map((friend) => {
-              const { id, firstName, lastName, email, profilePictureUrl } =
-                friend;
+              const {
+                id,
+                firstName,
+                lastName,
+                email,
+                profilePictureUrl,
+                currently_reading,
+                friend_count,
+                book_count,
+              } = friend;
+
+              const titles = currently_reading?.map((item) => item.book?.title);
+
               return (
                 <FriendCard
                   key={id}
                   id={id}
                   name={`${firstName} ${lastName}`}
-                  currentlyReading={"Nothing"}
-                  books={1}
-                  friends={1}
+                  currentlyReading={titles}
+                  books={book_count}
+                  friends={friend_count}
+                  profilePictureUrl={profilePictureUrl}
                 />
               );
             })}

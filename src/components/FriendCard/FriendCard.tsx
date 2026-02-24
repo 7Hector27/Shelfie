@@ -6,10 +6,11 @@ import { redirectTo } from "@/util/clientUtils";
 type FriendCardProps = {
   name: string;
   id: string;
-  currentlyReading?: string | string[];
+  currentlyReading?: string[];
   books?: number;
   friends?: number;
   buttonCopy?: string;
+  profilePictureUrl?: string;
   buttonHandler?: () => void;
 };
 const FriendCard = ({
@@ -19,6 +20,7 @@ const FriendCard = ({
   books,
   friends,
   buttonCopy,
+  profilePictureUrl,
   buttonHandler,
 }: FriendCardProps) => {
   const [requestStatus, setRequestStatus] = useState<
@@ -42,7 +44,11 @@ const FriendCard = ({
       <div className={styles.userInfo}>
         <div className={styles.profileImage}>
           <Image
-            src="/images/user_profile.webp"
+            src={
+              profilePictureUrl
+                ? profilePictureUrl
+                : "/images/user_profile.webp"
+            }
             alt="User Profile"
             width={30}
             height={30}
@@ -50,7 +56,9 @@ const FriendCard = ({
         </div>
         <div className={styles.nameAndCurrent}>
           <h2 onClick={() => redirectTo(`/user/profile/${id}`)}>{name}</h2>
-          {currentlyReading && <p>Reading: {currentlyReading}</p>}{" "}
+          {currentlyReading && currentlyReading?.length > 0 && (
+            <p>Reading: {currentlyReading.join(", ")}</p>
+          )}{" "}
         </div>
       </div>
 

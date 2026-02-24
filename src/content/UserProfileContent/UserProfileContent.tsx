@@ -14,12 +14,14 @@ import {
   formatMonthYear,
   getBirthdayMonthDay,
 } from "@/util/clientUtils";
+import { useAuth } from "@/context/AuthProvider";
 
 import styles from "./UserProfileContent.module.scss";
 
 const UserProfileContent = () => {
   const { query } = useRouter();
   const profileId = query.id;
+  const { user: owner, loading } = useAuth();
 
   const fetchUserProfile = async () => {
     const data = await apiGet<UserProfileResponse>(
@@ -40,8 +42,11 @@ const UserProfileContent = () => {
 
   const { user, shelves, friendsPreview, currentlyReading } = profileData || {};
 
-  const { first_name, last_name, profile_image, birthdate, bio } = user || {};
+  const { first_name, last_name, profile_image, birthdate, bio, user_id } =
+    user || {};
 
+  const isOwner = user_id === owner?.user_id;
+  console.log(profileData, "profileData");
   return (
     <Layout>
       <div className={styles.userProfile}>
@@ -58,20 +63,24 @@ const UserProfileContent = () => {
             <h1 className={styles.username}>
               {first_name} {last_name}
             </h1>
-            <button
-              onClick={() => redirectTo("/user/edit")}
-              className={styles.editBtn}
-            >
-              Edit Profile
-            </button>
+            {isOwner && (
+              <button
+                onClick={() => redirectTo("/user/edit")}
+                className={styles.editBtn}
+              >
+                Edit Profile
+              </button>
+            )}
             <p className={styles.joined}>
               Joined {formatMonthYear(user?.created_at || null)}
             </p>
-            <p className={styles.age}>
-              Age {birthdate && getAgeFromISO(birthdate)} •{" "}
-              {birthdate && getBirthdayMonthDay(birthdate)}
-            </p>
-            <p className={styles.bio}>{bio}</p>
+            {birthdate && (
+              <p className={styles.age}>
+                Age {birthdate && getAgeFromISO(birthdate)} •{" "}
+                {birthdate && getBirthdayMonthDay(birthdate)}
+              </p>
+            )}
+            {bio && <p className={styles.bio}>{bio}</p>}
           </div>
         </div>
         <div className={styles.currentlyReading}>
@@ -192,7 +201,7 @@ const UserProfileContent = () => {
                 height={38}
                 className={styles.iconImg}
               />
-              <span className={styles.count}>{shelves?.favorites ?? 0}</span>
+              <span className={styles.count}>{shelves?.total ?? 0}</span>
               <span className={styles.label}>All Books</span>
             </Link>
           </div>

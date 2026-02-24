@@ -28,12 +28,31 @@ export type GetRequestsResponse = {
   requests: UserType[];
 };
 
+export type BookType = {
+  id: string;
+  title: string;
+  author: string;
+  author_id: string;
+  cover_url: string;
+  description: string;
+};
+
 export type FriendList = {
   id: string;
   firstName: string;
   lastName: string;
   email: string;
   profilePictureUrl: string;
+  currently_reading: {
+    book: BookType;
+    favorite: boolean;
+    rating: string;
+    status: Date;
+    updated_at: string;
+    user_book_id: string;
+  }[];
+  friend_count: number;
+  book_count: number;
 };
 export type GetFriendListResponse = {
   friends: FriendList[];
@@ -81,6 +100,7 @@ export type ShelfCounts = {
   read: number;
   dropped: number;
   favorites: number;
+  total: number;
 };
 export type FriendPreview = {
   user_id: string;
@@ -139,4 +159,5 @@ export type GetUserBooksResponse = {
   data: UserBook[];
   pagination: Pagination;
   counts: UserBooksCountResponse;
+  profile: UserType;
 };
