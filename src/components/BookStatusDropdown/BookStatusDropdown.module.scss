@@ -1,0 +1,99 @@
+.wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.status {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  overflow: hidden;
+  border: 1px solid #2a2a2a;
+  background: #1c1c1c;
+}
+
+.actionBtn {
+  padding: 0.65rem 1rem;
+  background: transparent;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.dropdownBtn {
+  padding: 0.65rem 0.85rem;
+  background: transparent;
+  border: none;
+  color: #aaa;
+  cursor: pointer;
+  border-left: 1px solid #2a2a2a;
+
+  &:hover {
+    color: #fff;
+  }
+}
+
+.checkmark {
+  margin-right: 0.5rem;
+  opacity: 0.9;
+}
+
+.dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  width: 220px;
+  background: #1a1a1a;
+  border: 1px solid #2a2a2a;
+  border-radius: 14px;
+  padding: 0.35rem;
+  z-index: 50;
+}
+
+.dropdown button {
+  width: 100%;
+  text-align: left;
+  padding: 0.65rem 0.75rem;
+  border-radius: 10px;
+  background: transparent;
+  border: none;
+  color: #eaeaea;
+  cursor: pointer;
+
+  &:hover {
+    background: #232323;
+  }
+}
+
+.active {
+  background: #232323;
+}
+
+.danger {
+  color: #ffb4b4;
+
+  &:hover {
+    background: rgba(255, 60, 60, 0.12);
+  }
+}
+
+/* Optional status tint hooks */
+.want_to_read {
+  background: rgba(255, 200, 0, 0.12);
+  border: 1px solid rgba(255, 200, 0, 0.4);
+}
+
+.reading {
+  background: rgba(80, 150, 255, 0.12);
+  border: 1px solid rgba(80, 150, 255, 0.4);
+}
+
+.completed {
+  background: rgba(0, 200, 120, 0.12);
+  border: 1px solid rgba(0, 200, 120, 0.4);
+}
+.dropped {
+  background: rgba(200, 70, 90, 0.14);
+  border: 1px solid rgba(200, 70, 90, 0.45);
+}
