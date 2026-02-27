@@ -125,13 +125,12 @@ const BookContent = () => {
     enabled: typeof id === "string",
   });
   const authorId = bookData?.authors?.[0]?.author?.key;
-  console.log(bookData);
   const { data: authorData, isLoading: isLoadingAuthor } = useQuery({
     queryKey: ["author", authorId],
     queryFn: () => fetchAuthor(authorId as string),
     enabled: typeof authorId === "string",
   });
-  console.log(authorId, "authorId");
+
   const { data: userBookStatus } = useQuery({
     queryKey: ["userBookStatus", id],
     queryFn: () => fetchUserBookStatus(id as string),
