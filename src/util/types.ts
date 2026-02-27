@@ -161,3 +161,32 @@ export type GetUserBooksResponse = {
   counts: UserBooksCountResponse;
   profile: UserType;
 };
+export type ActivityType =
+  | "started_reading"
+  | "finished_reading"
+  | "rated_book"
+  | "review_posted"
+  | "book_added"
+  | "dropped";
+export type ActivityMetadata = {
+  status?: "want_to_read" | "reading" | "completed" | "dropped";
+  rating?: number;
+};
+export interface ActivityFeedItem {
+  id: string;
+  type: ActivityType;
+
+  metadata: ActivityMetadata;
+
+  created_at: string;
+
+  actor_id: string;
+  first_name: string;
+  last_name: string;
+  profile_image: string;
+
+  book_id: string;
+  title: string;
+  author: string;
+  cover_url: string;
+}
