@@ -7,6 +7,7 @@ import { useAuth } from "../../context/AuthProvider";
 import { apiGet } from "@/lib/api";
 
 import styles from "./Navbar.module.scss";
+import { redirectTo } from "@/util/clientUtils";
 
 type OpenLibraryDoc = {
   key: string;
@@ -59,7 +60,7 @@ const Navbar = () => {
   return (
     <>
       <div className={styles.navbar}>
-        <div className={styles.icon}>
+        <div className={styles.icon} onClick={() => redirectTo("/")}>
           <Image
             src="/images/shelfie_icon.webp"
             alt="Shelfie Icon"
