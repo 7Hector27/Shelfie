@@ -1,3 +1,4 @@
+import { useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/router";
 
@@ -12,6 +13,7 @@ interface Props {
 
 const ActivityCard = ({ item }: Props) => {
   const router = useRouter();
+  const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const actionText = getActionText(item.type, item.metadata);
 
@@ -23,7 +25,6 @@ const ActivityCard = ({ item }: Props) => {
     const diffDays = diffMs / (1000 * 60 * 60 * 24);
 
     if (diffDays < 7) {
-      // Format as MM/DD
       const month = created.getMonth() + 1;
       const day = created.getDate();
       return `${month}/${day}`;
@@ -33,9 +34,8 @@ const ActivityCard = ({ item }: Props) => {
     return `${weeks}w`;
   }
 
-  console.log(item);
   return (
-    <div className={styles.card}>
+    <div className={`${styles.card} ${dropdownOpen ? styles.cardActive : ""}`}>
       {/* Header */}
       <div className={styles.header}>
         <div className={styles.headerLeft}>
@@ -77,7 +77,6 @@ const ActivityCard = ({ item }: Props) => {
           <div className={styles.title}>{item.title}</div>
           <div className={styles.author}>{item.author}</div>
 
-          {/* Dropdown aligned under title/author */}
           <div className={styles.statusWrapper}>
             <BookStatusDropdown
               bookId={item.book_id}
@@ -87,6 +86,7 @@ const ActivityCard = ({ item }: Props) => {
                 author: item.author,
                 cover_url: item.cover_url,
               }}
+              onOpenChange={setDropdownOpen}
             />
           </div>
         </div>

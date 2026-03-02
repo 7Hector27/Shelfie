@@ -57,9 +57,40 @@ const Navbar = () => {
     searchBooks(value);
   };
 
+  const SearchResults = ({ books }: { books: OpenLibraryDoc[] }) => (
+    <div className={styles.searchResults}>
+      {books.map((book) => {
+        const BookId = book.key.split("/").pop();
+        return (
+          <Link
+            key={book.key}
+            href={`/book/${BookId}`}
+            className={styles.searchResultItem}
+          >
+            <Image
+              src={
+                book.cover_i
+                  ? `https://covers.openlibrary.org/b/id/${book.cover_i}-M.jpg`
+                  : "/images/book-placeholder.webp"
+              }
+              alt={book.title}
+              width={40}
+              height={60}
+            />
+            <div>
+              <p>{book.title}</p>
+              <span>{book.author_name?.[0]}</span>
+            </div>
+          </Link>
+        );
+      })}
+    </div>
+  );
+
   return (
     <>
       <div className={styles.navbar}>
+        {/* Logo */}
         <div className={styles.icon} onClick={() => redirectTo("/")}>
           <Image
             src="/images/shelfie_icon.webp"
@@ -70,6 +101,7 @@ const Navbar = () => {
           />
           <p>Shelfie</p>
         </div>
+
         {/* Mobile search icon */}
         <div
           className={styles.mobileSearch}
@@ -79,8 +111,8 @@ const Navbar = () => {
             src="/images/magnifying_glass_white.webp"
             alt="Search"
             className={styles.magnifyingIcon}
-            width={24}
-            height={24}
+            width={20}
+            height={20}
           />
         </div>
 
@@ -93,36 +125,7 @@ const Navbar = () => {
             onChange={(e) => handleSearchChange(e.target.value)}
           />
 
-          {results.length > 0 && (
-            <div className={styles.searchResults}>
-              {results.map((book) => {
-                const BookId = book.key.split("/").pop();
-                return (
-                  <Link
-                    key={book.key}
-                    href={`/book/${BookId}`}
-                    className={styles.searchResultItem}
-                  >
-                    <Image
-                      src={
-                        book.cover_i
-                          ? `https://covers.openlibrary.org/b/id/${book.cover_i}-M.jpg`
-                          : "/images/book-placeholder.webp"
-                      }
-                      alt={book.title}
-                      width={40}
-                      height={60}
-                    />
-                    <div>
-                      <p>{book.title}</p>
-                      <span>{book.author_name?.[0]}</span>
-                    </div>
-                  </Link>
-                );
-              })}
-            </div>
-          )}
-
+          {results.length > 0 && <SearchResults books={results} />}
           {loading && <div className={styles.searchLoading}>Searching…</div>}
         </div>
 
@@ -149,35 +152,7 @@ const Navbar = () => {
           />
           <button onClick={() => setMobileSearchVisible(false)}>Cancel</button>
 
-          {results.length > 0 && (
-            <div className={styles.searchResults}>
-              {results.map((book) => {
-                const BookId = book.key.split("/").pop();
-                return (
-                  <Link
-                    key={book.key}
-                    href={`/book/${BookId}`}
-                    className={styles.searchResultItem}
-                  >
-                    <Image
-                      src={
-                        book.cover_i
-                          ? `https://covers.openlibrary.org/b/id/${book.cover_i}-M.jpg`
-                          : "/images/book-placeholder.webp"
-                      }
-                      alt={book.title}
-                      width={40}
-                      height={60}
-                    />
-                    <div>
-                      <p>{book.title}</p>
-                      <span>{book.author_name?.[0]}</span>
-                    </div>
-                  </Link>
-                );
-              })}
-            </div>
-          )}
+          {results.length > 0 && <SearchResults books={results} />}
         </div>
       )}
     </>

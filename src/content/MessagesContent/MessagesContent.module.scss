@@ -1,109 +1,143 @@
+/* ─────────────────────────────────────────────────────────
+   MessagesContent — Glassmorphism
+   ───────────────────────────────────────────────────────── */
+
 .wrapper {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1.2rem;
+  padding: 24px 16px;
 }
 
-/* -------------------- */
-/* Pills */
-/* -------------------- */
-
+/* ── Filter pills ──────────────────────────────────────── */
 .pills {
   display: flex;
-  gap: 0.75rem;
+  gap: 8px;
   flex-wrap: wrap;
 }
 
 .pill {
-  padding: 0.5rem 1.2rem;
+  padding: 7px 18px;
   border-radius: 999px;
-  background: #1e1e1e;
-  border: 1px solid #2a2a2a;
-  color: #aaa;
-  font-size: 0.9rem;
+  font-size: 13px;
+  font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
+  color: rgba(255, 255, 255, 0.5);
+
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  backdrop-filter: blur(12px);
 
   &:hover {
-    background: #252525;
+    background: rgba(255, 255, 255, 0.09);
+    color: rgba(255, 255, 255, 0.8);
   }
 }
 
 .active {
-  background: #2c2c2c;
-  color: #fff;
-  border-color: #3a3a3a;
+  background: rgba(124, 58, 237, 0.22);
+  border-color: rgba(167, 139, 250, 0.4);
+  color: #e0d7ff;
+  box-shadow: 0 0 16px rgba(124, 58, 237, 0.2);
 }
 
-/* -------------------- */
-/* New Message Button */
-/* -------------------- */
-
+/* ── New message button ────────────────────────────────── */
 .newMessageBtn {
   width: 100%;
-  background: #2c2c2c;
-  border: 1px solid #3a3a3a;
-  padding: 0.6rem 1rem;
-  border-radius: 12px;
-  color: white;
+  padding: 11px 18px;
+  border-radius: 14px;
+  font-size: 14px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.8);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.22s ease;
+  text-align: center;
+
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
 
   &:hover {
-    background: #353535;
+    background: rgba(124, 58, 237, 0.22);
+    border-color: rgba(167, 139, 250, 0.4);
+    color: #fff;
+    box-shadow: 0 0 20px rgba(124, 58, 237, 0.2);
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0);
   }
 }
 
-/* -------------------- */
-/* Conversation List */
-/* -------------------- */
-
+/* ── Conversation list ─────────────────────────────────── */
 .conversationList {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 10px;
 }
 
-/* -------------------- */
-/* Conversation Card */
-/* -------------------- */
-
+/* ── Conversation card ─────────────────────────────────── */
 .conversationCard {
   display: flex;
-  gap: 0.9rem;
-  padding: 0.9rem;
-  border-radius: 16px;
-  background: #1a1a1a;
-  border: 1px solid #262626;
+  gap: 12px;
+  padding: 14px;
+  border-radius: 20px;
   cursor: pointer;
   text-align: left;
-  transition: all 0.2s ease;
+  width: 100%;
+  transition:
+    background 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease,
+    border-color 0.2s ease;
+
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
 
   &:hover {
-    background: #202020;
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(167, 139, 250, 0.22);
     transform: translateY(-2px);
+    box-shadow:
+      0 16px 36px rgba(0, 0, 0, 0.4),
+      0 0 16px rgba(124, 58, 237, 0.1);
   }
 }
 
-/* 🔥 Unread card highlight */
+/* Unread card — purple-tinted highlight */
 .unreadCard {
-  background: #161616;
-  border-color: #303030;
+  background: rgba(124, 58, 237, 0.08);
+  border-color: rgba(167, 139, 250, 0.2);
+  box-shadow:
+    0 8px 24px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(167, 139, 250, 0.15);
+
+  &:hover {
+    background: rgba(124, 58, 237, 0.13);
+    border-color: rgba(167, 139, 250, 0.35);
+  }
 }
 
-/* -------------------- */
-/* Avatar */
-/* -------------------- */
-
+/* ── Avatar ────────────────────────────────────────────── */
 .avatar {
   width: 42px;
   height: 42px;
   border-radius: 50%;
-  background: #2c2c2c;
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-shrink: 0;
+  overflow: hidden;
+
+  background: rgba(124, 58, 237, 0.2);
+  border: 2px solid rgba(167, 139, 250, 0.3);
+  box-shadow: 0 0 12px rgba(124, 58, 237, 0.2);
 }
 
 .avatarImg {
@@ -114,95 +148,100 @@
 }
 
 .avatarFallback {
-  font-weight: 600;
-  color: #bbb;
+  font-weight: 700;
+  font-size: 16px;
+  color: #c4b5fd;
 }
 
-/* -------------------- */
-/* Conversation Info */
-/* -------------------- */
-
+/* ── Conversation info ─────────────────────────────────── */
 .conversationInfo {
   flex: 1;
+  min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 0.35rem;
+  gap: 4px;
 }
 
 .topRow {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 8px;
 }
 
 .name {
+  font-size: 14px;
   font-weight: 600;
-  font-size: 0.95rem;
-  color: #fff;
-}
-
-.timestamp {
-  font-size: 0.75rem;
-  color: #777;
-}
-
-/* -------------------- */
-/* Bottom Row */
-/* -------------------- */
-
-.bottomRow {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.75rem;
-}
-
-.preview {
-  font-size: 0.85rem;
-  color: #999;
+  color: rgba(255, 255, 255, 0.85);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-/* 🔥 Bold text when unread */
+.timestamp {
+  font-size: 11px;
+  color: rgba(167, 139, 250, 0.5);
+  flex-shrink: 0;
+  letter-spacing: 0.2px;
+}
+
+/* ── Bottom row ────────────────────────────────────────── */
+.bottomRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.preview {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.38);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+}
+
+/* Bold + brighter when unread */
 .unreadText {
   font-weight: 600;
-  color: #ffffff;
+  color: rgba(255, 255, 255, 0.88) !important;
 }
 
-/* 🔥 Unread badge */
+/* Unread badge — pink-to-purple gradient */
 .unreadBadge {
-  background: #1d9bf0;
-  color: white;
-  font-size: 0.7rem;
-  padding: 4px 8px;
+  background: linear-gradient(135deg, #7c3aed, #ec4899);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 8px;
   border-radius: 999px;
-  min-width: 22px;
+  min-width: 20px;
   text-align: center;
-  font-weight: 600;
   flex-shrink: 0;
+  box-shadow: 0 0 10px rgba(124, 58, 237, 0.4);
 }
 
-/* -------------------- */
-/* Empty State */
-/* -------------------- */
-
+/* ── Empty / loading state ─────────────────────────────── */
 .emptyState {
   text-align: center;
-  color: #666;
-  padding: 3rem 0;
+  color: rgba(167, 139, 250, 0.45);
+  font-size: 14px;
+  padding: 3.5rem 0;
 }
 
-/* ===================================== */
-/* Tablet (768px and up) */
-/* ===================================== */
+/* ══════════════════════════════════════════════════════════
+   Tablet
+   ══════════════════════════════════════════════════════════ */
 
 @media (min-width: 768px) {
+  .wrapper {
+    padding: 28px 24px;
+  }
+
   .conversationCard {
-    padding: 1.2rem;
-    border-radius: 20px;
-    gap: 1rem;
+    padding: 16px 18px;
+    gap: 14px;
   }
 
   .avatar {
@@ -211,22 +250,22 @@
   }
 
   .name {
-    font-size: 1rem;
+    font-size: 15px;
   }
-
   .preview {
-    font-size: 0.9rem;
+    font-size: 13px;
   }
 
   .newMessageBtn {
     width: auto;
     align-self: flex-end;
+    padding: 10px 24px;
   }
 }
 
-/* ===================================== */
-/* Desktop (1024px and up) */
-/* ===================================== */
+/* ══════════════════════════════════════════════════════════
+   Desktop
+   ══════════════════════════════════════════════════════════ */
 
 @media (min-width: 1024px) {
   .wrapper {

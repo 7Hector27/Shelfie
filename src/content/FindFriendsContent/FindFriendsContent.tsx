@@ -2,27 +2,12 @@ import React, { useState, useEffect } from "react";
 import Image from "next/image";
 
 import Layout from "@/components/Layout";
-
-import styles from "./FindFriendsContent.module.scss";
 import FriendCard from "@/components/FriendCard";
-import { redirectTo } from "@/util/clientUtils";
+
 import { apiGet, apiPost } from "@/lib/api";
 import { FriendSearchResult } from "@/util/types";
 
-export const mockFriends = [
-  {
-    id: "1",
-    name: "Alex Walker",
-  },
-  {
-    id: "2",
-    name: "Jenny Adams",
-  },
-  {
-    id: "3",
-    name: "Chris Morgan",
-  },
-];
+import styles from "./FindFriendsContent.module.scss";
 
 const FindFriendsContent = () => {
   const [query, setQuery] = useState("");

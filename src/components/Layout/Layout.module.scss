@@ -1,24 +1,81 @@
 .layout {
   min-height: 100vh;
-  background:
-    radial-gradient(
-      140% 90% at 50% -10%,
-      rgba(155, 120, 255, 0.22),
-      transparent 60%
-    ),
-    linear-gradient(180deg, #201b3f 0%, #252250 40%, #1c1a34 70%, #141325 100%);
-
-  box-shadow: inset 0 0 140px rgba(0, 0, 0, 0.55);
   position: relative;
   overflow-x: hidden;
+
+  /* Deep dark base — essential for glass to read correctly */
+  background: #0d0820;
 }
+
+/* ── Ambient orb layer ──────────────────────────────────────
+   Three large soft blobs that drift slowly, casting colored
+   light the navbar and page content can "frost" over.       */
 .layout::before {
   content: "";
   position: fixed;
   inset: 0;
-  background-repeat: repeat;
-  opacity: 0.15; /* sweet spot: 0.025–0.045 */
   pointer-events: none;
   z-index: 0;
+
+  background:
+    radial-gradient(
+      ellipse 60vw 50vh at 10% 20%,
+      rgba(124, 58, 237, 0.28),
+      transparent 70%
+    ),
+    radial-gradient(
+      ellipse 50vw 45vh at 90% 15%,
+      rgba(236, 72, 153, 0.2),
+      transparent 70%
+    ),
+    radial-gradient(
+      ellipse 55vw 40vh at 55% 90%,
+      rgba(6, 182, 212, 0.16),
+      transparent 70%
+    ),
+    radial-gradient(
+      ellipse 40vw 35vh at 20% 80%,
+      rgba(167, 139, 250, 0.12),
+      transparent 70%
+    );
+
+  animation: orb-breathe 14s ease-in-out infinite alternate;
+}
+
+@keyframes orb-breathe {
+  0% {
+    transform: scale(1) translateY(0px);
+    opacity: 0.85;
+  }
+  50% {
+    transform: scale(1.04) translateY(-10px);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0.97) translateY(6px);
+    opacity: 0.9;
+  }
+}
+
+/* ── Grain texture overlay ──────────────────────────────────
+   Light noise on top of everything — adds tactile depth     */
+.layout::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+
   background-image: url("/images/grain.png");
+  background-repeat: repeat;
+  opacity: 0.04;
+
+  /* vignette baked in as a second layer */
+  box-shadow: inset 0 0 160px rgba(0, 0, 0, 0.35);
+}
+
+/* ── Page content sits above the orbs & grain ─────────────── */
+.layout > *:not(:first-child) {
+  position: relative;
+  z-index: 2;
 }

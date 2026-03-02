@@ -1,38 +1,93 @@
+/* ─────────────────────────────────────────────────────────
+   Alert — Glassmorphism
+   Slides in from the top, frosted glass panel, auto-dismiss
+   progress bar drains across the bottom edge.
+   ───────────────────────────────────────────────────────── */
+
 .alert {
-  position: absolute;
+  position: fixed;
+  top: 15px; /* clears the navbar */
   left: 50%;
   transform: translateX(-50%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #fdefef;
-  color: #721b1a;
-  padding: 12px 16px;
+  z-index: 2000;
+
+  min-width: 280px;
+  max-width: 480px;
+  padding: 13px 22px 16px;
+  border-radius: 16px;
+
+  /* Frosted glass */
+  background: rgba(18, 8, 42, 0.82);
+  backdrop-filter: blur(28px) saturate(180%);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+
+  border: 1px solid rgba(167, 139, 250, 0.25);
+  box-shadow:
+    0 20px 48px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(167, 139, 250, 0.3),
+    0 0 0 1px rgba(255, 255, 255, 0.04);
+
+  /* Text */
   font-size: 14px;
-  border: #721b1a 1px solid;
-  border-bottom-left-radius: 5px;
-  border-bottom-right-radius: 5px;
-  width: 100%;
-  z-index: 1000;
-  font-weight: 600;
-  animation: fadeIn 0.2s ease-out;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.9);
+  text-align: center;
+  letter-spacing: 0.2px;
+
+  /* Slide-in */
+  animation: slideDown 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+
+  /* Progress drain bar lives on the ::after pseudo */
+  overflow: hidden;
 }
 
-@media (min-width: 768px) {
-  .alert {
-    height: 50px;
-    transform: translateX(-50%);
+/* Shimmer top border */
+.alert::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(167, 139, 250, 0.6) 35%,
+    rgba(236, 72, 153, 0.4) 65%,
+    transparent
+  );
+}
 
-    background: #fdefef;
-    color: #721b1a;
-    padding: 12px 16px;
-    border-radius: 16px;
-    font-size: 16px;
+/* Auto-dismiss progress bar */
+.alert::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 2px;
+  width: 100%;
+  background: linear-gradient(90deg, #7c3aed, #ec4899);
+  border-radius: 0 0 16px 16px;
+  transform-origin: left center;
+  animation: drain var(--duration, 3000ms) linear forwards;
+}
 
-    border: #721b1a 2px solid;
-    width: 100%;
-    z-index: 1000;
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-16px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0) scale(1);
+  }
+}
 
-    animation: fadeIn 0.2s ease-out;
+@keyframes drain {
+  from {
+    transform: scaleX(1);
+  }
+  to {
+    transform: scaleX(0);
   }
 }

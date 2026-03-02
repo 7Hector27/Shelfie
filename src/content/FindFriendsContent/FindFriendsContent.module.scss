@@ -1,147 +1,216 @@
+/* ─────────────────────────────────────────────────────────
+   FindFriendsContent — Glassmorphism
+   ───────────────────────────────────────────────────────── */
+
 .findFriends {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  padding: 50px 20px;
-  .titles {
-    margin: 0 auto;
-    width: 320px;
-    padding-bottom: 20px;
-    h1 {
-      font-size: 28px;
-      color: #e6e7f0;
-      font-family: var(--font-inter);
-      font-weight: 500;
-    }
-    p {
-      font-size: 14px;
-      color: #e6e7f0;
+  padding: 52px 20px 60px;
+}
 
-      font-family: var(--font-inter);
-      font-weight: 500;
-      padding: 10px 0;
-    }
+/* ── Titles ────────────────────────────────────────────── */
+.titles {
+  width: 320px;
+  padding-bottom: 24px;
+
+  h1 {
+    margin: 0;
+    font-size: 30px;
+    font-family: var(--font-playfair);
+    font-weight: 700;
+    font-style: italic;
+    line-height: 1.2;
+
+    background: linear-gradient(135deg, #fff 0%, #e0d7ff 55%, #c084fc 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
-  .searchBarWrapper {
-    width: 320px;
 
-    padding: 10px 20px;
+  p {
+    margin: 10px 0 0;
+    font-size: 14px;
+    color: rgba(167, 139, 250, 0.65);
+    line-height: 1.5;
+  }
+}
+
+/* ── Search bar wrapper ────────────────────────────────── */
+.searchBarWrapper {
+  width: 320px;
+  padding: 12px 16px;
+  border-radius: 20px;
+  position: relative;
+
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(24px) saturate(160%);
+  -webkit-backdrop-filter: blur(24px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow:
+    0 12px 32px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(167, 139, 250, 0.2);
+
+  /* Shimmer top */
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    border-radius: 20px 20px 0 0;
     background: linear-gradient(
-      180deg,
-      rgba(255, 255, 255, 0.04),
-      rgba(255, 255, 255, 0.01)
+      90deg,
+      transparent,
+      rgba(167, 139, 250, 0.5) 40%,
+      rgba(236, 72, 153, 0.3) 70%,
+      transparent
     );
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 10px;
-    box-shadow:
-      0 8px 20px rgba(0, 0, 0, 0.45),
-      inset 0 1px 0 rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(6px);
-    .search {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-
-      height: 44px;
-      padding: 0 14px;
-      border-radius: 12px;
-
-      background: rgba(255, 255, 255, 0.06);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      backdrop-filter: blur(10px);
-
-      transition:
-        border-color 0.2s ease,
-        box-shadow 0.2s ease;
-
-      &:focus-within {
-        border-color: rgba(120, 110, 255, 0.45);
-        box-shadow: 0 0 0 2px rgba(120, 110, 255, 0.15);
-      }
-
-      .icon {
-        font-size: 14px;
-        color: var(--text-secondary);
-        opacity: 0.7;
-      }
-
-      input {
-        flex: 1;
-        background: none;
-        border: none;
-        outline: none;
-
-        color: var(--text-primary);
-        font-size: 14px;
-
-        &::placeholder {
-          color: var(--text-secondary);
-          opacity: 0.6;
-        }
-      }
-    }
   }
-  .results {
-    width: 320px;
-    .resultsTitle {
-      font-size: 16px;
-      color: #e6e7f0;
-      font-family: var(--font-inter);
-      font-weight: 500;
-      padding: 30px 0 10px;
-    }
-    .cards {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      width: 100%;
-      gap: 10px;
+}
+
+.search {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 44px;
+  padding: 0 14px;
+  border-radius: 12px;
+
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition:
+    border-color 0.22s ease,
+    box-shadow 0.22s ease,
+    background 0.22s ease;
+
+  &:focus-within {
+    background: rgba(255, 255, 255, 0.09);
+    border-color: rgba(167, 139, 250, 0.5);
+    box-shadow:
+      0 0 0 3px rgba(124, 58, 237, 0.15),
+      inset 0 0 20px rgba(124, 58, 237, 0.04);
+  }
+
+  .icon {
+    opacity: 0.55;
+    flex-shrink: 0;
+  }
+
+  input {
+    flex: 1;
+    background: none;
+    border: none;
+    outline: none;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 14px;
+
+    &::placeholder {
+      color: rgba(255, 255, 255, 0.3);
     }
   }
 }
+
+/* ── Results ───────────────────────────────────────────── */
+.results {
+  width: 320px;
+  margin-top: 28px;
+}
+
+.resultsTitle {
+  font-size: 11px;
+  font-weight: 600;
+  font-family: var(--font-playfair);
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: rgba(167, 139, 250, 0.7);
+  margin: 0 0 14px;
+  padding-bottom: 10px;
+
+  /* Gradient underline */
+  border-bottom: 1px solid transparent;
+  background:
+    linear-gradient(#0d0820, #0d0820) padding-box,
+    linear-gradient(
+        90deg,
+        rgba(167, 139, 250, 0.5),
+        rgba(236, 72, 153, 0.3),
+        transparent
+      )
+      border-box;
+}
+
+.cards {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 10px;
+}
+
+/* ══════════════════════════════════════════════════════════
+   Tablet
+   ══════════════════════════════════════════════════════════ */
+
 @media (min-width: 768px) {
   .findFriends {
-    .titles {
-      width: 600px;
-      padding: 80px 0 20px;
-      h1 {
-        font-size: 32px;
-      }
-      p {
-        font-size: 18px;
-        padding: 10px 0 0;
-      }
-    }
-    .searchBarWrapper {
-      width: 600px;
-      padding: 25px 35px;
+    padding-top: 72px;
+  }
 
-      .search {
-        gap: 10px;
-        height: 56px;
-        padding: 0 14px;
-        .icon {
-          width: 22px;
-          height: 22px;
-        }
-        input {
-          font-size: 18px;
-        }
-      }
+  .titles {
+    width: 600px;
+    padding-bottom: 28px;
+
+    h1 {
+      font-size: 38px;
     }
-    .results {
-      width: 600px;
-      padding-top: 40px;
-      .resultsTitle {
-        font-size: 20px;
-        padding: 30px 0 10px;
+    p {
+      font-size: 16px;
+    }
+  }
+
+  .searchBarWrapper {
+    width: 600px;
+    padding: 20px 28px;
+    border-radius: 24px;
+
+    .search {
+      height: 54px;
+      padding: 0 18px;
+      border-radius: 14px;
+
+      .icon {
+        width: 20px;
+        height: 20px;
       }
-      .cards {
-        gap: 20px;
+      input {
+        font-size: 17px;
       }
     }
   }
+
+  .results {
+    width: 600px;
+    margin-top: 36px;
+  }
+
+  .cards {
+    gap: 16px;
+  }
 }
+
+/* ══════════════════════════════════════════════════════════
+   Desktop
+   ══════════════════════════════════════════════════════════ */
+
 @media (min-width: 1200px) {
+  .titles {
+    width: 720px;
+  }
+  .searchBarWrapper {
+    width: 720px;
+  }
+  .results {
+    width: 720px;
+  }
 }

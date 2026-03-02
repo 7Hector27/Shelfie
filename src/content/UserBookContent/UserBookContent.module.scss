@@ -1,5 +1,30 @@
+// =============================================
+// 🌌 DARK GLASSMORPHISM LIBRARY
+// =============================================
+
 .libraryPage {
-  background: linear-gradient(180deg, #f8fafc 0%, #eef2f7 100%);
+  background:
+    radial-gradient(
+      ellipse at 10% 0%,
+      rgba(139, 92, 246, 0.25) 0%,
+      transparent 45%
+    ),
+    radial-gradient(
+      ellipse at 90% 10%,
+      rgba(56, 189, 248, 0.18) 0%,
+      transparent 40%
+    ),
+    radial-gradient(
+      ellipse at 70% 60%,
+      rgba(236, 72, 153, 0.15) 0%,
+      transparent 45%
+    ),
+    radial-gradient(
+      ellipse at 20% 80%,
+      rgba(52, 211, 153, 0.12) 0%,
+      transparent 40%
+    ),
+    linear-gradient(160deg, #0d0a1a 0%, #110d24 40%, #0a1020 100%);
   min-height: 100vh;
   padding: 24px 16px 100px;
 
@@ -9,37 +34,46 @@
     gap: 32px;
   }
 
-  /* ===================== */
-  /* HEADER */
-  /* ===================== */
+  // =====================
+  // HEADER
+  // =====================
 
   .libraryHeader {
     margin-bottom: 18px;
+
     h1 {
       font-size: 28px;
-      font-weight: 700;
+      font-weight: 800;
       margin-bottom: 4px;
-      color: #111827;
+      background: linear-gradient(
+        135deg,
+        #c4b5fd 0%,
+        #f472b6 60%,
+        #38bdf8 100%
+      );
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: -0.03em;
     }
+
     p {
       font-size: 16px;
-      color: #6b7280;
+      color: #6b6a8a;
     }
   }
 
-  /* ===================== */
-  /* SHELF TABS */
-  /* ===================== */
+  // =====================
+  // SHELF TABS
+  // =====================
 
   .shelfTabs {
     display: flex;
     gap: 10px;
     overflow-x: auto;
     overflow-y: hidden;
-
     padding-bottom: 6px;
     margin-bottom: 22px;
-
     scrollbar-width: none;
     -ms-overflow-style: none;
 
@@ -47,92 +81,142 @@
       display: none;
     }
 
-    -webkit-overflow-scrolling: touch; // smooth momentum scroll on iOS
+    -webkit-overflow-scrolling: touch;
     scroll-behavior: smooth;
+
     .tab {
       flex-shrink: 0;
-      padding: 8px 16px;
+      padding: 8px 18px;
       border-radius: 999px;
-      border: none;
-      background: #e9edf3;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(12px) saturate(150%);
+      -webkit-backdrop-filter: blur(12px) saturate(150%);
       font-size: 14px;
-      font-weight: 500;
-      color: #4b5563;
+      font-weight: 600;
+      color: #a09ac0;
       cursor: pointer;
       display: flex;
       align-items: center;
       gap: 6px;
       transition: all 0.2s ease;
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.09);
+        color: #e2d9f3;
+        border-color: rgba(255, 255, 255, 0.14);
+      }
+
       &.active {
-        background: #111827;
+        background: linear-gradient(
+          135deg,
+          rgba(124, 58, 237, 0.6),
+          rgba(219, 39, 119, 0.5)
+        );
+        border-color: rgba(196, 181, 253, 0.3);
         color: #ffffff;
+        box-shadow:
+          0 4px 20px rgba(124, 58, 237, 0.4),
+          inset 0 1px 0 rgba(255, 255, 255, 0.15);
       }
     }
+
     .icon {
       font-size: 14px;
     }
   }
 
-  /* ===================== */
-  /* BOOK LIST */
-  /* ===================== */
+  // =====================
+  // BOOK LIST
+  // =====================
 
   .bookList {
     display: flex;
     flex-direction: column;
     gap: 22px;
+
     .bookCard {
-      background: #ffffff;
+      background: rgba(255, 255, 255, 0.04);
+      backdrop-filter: blur(24px) saturate(180%);
+      -webkit-backdrop-filter: blur(24px) saturate(180%);
+      border: 1px solid rgba(255, 255, 255, 0.08);
       border-radius: 34px;
       padding: 26px 22px;
       box-shadow:
-        0 18px 55px rgba(15, 23, 42, 0.08),
-        0 2px 10px rgba(15, 23, 42, 0.03);
+        0 8px 40px rgba(0, 0, 0, 0.4),
+        0 2px 10px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.07);
       display: flex;
       flex-direction: column;
       gap: 24px;
+      transition:
+        box-shadow 0.25s ease,
+        transform 0.25s ease,
+        border-color 0.25s ease;
 
-      /* ================= TOP ROW ================= */
+      &:hover {
+        border-color: rgba(196, 181, 253, 0.2);
+        box-shadow:
+          0 16px 56px rgba(0, 0, 0, 0.5),
+          0 0 0 1px rgba(196, 181, 253, 0.1),
+          inset 0 1px 0 rgba(255, 255, 255, 0.09);
+        transform: translateY(-2px);
+      }
 
+      // TOP ROW
       .topRow {
         display: flex;
         gap: 20px;
         align-items: flex-start;
       }
+
       .bookCover img {
         width: 110px;
         height: 160px;
         border-radius: 22px;
         object-fit: cover;
-        box-shadow: 0 12px 28px rgba(15, 23, 42, 0.15);
+        box-shadow:
+          0 12px 32px rgba(0, 0, 0, 0.5),
+          0 0 0 1px rgba(255, 255, 255, 0.06);
       }
+
       .cardBody {
         flex: 1;
         display: flex;
         flex-direction: column;
         gap: 10px;
+
         .titleRow {
           font-size: 28px;
           font-weight: 800;
           letter-spacing: -0.02em;
-          color: #1c1c1e;
+          color: #ede9fe;
           margin: 0;
           line-height: 1.05;
           cursor: pointer;
+          transition: color 0.15s ease;
+
           &:hover {
-            text-decoration: underline;
+            background: linear-gradient(90deg, #c4b5fd, #f472b6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
           }
         }
+
         .largeAuthor {
           font-size: 20px;
-          color: #6e6e73;
+          color: #6b6a8a;
           font-weight: 500;
           margin: 0;
+          transition: color 0.15s ease;
+
           &:hover {
-            text-decoration: underline;
+            color: #a78bfa;
             cursor: pointer;
           }
         }
+
         .statusPill {
           align-self: flex-start;
           font-size: 12px;
@@ -142,99 +226,129 @@
           padding: 10px 18px;
           border-radius: 999px;
           margin-top: 6px;
+          border: 1px solid transparent;
         }
 
         .want_to_read {
-          background: #fff1db; // soft peach
-          color: #c96b1a; // warm amber
+          background: rgba(251, 191, 36, 0.12);
+          color: #fbbf24;
+          border-color: rgba(251, 191, 36, 0.25);
         }
 
         .reading {
-          background: #d8f4ee;
-          color: #0e8a78;
+          background: rgba(52, 211, 153, 0.12);
+          color: #34d399;
+          border-color: rgba(52, 211, 153, 0.25);
         }
+
         .completed {
-          background: #ece6ff;
-          color: #5a3dd6;
+          background: rgba(167, 139, 250, 0.12);
+          color: #a78bfa;
+          border-color: rgba(167, 139, 250, 0.25);
         }
+
         .dropped {
-          background: #f3d9dc;
-          color: #9c3e4e;
+          background: rgba(251, 113, 133, 0.12);
+          color: #fb7185;
+          border-color: rgba(251, 113, 133, 0.25);
         }
       }
 
-      /* ================= RATING ================= */
-
+      // RATING
       .ratingBlock {
         display: flex;
         flex-direction: column;
         gap: 10px;
       }
+
       .dateMeta {
-        font-size: 16px;
-        color: #8e8e93; // iOS secondary gray
+        font-size: 15px;
+        color: #4e4a6a;
         margin-top: 4px;
       }
-      /* ================= DIVIDER ================= */
 
+      // DIVIDER
       .cardDivider {
         height: 1px;
-        background: #e5e7eb;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(167, 139, 250, 0.2) 20%,
+          rgba(244, 114, 182, 0.18) 60%,
+          transparent
+        );
       }
 
-      /* ================= REVIEW SECTION ================= */
-
+      // REVIEW SECTION
       .reviewSection {
         display: flex;
         flex-direction: column;
         gap: 10px;
+
         h4 {
-          font-size: 22px;
-          font-weight: 800;
-          color: #1c1c1e;
+          font-size: 16px;
+          font-weight: 700;
+          color: #3d3560;
           margin: 0;
         }
+
         p {
-          color: #6e6e73;
+          color: #7e7a9a;
+          font-size: 15px;
+          line-height: 1.6;
         }
       }
 
-      /* ================= FOOTER ================= */
-
+      // FOOTER
       .cardFooter {
         margin-top: 8px;
-        background: #f3f4f6;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.06);
         border-radius: 24px;
         padding: 12px;
         display: flex;
         justify-content: flex-end;
+
         .quickEditBtn {
-          background: #63666a;
-          color: #ffffff;
-          border: none;
+          background: linear-gradient(
+            135deg,
+            rgba(124, 58, 237, 0.7),
+            rgba(168, 85, 247, 0.6)
+          );
+          color: #ede9fe;
+          border: 1px solid rgba(196, 181, 253, 0.25);
           padding: 8px 28px;
           border-radius: 24px;
           font-size: 14px;
           font-weight: 700;
           cursor: pointer;
           box-shadow:
-            inset 0 1px 0 rgba(255, 255, 255, 0.25),
-            0 10px 22px rgba(15, 23, 42, 0.18);
+            0 4px 16px rgba(124, 58, 237, 0.3),
+            inset 0 1px 0 rgba(255, 255, 255, 0.15);
+          transition: all 0.2s ease;
+
+          &:hover {
+            background: linear-gradient(
+              135deg,
+              rgba(109, 40, 217, 0.85),
+              rgba(147, 51, 234, 0.75)
+            );
+            box-shadow: 0 6px 24px rgba(124, 58, 237, 0.45);
+            transform: translateY(-1px);
+          }
 
           &:active {
             transform: translateY(1px);
-            box-shadow:
-              inset 0 1px 0 rgba(255, 255, 255, 0.18),
-              0 6px 14px rgba(15, 23, 42, 0.16);
+            box-shadow: 0 2px 8px rgba(124, 58, 237, 0.25);
           }
         }
       }
     }
   }
 
-  /* ===================== */
-  /* PAGINATION */
-  /* ===================== */
+  // =====================
+  // PAGINATION
+  // =====================
 
   .pagination {
     margin-top: 40px;
@@ -242,38 +356,59 @@
     justify-content: center;
     align-items: center;
     gap: 14px;
+
     button {
       font-size: 13px;
-      padding: 6px 14px;
-      border-radius: 12px;
-      border: none;
-      background: #111827;
-      color: white;
+      font-weight: 700;
+      padding: 8px 20px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      color: #a78bfa;
       cursor: pointer;
+      transition: all 0.2s ease;
+
+      &:hover {
+        background: linear-gradient(
+          135deg,
+          rgba(124, 58, 237, 0.6),
+          rgba(219, 39, 119, 0.5)
+        );
+        color: white;
+        border-color: rgba(196, 181, 253, 0.3);
+        box-shadow: 0 4px 20px rgba(124, 58, 237, 0.35);
+      }
     }
+
     span {
       font-size: 13px;
-      color: #6b7280;
+      color: #4e4a6a;
     }
   }
 
-  /* ===================== */
-  /* SIDEBAR (Mobile Hidden) */
-  /* ===================== */
+  // =====================
+  // SIDEBAR (Mobile Hidden)
+  // =====================
 
   .librarySidebar {
     display: none;
   }
 }
 
+// =====================
+// TABLET
+// =====================
+
 @media (min-width: 768px) {
   .libraryPage {
     display: flex;
     flex-direction: column;
     align-items: center;
+
     .shelfTabs {
       cursor: grab;
-
       &:active {
         cursor: grabbing;
       }
@@ -287,6 +422,7 @@
         row-gap: 12px;
         align-items: start;
         max-width: 850px;
+
         .topRow {
           grid-column: 1 / -1;
           display: contents;
@@ -299,11 +435,9 @@
 
         .cardBody {
           grid-column: 2;
-
           display: grid;
           grid-template-columns: max-content max-content;
           justify-content: start;
-
           grid-template-rows: auto auto;
           column-gap: 12px;
           row-gap: 6px;
@@ -314,14 +448,12 @@
           grid-column: 1;
           grid-row: 1;
         }
-
         .statusPill {
           grid-column: 2;
           grid-row: 1;
           justify-self: start;
           margin-top: 0;
         }
-
         .largeAuthor {
           grid-column: 1 / -1;
           grid-row: 2;
@@ -339,7 +471,6 @@
           grid-column: 2;
           margin-top: 0;
         }
-
         .reviewSection {
           grid-column: 2;
         }
@@ -350,6 +481,9 @@
         .cardFooter {
           grid-column: 2;
           background: none;
+          backdrop-filter: none;
+          -webkit-backdrop-filter: none;
+          border: none;
           padding: 0;
           margin-top: 0;
           justify-self: end;

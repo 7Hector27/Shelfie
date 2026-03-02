@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
-
 import styles from "./WelcomeSection.module.scss";
+
 interface Props {
   firstName?: string;
   userId?: string;
@@ -10,33 +10,39 @@ const WelcomeSection = ({ firstName, userId }: Props) => {
   const router = useRouter();
 
   return (
-    <div className={styles.container}>
-      <h2 className={styles.title}>
-        Welcome back{firstName ? `, ${firstName}` : ""} 👋
-      </h2>
+    <section className={styles.container}>
+      <div className={styles.books} />
+      <div className={styles.overlay} />
 
-      <div className={styles.buttonRow}>
-        <button className={styles.button} onClick={() => router.push("/book")}>
-          Add a Book
-        </button>
+      <div className={styles.inner}>
+        <div className={styles.copy}>
+          <h2 className={styles.title}>
+            Welcome back{firstName ? `, ${firstName}` : ""}
+          </h2>
+          <p className={styles.subtitle}>
+            Ready to continue where you left off?
+          </p>
+        </div>
 
-        <button
-          className={styles.button}
-          onClick={() => router.push("/friends/find")}
-        >
-          Find Friends
-        </button>
-
-        {userId && (
+        <div className={styles.buttonGroup}>
           <button
-            className={styles.button}
-            onClick={() => router.push(`/user/books/${userId}`)}
+            className={styles.actionBtn}
+            onClick={() => router.push("/book")}
           >
-            My Books
+            Add a Book <span>›</span>
           </button>
-        )}
+
+          {userId && (
+            <button
+              className={styles.actionBtn}
+              onClick={() => router.push(`/user/books/${userId}`)}
+            >
+              My Books <span>›</span>
+            </button>
+          )}
+        </div>
       </div>
-    </div>
+    </section>
   );
 };
 

@@ -1,99 +1,188 @@
+/* ─────────────────────────────────────────────────────────
+   BookStatusDropdown — Glassmorphism
+   Frosted pill button, glassy dropdown, status tints
+   ───────────────────────────────────────────────────────── */
+
 .wrapper {
   position: relative;
   display: inline-block;
 }
 
+/* ── Status pill ───────────────────────────────────────── */
 .status {
   display: inline-flex;
   align-items: center;
   border-radius: 999px;
   overflow: hidden;
-  border: 1px solid #2a2a2a;
-  background: #1c1c1c;
+
+  /* Default frosted glass state */
+  background: rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(16px) saturate(160%);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  box-shadow:
+    0 4px 16px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+
+  transition:
+    box-shadow 0.2s ease,
+    background 0.2s ease;
 }
 
 .actionBtn {
-  padding: 0.65rem 1rem;
+  padding: 0.6rem 1rem;
   background: transparent;
   border: none;
   color: #fff;
   cursor: pointer;
+  font-size: 13px;
   font-weight: 600;
+  letter-spacing: 0.2px;
+  transition: color 0.15s;
+
+  &:hover {
+    color: #e0d7ff;
+  }
+  &:disabled {
+    opacity: 0.5;
+    cursor: default;
+  }
 }
 
 .dropdownBtn {
-  padding: 0.65rem 0.85rem;
+  padding: 0.6rem 0.85rem;
   background: transparent;
   border: none;
-  color: #aaa;
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.45);
   cursor: pointer;
-  border-left: 1px solid #2a2a2a;
+  font-size: 10px;
+  transition: color 0.15s;
 
   &:hover {
-    color: #fff;
+    color: rgba(255, 255, 255, 0.9);
+  }
+  &:disabled {
+    opacity: 0.4;
+    cursor: default;
   }
 }
 
 .checkmark {
-  margin-right: 0.5rem;
-  opacity: 0.9;
+  margin-right: 0.45rem;
+  opacity: 0.85;
+  color: #a78bfa;
 }
 
+/* ── Dropdown panel ────────────────────────────────────── */
 .dropdown {
   position: absolute;
   top: calc(100% + 8px);
   left: 0;
-  width: 220px;
-  background: #1a1a1a;
-  border: 1px solid #2a2a2a;
-  border-radius: 14px;
-  padding: 0.35rem;
-  z-index: 50;
+  width: 230px;
+  z-index: 500;
+
+  background: rgba(16, 8, 38, 0.88);
+  backdrop-filter: blur(28px) saturate(200%);
+  -webkit-backdrop-filter: blur(28px) saturate(200%);
+
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 18px;
+  padding: 6px;
+
+  box-shadow:
+    0 24px 56px rgba(0, 0, 0, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+
+  /* Shimmer top */
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    border-radius: 18px 18px 0 0;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(167, 139, 250, 0.45) 40%,
+      rgba(236, 72, 153, 0.3) 70%,
+      transparent
+    );
+  }
 }
 
 .dropdown button {
   width: 100%;
   text-align: left;
-  padding: 0.65rem 0.75rem;
-  border-radius: 10px;
+  padding: 0.6rem 0.85rem;
+  border-radius: 12px;
   background: transparent;
   border: none;
-  color: #eaeaea;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 13px;
   cursor: pointer;
+  transition:
+    background 0.15s,
+    color 0.15s;
 
   &:hover {
-    background: #232323;
+    background: rgba(124, 58, 237, 0.2);
+    color: #fff;
   }
 }
 
 .active {
-  background: #232323;
+  background: rgba(124, 58, 237, 0.18) !important;
+  color: #c4b5fd !important;
+  font-weight: 600;
 }
 
 .danger {
-  color: #ffb4b4;
+  color: rgba(255, 150, 150, 0.85) !important;
+  margin-top: 2px;
+
+  /* Faint separator above */
+  border-top: 1px solid rgba(255, 255, 255, 0.06) !important;
+  border-radius: 0 0 12px 12px !important;
 
   &:hover {
-    background: rgba(255, 60, 60, 0.12);
+    background: rgba(255, 60, 60, 0.15) !important;
+    color: #ffb4b4 !important;
   }
 }
 
-/* Optional status tint hooks */
+/* ── Status tints on the pill ──────────────────────────── */
 .want_to_read {
-  background: rgba(255, 200, 0, 0.12);
-  border: 1px solid rgba(255, 200, 0, 0.4);
+  background: rgba(250, 200, 0, 0.1);
+  border-color: rgba(250, 200, 0, 0.3);
+  box-shadow:
+    0 4px 16px rgba(0, 0, 0, 0.3),
+    0 0 18px rgba(250, 200, 0, 0.1);
 }
 
 .reading {
-  background: rgba(80, 150, 255, 0.12);
-  border: 1px solid rgba(80, 150, 255, 0.4);
+  background: rgba(80, 150, 255, 0.1);
+  border-color: rgba(80, 150, 255, 0.3);
+  box-shadow:
+    0 4px 16px rgba(0, 0, 0, 0.3),
+    0 0 18px rgba(80, 150, 255, 0.12);
 }
 
 .completed {
-  background: rgba(0, 200, 120, 0.12);
-  border: 1px solid rgba(0, 200, 120, 0.4);
+  background: rgba(0, 200, 120, 0.1);
+  border-color: rgba(0, 200, 120, 0.3);
+  box-shadow:
+    0 4px 16px rgba(0, 0, 0, 0.3),
+    0 0 18px rgba(0, 200, 120, 0.12);
 }
+
 .dropped {
-  background: rgba(200, 70, 90, 0.14);
-  border: 1px solid rgba(200, 70, 90, 0.45);
+  background: rgba(200, 70, 90, 0.1);
+  border-color: rgba(200, 70, 90, 0.35);
+  box-shadow:
+    0 4px 16px rgba(0, 0, 0, 0.3),
+    0 0 18px rgba(200, 70, 90, 0.1);
 }

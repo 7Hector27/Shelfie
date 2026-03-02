@@ -30,8 +30,6 @@ type UpsertPayload = {
   book_id: string;
   external_source: ExternalSource;
   status: Status;
-
-  // Optional “book snapshot” fields for first-time insert into books table
   title?: string;
   author?: string;
   description?: string | null;
@@ -42,15 +40,11 @@ type UpsertPayload = {
 interface Props {
   bookId: string;
   externalSource: ExternalSource;
-
-  // Pass these if you want the backend to create the book record when first adding
   book?: Omit<UpsertPayload, "book_id" | "external_source" | "status">;
-
-  // Optional: show remove option when book exists
   allowRemove?: boolean;
-
-  // Optional: let parent know
   onStatusChange?: (next: Status) => void;
+  // Called whenever the dropdown opens or closes — used by parent to manage z-index
+  onOpenChange?: (isOpen: boolean) => void;
 }
 
 export default function BookStatusDropdown({
@@ -59,11 +53,17 @@ export default function BookStatusDropdown({
   book,
   allowRemove = true,
   onStatusChange,
+  onOpenChange,
 }: Props) {
   const queryClient = useQueryClient();
 
   const [isOpen, setIsOpen] = useState(false);
   const [showRemoveModal, setShowRemoveModal] = useState(false);
+
+  const toggleDropdown = (next: boolean) => {
+    setIsOpen(next);
+    onOpenChange?.(next);
+  };
 
   const statusQueryKey = useMemo(() => ["userBookStatus", bookId], [bookId]);
 
@@ -105,12 +105,12 @@ export default function BookStatusDropdown({
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: statusQueryKey });
       setShowRemoveModal(false);
-      setIsOpen(false);
+      toggleDropdown(false);
     },
   });
 
   const saveStatus = (nextStatus: Status) => {
-    setIsOpen(false);
+    toggleDropdown(false);
     upsertUserBook.mutate(nextStatus);
   };
 
@@ -143,7 +143,7 @@ export default function BookStatusDropdown({
 
           <button
             className={styles.dropdownBtn}
-            onClick={() => setIsOpen((p) => !p)}
+            onClick={() => toggleDropdown(!isOpen)}
             disabled={upsertUserBook.isPending}
           >
             ▼

@@ -1,41 +1,47 @@
-import { useEffect, useState } from "react";
+import Image from "next/image";
 import { useRouter } from "next/router";
+import { useQuery } from "@tanstack/react-query";
+import { useAuth } from "@/context/AuthProvider";
+import { GetUserBooksResponse, UserBook } from "@/util/types";
+
+import { apiGet } from "@/lib/api";
 import styles from "./NowReadingSection.module.scss";
 
 interface Book {
-  id: string;
-  book_id: string;
+  id: string; // user_book id
+  book_id: string; // external book id
   cover_url: string;
 }
 
 const NowReadingSection = () => {
-  const [books, setBooks] = useState<Book[]>([]);
   const router = useRouter();
+  const { user } = useAuth();
 
-  useEffect(() => {
-    async function fetchReading() {
-      const res = await fetch("/api/user-books?status=reading");
-      if (!res.ok) return;
-      const data = await res.json();
-      setBooks(data);
-    }
+  const currentUserId = user?.user_id;
+  const { data, isLoading, isError } = useQuery<GetUserBooksResponse>({
+    queryKey: ["userBooks", "reading"],
+    queryFn: () => apiGet(`/user/${currentUserId}/books?shelf=reading`),
+  });
 
-    fetchReading();
-  }, []);
+  if (isLoading) return null;
+  if (isError) return null;
 
-  if (!books.length) return null;
-
+  const { data: booksList, pagination, counts, profile } = data || {};
+  console.log(data);
   return (
     <div className={styles.container}>
       <h3 className={styles.title}>Currently Reading</h3>
 
       <div className={styles.scrollRow}>
-        {books.map((b) => (
-          <img
+        {booksList?.map((b: UserBook) => (
+          <Image
             key={b.id}
-            src={b.cover_url}
+            src={b.cover_url || "/images/book-placeholder.webp"}
+            alt={b.title}
             className={styles.cover}
-            onClick={() => router.push(`/user/books/${b.id}`)}
+            onClick={() => router.push(`/book/${b.book_id}`)}
+            width={100}
+            height={200}
           />
         ))}
       </div>
