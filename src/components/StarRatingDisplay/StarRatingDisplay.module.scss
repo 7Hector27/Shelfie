@@ -16,7 +16,7 @@
 }
 
 .starBase {
-  color: #b2b4b6;
+  color: rgba(255, 255, 255, 0.12);
 }
 
 .starFill {
@@ -25,16 +25,16 @@
   left: 0;
   overflow: hidden;
   white-space: nowrap;
-  color: #f5b301;
+  color: #f5c76a;
 }
 
 .unratedText {
   font-size: 13px;
-  color: #9ca3af;
+  color: #3d3560;
 }
 
 .ratingText {
   font-size: 13px;
   font-weight: 600;
-  color: #6b7280;
+  color: #6b6a8a;
 }

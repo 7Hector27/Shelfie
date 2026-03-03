@@ -6,9 +6,10 @@ import { useRouter } from "next/router";
 import Layout from "@/components/Layout";
 import StarRatingDisplay from "@/components/StarRatingDisplay";
 import EditBookModal from "@/components/EditBookModal";
+import ConfirmationModal from "@/components/ConfirmationModal";
 
 import { GetUserBooksResponse } from "@/util/types";
-import { apiGet, apiPatch } from "@/lib/api";
+import { apiGet, apiPatch, apiDelete } from "@/lib/api";
 import { formatMonthYear, redirectTo, toPossessive } from "@/util/clientUtils";
 import { useAuth } from "@/context/AuthProvider";
 
@@ -17,9 +18,6 @@ import styles from "./UserBookContent.module.scss";
 const UserBookContent = () => {
   const { user: owner, loading } = useAuth();
 
-  /* ================================
-     Router + Query Params
-  ================================= */
   const router = useRouter();
   const { id: userId, shelf, page, favorite } = router.query;
   const isOwner = userId === owner?.user_id;
@@ -28,19 +26,14 @@ const UserBookContent = () => {
   const currentPage = (page as string) || "1";
   const isFavorite = favorite === "true";
 
-  /* ================================
-     Local State
-  ================================= */
   const queryClient = useQueryClient();
 
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [selectedBookId, setSelectedBookId] = useState<string | null>(null);
+  const [bookToDelete, setBookToDelete] = useState<string | null>(null);
 
   const tabsRef = useRef<HTMLDivElement>(null);
 
-  /* ================================
-     Data Fetching
-  ================================= */
   const { data, isLoading, isError } = useQuery<GetUserBooksResponse>({
     queryKey: ["userBooks", userId, currentShelf, currentPage, isFavorite],
     queryFn: () =>
@@ -53,11 +46,8 @@ const UserBookContent = () => {
   });
 
   const { data: booksList, pagination, counts, profile } = data || {};
-  console.log(profile);
-  const { first_name, last_name } = profile || {};
-  /* ================================
-     Derived Values
-  ================================= */
+  const { first_name } = profile || {};
+
   const selectedBook = useMemo(() => {
     if (!selectedBookId) return null;
     return booksList?.find((b) => b.book_id === selectedBookId) ?? null;
@@ -77,18 +67,8 @@ const UserBookContent = () => {
       icon: "🩷",
       count: counts?.wantToRead || 0,
     },
-    {
-      label: "Read",
-      value: "completed",
-      icon: "🟣",
-      count: counts?.read || 0,
-    },
-    {
-      label: "DNF",
-      value: "dropped",
-      icon: "🛑",
-      count: counts?.dropped || 0,
-    },
+    { label: "Read", value: "completed", icon: "🟣", count: counts?.read || 0 },
+    { label: "DNF", value: "dropped", icon: "🛑", count: counts?.dropped || 0 },
   ];
 
   const statusLabel: Record<string, string> = {
@@ -98,9 +78,6 @@ const UserBookContent = () => {
     dropped: "Dropped",
   };
 
-  /* ================================
-     Navigation Handlers
-  ================================= */
   const changeShelf = (newShelf: string) => {
     router.push({
       pathname: `/user/books/${userId}`,
@@ -125,9 +102,15 @@ const UserBookContent = () => {
     setSelectedBookId(null);
   };
 
-  /* ================================
-     Drag Scroll Logic (Shelf Tabs)
-  ================================= */
+  const handleDeleteBook = async () => {
+    if (!bookToDelete) return;
+    await apiDelete(`/userbooks/${bookToDelete}`);
+    queryClient.invalidateQueries({
+      queryKey: ["userBooks", userId, currentShelf, currentPage, isFavorite],
+    });
+    setBookToDelete(null);
+  };
+
   useEffect(() => {
     const el = tabsRef.current;
     if (!el) return;
@@ -141,16 +124,13 @@ const UserBookContent = () => {
       startX = e.pageX - el.offsetLeft;
       scrollLeft = el.scrollLeft;
     };
-
     const handleMouseUp = () => (isDown = false);
     const handleMouseLeave = () => (isDown = false);
-
     const handleMouseMove = (e: MouseEvent) => {
       if (!isDown) return;
       e.preventDefault();
       const x = e.pageX - el.offsetLeft;
-      const walk = (x - startX) * 1.5;
-      el.scrollLeft = scrollLeft - walk;
+      el.scrollLeft = scrollLeft - (x - startX) * 1.5;
     };
 
     el.addEventListener("mousedown", handleMouseDown);
@@ -188,7 +168,6 @@ const UserBookContent = () => {
             favorite: selectedBook.favorite,
           }}
           onSave={async (values) => {
-            // TODO: adjust endpoint/body keys to match your backend
             await apiPatch(`/userbooks/${selectedBook.id}`, {
               status: values.status,
               rating: values.rating,
@@ -197,7 +176,6 @@ const UserBookContent = () => {
               date_finished: values.date_finished,
               favorite: values.favorite,
             });
-
             await queryClient.invalidateQueries({
               queryKey: ["userBooks", userId, currentShelf, currentPage],
             });
@@ -207,13 +185,11 @@ const UserBookContent = () => {
 
       <div className={styles.libraryPage}>
         <div className={styles.libraryContainer}>
-          {/* ================= LEFT ================= */}
           <div className={styles.libraryMain}>
-            {/* Header */}
             <div className={styles.libraryHeader}>
               <h1>
                 {!isOwner
-                  ? ` ${first_name && toPossessive(first_name)} Library`
+                  ? `${first_name && toPossessive(first_name)} Library`
                   : "My Library"}
               </h1>
               <p>
@@ -223,7 +199,6 @@ const UserBookContent = () => {
               </p>
             </div>
 
-            {/* Shelf Tabs */}
             <div className={styles.shelfTabs} ref={tabsRef}>
               {SHELVES.map((s) => (
                 <button
@@ -241,7 +216,6 @@ const UserBookContent = () => {
                   </span>
                 </button>
               ))}
-
               <button
                 onClick={() =>
                   router.push({
@@ -249,9 +223,7 @@ const UserBookContent = () => {
                     query: { favorite: true, page: 1 },
                   })
                 }
-                className={`${styles.tab} ${
-                  router.query.favorite ? styles.active : ""
-                }`}
+                className={`${styles.tab} ${router.query.favorite ? styles.active : ""}`}
               >
                 <span className={styles.icon}>⭐</span>
                 <span>Favorites ({counts?.favorites || 0})</span>
@@ -261,7 +233,6 @@ const UserBookContent = () => {
             {isLoading && <p>Loading...</p>}
             {isError && <p>Something went wrong.</p>}
 
-            {/* ================= BOOK CARDS ================= */}
             <div className={styles.bookList}>
               {booksList?.map((book) => {
                 const {
@@ -281,7 +252,31 @@ const UserBookContent = () => {
 
                 return (
                   <div key={book_id} className={styles.bookCard}>
-                    {/* TOP ROW */}
+                    <ConfirmationModal
+                      isOpen={!!bookToDelete}
+                      onClose={() => setBookToDelete(null)}
+                      title="Remove from shelf?"
+                      copy="This will remove the book from all your shelves."
+                      confirmCopy="Remove"
+                      cancelCopy="Cancel"
+                      onConfirm={handleDeleteBook}
+                    />
+                    {isOwner && (
+                      <button
+                        className={styles.deleteBtn}
+                        onClick={() => setBookToDelete(book_id)}
+                        aria-label="Remove book"
+                        title="Remove from shelf"
+                      >
+                        <Image
+                          src="/images/trash-white.webp"
+                          alt="trash Logo"
+                          width={16}
+                          height={20}
+                        />
+                      </button>
+                    )}
+
                     <div className={styles.topRow}>
                       <div className={styles.bookCover}>
                         <Image
@@ -295,17 +290,13 @@ const UserBookContent = () => {
                       <div className={styles.cardBody}>
                         <h2
                           className={styles.titleRow}
-                          onClick={() => {
-                            redirectTo(`/book/${book_id}`);
-                          }}
+                          onClick={() => redirectTo(`/book/${book_id}`)}
                         >
                           {title}
                         </h2>
                         <p
                           className={styles.largeAuthor}
-                          onClick={() => {
-                            redirectTo(`${author_id}`);
-                          }}
+                          onClick={() => redirectTo(`${author_id}`)}
                         >
                           {author}
                         </p>
@@ -314,11 +305,13 @@ const UserBookContent = () => {
                         >
                           {statusLabel[status]}
                         </span>
-                      </div>{" "}
-                    </div>{" "}
+                      </div>
+                    </div>
+
                     <div className={styles.ratingBlock}>
                       <StarRatingDisplay rating={rating} />
                     </div>
+
                     {(date_started || date_finished || created_at) && (
                       <p className={styles.dateMeta}>
                         {date_started &&
@@ -330,19 +323,13 @@ const UserBookContent = () => {
                         {created_at && `Saved ${formatMonthYear(created_at)}`}
                       </p>
                     )}
-                    {/* RATING */}
+
                     <div className={styles.cardDivider} />
-                    {/* REVIEW SECTION */}
+
                     <div className={styles.reviewSection}>
-                      {review ? (
-                        <p> {review}</p>
-                      ) : (
-                        <>
-                          <h4>No review yet</h4>
-                        </>
-                      )}
+                      {review ? <p>{review}</p> : <h4>No review yet</h4>}
                     </div>
-                    {/* FOOTER AREA */}
+
                     {isOwner && (
                       <div className={styles.cardFooter}>
                         <button
@@ -358,7 +345,6 @@ const UserBookContent = () => {
               })}
             </div>
 
-            {/* ================= PAGINATION ================= */}
             {pagination && (
               <div className={styles.pagination}>
                 {pagination.hasPrevPage && (
@@ -366,11 +352,9 @@ const UserBookContent = () => {
                     Prev
                   </button>
                 )}
-
                 <span>
                   Page {pagination.page} of {pagination.totalPages}
                 </span>
-
                 {pagination.hasNextPage && (
                   <button onClick={() => changePage(pagination.page + 1)}>
                     Next
@@ -380,7 +364,6 @@ const UserBookContent = () => {
             )}
           </div>
 
-          {/* ================= RIGHT SIDEBAR ================= */}
           <aside className={styles.librarySidebar}>
             <div className={styles.statsCard}>
               <p>Books this year: 23</p>

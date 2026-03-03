@@ -2,14 +2,11 @@
   min-height: 100vh;
   position: relative;
   overflow-x: hidden;
-
-  /* Deep dark base — essential for glass to read correctly */
+  display: flex;
+  flex-direction: column;
   background: #0d0820;
 }
 
-/* ── Ambient orb layer ──────────────────────────────────────
-   Three large soft blobs that drift slowly, casting colored
-   light the navbar and page content can "frost" over.       */
 .layout::before {
   content: "";
   position: fixed;
@@ -57,8 +54,6 @@
   }
 }
 
-/* ── Grain texture overlay ──────────────────────────────────
-   Light noise on top of everything — adds tactile depth     */
 .layout::after {
   content: "";
   position: fixed;
@@ -69,13 +64,120 @@
   background-image: url("/images/grain.png");
   background-repeat: repeat;
   opacity: 0.04;
-
-  /* vignette baked in as a second layer */
   box-shadow: inset 0 0 160px rgba(0, 0, 0, 0.35);
 }
 
-/* ── Page content sits above the orbs & grain ─────────────── */
 .layout > *:not(:first-child) {
   position: relative;
   z-index: 2;
+}
+
+.main {
+  flex: 1;
+  position: relative;
+  z-index: 2;
+}
+
+.footer {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  padding: 32px 20px;
+
+  background: rgba(255, 255, 255, 0.02);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(167, 139, 250, 0.35) 30%,
+      rgba(236, 72, 153, 0.25) 60%,
+      transparent
+    );
+  }
+}
+
+.footerInner {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  text-align: center;
+}
+
+.footerBrand {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  .brandName {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+    font-size: 18px;
+    font-weight: 800;
+    font-family: var(--font-playfair);
+    background: linear-gradient(135deg, #c4b5fd 0%, #f472b6 60%, #38bdf8 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  p {
+    font-size: 13px;
+    color: #4e4a6a;
+    margin: 0;
+  }
+}
+
+.footerLinks {
+  display: flex;
+  gap: 24px;
+
+  a {
+    font-size: 13px;
+    font-weight: 500;
+    color: #6b6a8a;
+    text-decoration: none;
+    transition: color 0.15s ease;
+
+    &:hover {
+      color: #a78bfa;
+    }
+  }
+}
+
+.footerCopy {
+  font-size: 11px;
+  color: #3d3560;
+  margin: 0;
+}
+
+@media (min-width: 768px) {
+  .footerInner {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    text-align: left;
+  }
+  .footerBrand {
+    .brandName {
+      justify-content: flex-start;
+    }
+  }
+  .footerCopy {
+    text-align: right;
+  }
 }

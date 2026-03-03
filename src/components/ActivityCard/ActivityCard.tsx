@@ -39,7 +39,7 @@ const ActivityCard = ({ item }: Props) => {
       <div className={styles.header}>
         <div className={styles.headerLeft}>
           <Image
-            src={item.profile_image}
+            src={item.profile_image ?? "/images/user_profile.webp"}
             alt={`${item.first_name} ${item.last_name}`}
             width={40}
             height={40}

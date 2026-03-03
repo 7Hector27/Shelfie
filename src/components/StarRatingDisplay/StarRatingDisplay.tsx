@@ -17,10 +17,8 @@ const StarRatingDisplay = ({ rating, onClick, max = 5 }: Props) => {
   return (
     <button type="button" onClick={onClick} className={styles.starsButton}>
       <div className={styles.starContainer}>
-        {/* Grey base stars */}
         <div className={styles.starBase}>{"★".repeat(max)}</div>
 
-        {/* Yellow fill stars */}
         <div className={styles.starFill} style={{ width: `${fillPercent}%` }}>
           {"★".repeat(max)}
         </div>
