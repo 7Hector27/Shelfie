@@ -51,8 +51,12 @@ const ProfileMenu = () => {
       </div>
       {menuOpen && (
         <div className={styles.menuOptions}>
+          <div className={styles.menuHeader}>
+            <p className={styles.userName}>{user?.first_name}</p>
+            <span className={styles.subLabel}>Signed in</span>
+          </div>
+
           <ul>
-            {user && <li>{user?.first_name}</li>}{" "}
             <li onClick={() => redirectTo(`/user/profile/${user?.user_id}`)}>
               Profile
             </li>
@@ -61,7 +65,9 @@ const ProfileMenu = () => {
             </li>
             <li onClick={() => redirectTo("/friends")}>Friends</li>
             <li onClick={() => redirectTo("/messages")}>Messages</li>
-            <li onClick={logout}>Logout</li>
+            <li className={styles.logout} onClick={logout}>
+              Logout
+            </li>
           </ul>
         </div>
       )}
