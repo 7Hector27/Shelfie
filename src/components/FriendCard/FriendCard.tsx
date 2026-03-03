@@ -12,7 +12,9 @@ type FriendCardProps = {
   buttonCopy?: string;
   profilePictureUrl?: string;
   buttonHandler?: () => void;
+  onDelete?: () => void; // ✅ new
 };
+
 const FriendCard = ({
   name,
   id,
@@ -22,6 +24,7 @@ const FriendCard = ({
   buttonCopy,
   profilePictureUrl,
   buttonHandler,
+  onDelete, // ✅ new
 }: FriendCardProps) => {
   const [requestStatus, setRequestStatus] = useState<
     "idle" | "pending" | "sent"
@@ -29,7 +32,6 @@ const FriendCard = ({
 
   const handleRequest = async () => {
     if (!buttonHandler) return;
-
     try {
       setRequestStatus("pending");
       await buttonHandler();
@@ -44,11 +46,7 @@ const FriendCard = ({
       <div className={styles.userInfo}>
         <div className={styles.profileImage}>
           <Image
-            src={
-              profilePictureUrl
-                ? profilePictureUrl
-                : "/images/user_profile.webp"
-            }
+            src={profilePictureUrl ?? "/images/user_profile.webp"}
             alt="User Profile"
             width={30}
             height={30}
@@ -56,9 +54,9 @@ const FriendCard = ({
         </div>
         <div className={styles.nameAndCurrent}>
           <h2 onClick={() => redirectTo(`/user/profile/${id}`)}>{name}</h2>
-          {currentlyReading && currentlyReading?.length > 0 && (
+          {currentlyReading && currentlyReading.length > 0 && (
             <p>Reading: {currentlyReading.join(", ")}</p>
-          )}{" "}
+          )}
         </div>
       </div>
 
@@ -66,18 +64,22 @@ const FriendCard = ({
         <div className={styles.booksAndFriends}>
           <p>{books} books</p>
           <p>{friends} friends</p>
+          {onDelete && (
+            <button className={styles.deleteBtn} onClick={onDelete}>
+              Remove
+            </button>
+          )}
         </div>
       )}
+
       {buttonCopy && (
         <div className={styles.button}>
           {requestStatus === "idle" && (
             <button onClick={handleRequest}>{buttonCopy}</button>
           )}
-
           {requestStatus === "pending" && (
             <span className={styles.pending}>Sending…</span>
           )}
-
           {requestStatus === "sent" && (
             <span className={styles.sent}>Request sent</span>
           )}

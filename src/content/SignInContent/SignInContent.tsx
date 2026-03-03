@@ -41,10 +41,9 @@ const SignInContent = () => {
         password: data.password,
       });
 
-      // refresh "me" after cookie is set
       await queryClient.invalidateQueries({ queryKey: ["me"] });
 
-      router.push("/"); // or /friends etc
+      router.push("/");
     } catch (err) {
       if (err instanceof Error) {
         setServerError(err.message);

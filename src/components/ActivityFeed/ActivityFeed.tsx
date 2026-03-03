@@ -34,6 +34,8 @@ const ActivityFeed = () => {
     return <div className={styles.container}>Failed to load activity.</div>;
   }
 
+  if (!feed.length) return null;
+
   return (
     <div className={styles.container}>
       <h3 className={styles.title}>Updates</h3>

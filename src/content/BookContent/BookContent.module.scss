@@ -13,6 +13,13 @@
     justify-content: center;
     align-items: center;
 
+    img {
+      border-radius: 18px;
+      box-shadow:
+        0 20px 50px rgba(0, 0, 0, 0.55),
+        0 0 0 1px rgba(255, 255, 255, 0.06);
+    }
+
     .bookDetails {
       display: flex;
       flex-direction: column;
@@ -24,11 +31,21 @@
         text-align: center;
         max-width: 300px;
         font-size: 16px;
+        color: #ede9fe;
+        font-weight: 800;
+        letter-spacing: -0.02em;
       }
 
       p {
         max-width: 300px;
         font-size: 16px;
+        color: #6b6a8a;
+        cursor: pointer;
+        transition: color 0.15s ease;
+
+        &:hover {
+          color: #a78bfa;
+        }
       }
 
       .ratingTop {
@@ -54,24 +71,18 @@
       }
 
       .empty {
-        color: rgba(240, 240, 240, 0.35);
+        color: rgba(255, 255, 255, 0.15);
       }
 
       .ratingNumber {
         font-size: 16px;
         font-weight: 600;
-        color: rgba(240, 240, 240, 0.95);
+        color: rgba(240, 240, 240, 0.85);
       }
-
-      .ratingMeta {
-        margin-top: 4px;
-        font-size: 12px;
-        color: rgba(240, 240, 240, 0.6);
-      }
-
       .statusWrapper {
         position: relative;
         width: 100%;
+
         .status {
           display: flex;
           width: 250px;
@@ -79,19 +90,23 @@
           border-radius: 999px;
           overflow: hidden;
           margin-bottom: 20px;
-          background: rgba(255, 255, 255, 0.14);
-          backdrop-filter: blur(10px);
+          background: rgba(255, 255, 255, 0.06);
+          backdrop-filter: blur(12px) saturate(150%);
+          -webkit-backdrop-filter: blur(12px) saturate(150%);
+          border: 1px solid rgba(255, 255, 255, 0.1);
           box-shadow:
-            inset 0 0 0 1px rgba(255, 255, 255, 0.12),
-            0 4px 12px rgba(0, 0, 0, 0.25);
+            0 4px 16px rgba(0, 0, 0, 0.3),
+            inset 0 1px 0 rgba(255, 255, 255, 0.07);
+
           .actionBtn {
             flex: 1;
             border: none;
             background: transparent;
-            color: #f1f1f1;
-            font-weight: 500;
+            color: #e2d9f3;
+            font-weight: 600;
             cursor: pointer;
-            font-size: 15px;
+            font-size: 14px;
+            transition: background 0.2s ease;
 
             &:hover {
               background: rgba(255, 255, 255, 0.06);
@@ -101,40 +116,42 @@
           .dropdownBtn {
             width: 48px;
             border: none;
-            background: rgba(255, 255, 255, 0.06);
-            border-left: 1px solid rgba(255, 255, 255, 0.12);
-            color: #e6e6e6;
+            background: rgba(255, 255, 255, 0.04);
+            border-left: 1px solid rgba(255, 255, 255, 0.1);
+            color: #a09ac0;
             cursor: pointer;
+            transition: background 0.2s ease;
+
+            &:hover {
+              background: rgba(255, 255, 255, 0.08);
+            }
           }
         }
+
         .want_to_read {
-          background: rgba(255, 200, 0, 0.12);
-          border: 1px solid rgba(255, 200, 0, 0.4);
+          background: rgba(251, 191, 36, 0.1);
+          border-color: rgba(251, 191, 36, 0.3);
+          box-shadow: 0 4px 20px rgba(251, 191, 36, 0.1);
         }
 
         .reading {
-          background: rgba(80, 150, 255, 0.12);
-          border: 1px solid rgba(80, 150, 255, 0.4);
+          background: rgba(56, 189, 248, 0.1);
+          border-color: rgba(56, 189, 248, 0.3);
+          box-shadow: 0 4px 20px rgba(56, 189, 248, 0.1);
         }
 
         .completed {
-          background: rgba(0, 200, 120, 0.12);
-          border: 1px solid rgba(0, 200, 120, 0.4);
+          background: rgba(52, 211, 153, 0.1);
+          border-color: rgba(52, 211, 153, 0.3);
+          box-shadow: 0 4px 20px rgba(52, 211, 153, 0.1);
         }
+
         .dropped {
-          background: rgba(200, 70, 90, 0.14);
-          border: 1px solid rgba(200, 70, 90, 0.45);
+          background: rgba(251, 113, 133, 0.1);
+          border-color: rgba(251, 113, 133, 0.3);
+          box-shadow: 0 4px 20px rgba(251, 113, 133, 0.1);
         }
-        .checkmark {
-          margin-right: 8px;
-          font-size: 12px;
-          font-weight: 700;
-          opacity: 0.9;
-          transform: scale(0.8);
-          transition:
-            transform 200ms ease,
-            opacity 200ms ease;
-        }
+
         @keyframes checkPop {
           0% {
             transform: scale(0.6);
@@ -150,71 +167,100 @@
         }
 
         .checkmark {
+          margin-right: 8px;
+          font-size: 12px;
+          font-weight: 700;
+          opacity: 0.9;
           animation: checkPop 220ms ease;
         }
-      }
-
-      .dropdown {
-        position: absolute;
-        top: calc(100% + 8px);
-        left: 0;
-        width: 100%;
-        z-index: 20;
-        overflow: hidden;
-        background: rgba(255, 255, 255, 0.14);
-        backdrop-filter: blur(12px);
-        border-radius: 16px;
-        // box-shadow:
-        //   inset 0 0 0 1px rgba(255, 255, 255, 0.12),
-        //   0 12px 28px rgba(0, 0, 0, 0.35);
-
-        button {
+        .dropdown {
+          position: absolute;
+          top: calc(100% + 8px);
+          left: 0;
           width: 100%;
-          padding: 12px 16px;
-          background: none;
-          border: none;
+          z-index: 20;
+          overflow: hidden;
+          background: rgba(20, 15, 45, 0.9);
+          backdrop-filter: blur(20px) saturate(160%);
+          -webkit-backdrop-filter: blur(20px) saturate(160%);
+          border: 1px solid rgba(255, 255, 255, 0.08);
+          border-radius: 16px;
+          box-shadow:
+            0 20px 40px rgba(0, 0, 0, 0.5),
+            0 0 40px rgba(124, 58, 237, 0.12);
 
-          text-align: left;
-          font-size: 14px;
-          color: rgba(240, 240, 240, 0.9);
-          cursor: pointer;
+          button {
+            width: 100%;
+            padding: 12px 16px;
+            background: none;
+            border: none;
+            text-align: left;
+            font-size: 14px;
+            font-weight: 500;
+            color: rgba(225, 215, 255, 0.85);
+            cursor: pointer;
+            transition:
+              background 0.15s ease,
+              color 0.15s ease;
 
-          &:hover {
-            background: rgba(255, 255, 255, 0.08);
-          }
+            &:hover {
+              background: rgba(124, 58, 237, 0.18);
+              color: #fff;
+            }
 
-          &:not(:last-child) {
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            &.active {
+              color: #c4b5fd;
+              background: rgba(124, 58, 237, 0.12);
+            }
+
+            &:not(:last-child) {
+              border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            }
+
+            // "Remove from shelf" — last button, red tint
+            &:last-child {
+              color: rgba(251, 113, 133, 0.85);
+
+              &:hover {
+                background: rgba(251, 113, 133, 0.1);
+                color: #fb7185;
+              }
+            }
           }
         }
       }
     }
   }
+
   .description,
   .authorInfo,
   .shelves > div {
-    border-radius: 16px;
-    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.04);
+    backdrop-filter: blur(20px) saturate(160%);
+    -webkit-backdrop-filter: blur(20px) saturate(160%);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 20px;
     box-shadow:
-      inset 0 0 0 1px rgba(255, 255, 255, 0.12),
-      0 6px 16px rgba(0, 0, 0, 0.25);
+      0 8px 32px rgba(0, 0, 0, 0.35),
+      inset 0 1px 0 rgba(255, 255, 255, 0.06);
   }
 
   .description {
     position: relative;
     width: 100%;
     padding: 16px 18px;
-    background: rgba(201, 201, 201, 0.12);
 
     p {
       margin: 0;
       font-size: 14px;
-      line-height: 1.6;
+      line-height: 1.7;
+      color: #9d94be;
       display: -webkit-box;
       -webkit-line-clamp: 3;
       -webkit-box-orient: vertical;
       overflow: hidden;
     }
+
     &.expanded p {
       -webkit-line-clamp: unset;
     }
@@ -227,10 +273,13 @@
     background: none;
     border: none;
     font-size: 12px;
-    color: #8fd0c2;
+    color: #7dd3c8;
     cursor: pointer;
+    font-weight: 600;
+    transition: color 0.15s ease;
 
     &:hover {
+      color: #a5f3ee;
       text-decoration: underline;
     }
   }
@@ -244,16 +293,22 @@
     div {
       flex: 1;
       padding: 10px 0;
-      background: rgba(201, 201, 201, 0.12);
       text-align: center;
+      transition: border-color 0.2s ease;
+
+      &:hover {
+        border-color: rgba(167, 139, 250, 0.2);
+      }
 
       .count {
         font-size: 18px;
-        font-weight: 600;
+        font-weight: 700;
+        color: #c4b5fd;
       }
 
       .text {
         font-size: 14px;
+        color: #6b6a8a;
       }
     }
   }
@@ -263,13 +318,14 @@
     width: 100%;
     padding: 16px 18px;
     margin-top: 10px;
-    background: rgba(255, 255, 255, 0.12);
 
     .aboutTheAuthor {
-      font-size: 13px;
+      font-size: 11px;
+      font-weight: 700;
       text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #6b6a8a;
       margin-bottom: 12px;
-      opacity: 0.7;
     }
 
     .authorDetails {
@@ -283,6 +339,9 @@
         overflow: hidden;
         width: 44px;
         height: 44px;
+        flex-shrink: 0;
+        border: 1px solid rgba(167, 139, 250, 0.2);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
 
         img {
           width: 100%;
@@ -293,13 +352,15 @@
 
       .authorText {
         p:first-child {
-          font-weight: 500;
+          font-size: 15px;
+          font-weight: 600;
+          color: #ede9fe;
           margin: 0;
         }
 
         p:last-child {
           font-size: 13px;
-          opacity: 0.6;
+          color: #4e4a6a;
           margin: 0;
           margin-top: 2px;
         }
@@ -307,9 +368,10 @@
     }
 
     .authorBio {
-      padding-top: 10px;
+      padding-top: 12px;
       font-size: 14px;
-      line-height: 1.6;
+      line-height: 1.7;
+      color: #9d94be;
       display: -webkit-box;
       -webkit-line-clamp: 2;
       -webkit-box-orient: vertical;
@@ -318,11 +380,6 @@
 
     &.expanded .authorBio {
       -webkit-line-clamp: unset;
-    }
-
-    .readMore {
-      bottom: 5px;
-      right: 16px;
     }
   }
 }
@@ -365,24 +422,16 @@
         .statusWrapper {
           .status {
             width: 350px;
-            height: 48px;
-            .actionBtn {
-            }
-
-            .dropdownBtn {
-            }
           }
-        }
-
-        .dropdown {
-          width: 350px;
+          .dropdown {
+            width: 350px;
+          }
         }
       }
     }
 
     .description {
       padding: 24px 22px;
-
       p {
         font-size: 16px;
       }
@@ -395,11 +444,9 @@
     .shelves {
       div {
         padding: 24px 22px;
-
         .count {
           font-size: 24px;
         }
-
         .text {
           font-size: 18px;
         }
@@ -410,7 +457,7 @@
       padding: 24px 22px;
 
       .aboutTheAuthor {
-        font-size: 18px;
+        font-size: 13px;
       }
 
       .authorDetails {
@@ -425,7 +472,6 @@
           p:first-child {
             font-size: 22px;
           }
-
           p:last-child {
             font-size: 18px;
           }
@@ -450,42 +496,39 @@
         h2 {
           font-size: 42px;
         }
+
         p {
           max-width: 100%;
           font-size: 32px;
         }
+
         .stars {
           font-size: 40px;
         }
+
         .ratingNumber {
           font-size: 30px;
         }
-        .buttons {
-          width: 300px;
-        }
       }
     }
-    .description p {
-    }
+
     .readMore {
       font-size: 16px;
     }
+
     .shelves {
       margin-top: 20px;
       gap: 20px;
-      div {
-        .count {
-        }
-        .text {
-        }
-      }
     }
+
     .authorInfo {
       margin-top: 20px;
+
       .aboutTheAuthor {
-        font-size: 20px;
+        font-size: 14px;
         margin-bottom: 16px;
       }
+
       .authorDetails {
         .authorText {
           p:first-child {
@@ -495,8 +538,6 @@
             font-size: 20px;
           }
         }
-      }
-      .authorBio {
       }
     }
   }

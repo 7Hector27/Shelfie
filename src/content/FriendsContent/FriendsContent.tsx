@@ -1,45 +1,61 @@
 import React, { useState } from "react";
 import Image from "next/image";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 import FriendCard from "@/components/FriendCard";
 import FriendRequestsModal from "@/components/FriendRequestsModal/FriendRequestsModal";
+import ConfirmationModal from "@/components/ConfirmationModal";
 
 import { redirectTo } from "@/util/clientUtils";
-import { apiGet } from "@/lib/api";
+import { apiGet, apiDelete } from "@/lib/api";
 import { GetRequestsResponse, GetFriendListResponse } from "@/util/types";
 
 import styles from "./FriendsContent.module.scss";
 
 const FriendsContent = () => {
-  const [displayModal, setDisplayModal] = useState<boolean>(false);
+  const [displayModal, setDisplayModal] = useState(false);
+  const [friendToDelete, setFriendToDelete] = useState<string | null>(null); // ✅
 
-  // Fetch friend requests
+  const queryClient = useQueryClient(); // ✅
+
   const fetchFriendRequests = async () => {
     const data = await apiGet<GetRequestsResponse>("/friends/requests");
     return data.requests;
   };
 
-  const { data: friendRequests = [], isLoading } = useQuery({
+  const { data: friendRequests = [] } = useQuery({
     queryKey: ["friendRequests"],
     queryFn: fetchFriendRequests,
   });
 
-  // Fetching Friends list
   const fetchFriendList = async () => {
     const data = await apiGet<GetFriendListResponse>("/friends/list");
     return data.friends;
   };
 
-  const { data: friendList = [], isLoading: isLoadingFriendList } = useQuery({
+  const { data: friendList = [] } = useQuery({
     queryKey: ["friendList"],
     queryFn: fetchFriendList,
   });
 
-  console.log(friendList);
+  const handleDeleteFriend = async () => {
+    if (!friendToDelete) return;
+    await apiDelete(`/friends/${friendToDelete}`);
+    queryClient.invalidateQueries({ queryKey: ["friendList"] });
+    setFriendToDelete(null);
+  };
 
   return (
     <div className={styles.friendsContent}>
+      <ConfirmationModal
+        isOpen={!!friendToDelete}
+        onClose={() => setFriendToDelete(null)}
+        title="Remove friend?"
+        copy="They won't be notified, but you'll no longer see each other's activity."
+        confirmCopy="Remove"
+        onConfirm={handleDeleteFriend}
+      />
+
       <div className={styles.banner}>
         <div className={styles.bannerContent}>
           <h2>Friends</h2>
@@ -63,6 +79,7 @@ const FriendsContent = () => {
           className={styles.shelfIcon}
         />
       </div>
+
       <div className={styles.friendsList}>
         <div className={styles.sectionHeader}>
           <h2 className={styles.title}>FRIENDS</h2>
@@ -84,15 +101,6 @@ const FriendsContent = () => {
             </button>
           )}
         </div>
-        {/* <div>
-          <input
-            type="search"
-            name=""
-            id=""
-            placeholder="Filter friends"
-            onChange={(e) => {}}
-          />
-        </div> */}
 
         {friendList.length ? (
           <div className={styles.cards}>
@@ -101,7 +109,6 @@ const FriendsContent = () => {
                 id,
                 firstName,
                 lastName,
-                email,
                 profilePictureUrl,
                 currently_reading,
                 friend_count,
@@ -119,6 +126,7 @@ const FriendsContent = () => {
                   books={book_count}
                   friends={friend_count}
                   profilePictureUrl={profilePictureUrl}
+                  onDelete={() => setFriendToDelete(id)} // ✅
                 />
               );
             })}
@@ -133,6 +141,7 @@ const FriendsContent = () => {
           </div>
         )}
       </div>
+
       <FriendRequestsModal
         displayModal={displayModal}
         setDisplayModal={setDisplayModal}

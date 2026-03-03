@@ -57,7 +57,7 @@ const FindFriendsContent = () => {
       setLoading(false);
     }
   };
-
+  console.log(results, "res");
   return (
     <Layout>
       <div className={styles.findFriends}>

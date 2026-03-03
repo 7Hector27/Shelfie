@@ -36,7 +36,6 @@ const ActivityCard = ({ item }: Props) => {
 
   return (
     <div className={`${styles.card} ${dropdownOpen ? styles.cardActive : ""}`}>
-      {/* Header */}
       <div className={styles.header}>
         <div className={styles.headerLeft}>
           <Image
@@ -62,7 +61,6 @@ const ActivityCard = ({ item }: Props) => {
         <div className={styles.date}>{formatActivityDate(item.created_at)}</div>
       </div>
 
-      {/* Book Section */}
       <div className={styles.bookRow}>
         <Image
           src={item.cover_url}
@@ -94,10 +92,6 @@ const ActivityCard = ({ item }: Props) => {
     </div>
   );
 };
-
-/* =========================
-   Helpers
-========================= */
 
 function getActionText(
   type: ActivityType,

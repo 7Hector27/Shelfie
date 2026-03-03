@@ -27,7 +27,9 @@ const NowReadingSection = () => {
   if (isError) return null;
 
   const { data: booksList, pagination, counts, profile } = data || {};
-  console.log(data);
+
+  if (!booksList?.length) return null;
+
   return (
     <div className={styles.container}>
       <h3 className={styles.title}>Currently Reading</h3>

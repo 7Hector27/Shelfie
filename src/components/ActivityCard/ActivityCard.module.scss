@@ -1,15 +1,9 @@
-/* ─────────────────────────────────────────────────────────
-   ActivityCard — Glassmorphism
-   ───────────────────────────────────────────────────────── */
-
 .card {
   position: relative;
   padding: 1.6rem;
   border-radius: 24px;
   margin-bottom: 1.75rem;
-  /* overflow: hidden removed — was clipping the BookStatusDropdown */
 
-  /* Frosted glass */
   background: rgba(255, 255, 255, 0.06);
   backdrop-filter: blur(24px) saturate(160%);
   -webkit-backdrop-filter: blur(24px) saturate(160%);
@@ -17,7 +11,6 @@
   border: 1px solid rgba(255, 255, 255, 0.1);
   box-shadow:
     0 16px 40px rgba(0, 0, 0, 0.38),
-    /* shimmer top highlight replaces the ::before pseudo since overflow:hidden is gone */
     inset 0 1px 0 rgba(167, 139, 250, 0.35),
     inset 0 -1px 0 rgba(255, 255, 255, 0.04);
 
@@ -168,7 +161,6 @@
   margin-top: 0.6rem;
 }
 
-/* Elevate the card above siblings when its dropdown is open */
 .cardActive {
   z-index: 10;
 }
