@@ -136,7 +136,7 @@
     gap: 22px;
 
     .bookCard {
-      position: relative; // ✅ needed for deleteBtn absolute positioning
+      position: relative;
       background: rgba(255, 255, 255, 0.04);
       backdrop-filter: blur(24px) saturate(180%);
       -webkit-backdrop-filter: blur(24px) saturate(180%);
@@ -164,7 +164,7 @@
         transform: translateY(-2px);
       }
 
-      // ✅ DELETE BUTTON — top right corner
+      // DELETE BUTTON — top right corner
       .deleteBtn {
         position: absolute;
         top: 16px;
@@ -216,7 +216,6 @@
         display: flex;
         flex-direction: column;
         gap: 10px;
-        // ✅ padding-right so title doesn't clash with delete icon
         padding-right: 44px;
 
         .titleRow {
@@ -340,8 +339,9 @@
         border-radius: 24px;
         padding: 12px;
         display: flex;
-        justify-content: flex-end;
+        justify-content: space-between; // ✅ space between edit + chat
         align-items: center;
+        gap: 10px;
 
         .quickEditBtn {
           background: linear-gradient(
@@ -374,6 +374,33 @@
           &:active {
             transform: translateY(1px);
             box-shadow: 0 2px 8px rgba(124, 58, 237, 0.25);
+          }
+        }
+
+        // ✅ AI chat button
+        .chatBtn {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          padding: 8px 20px;
+          border-radius: 24px;
+          border: 1px solid rgba(56, 189, 248, 0.25);
+          background: rgba(56, 189, 248, 0.08);
+          color: #38bdf8;
+          font-size: 14px;
+          font-weight: 700;
+          cursor: pointer;
+          transition: all 0.2s ease;
+
+          &:hover {
+            background: rgba(56, 189, 248, 0.18);
+            border-color: rgba(56, 189, 248, 0.45);
+            box-shadow: 0 0 20px rgba(56, 189, 248, 0.2);
+            transform: translateY(-1px);
+          }
+
+          &:active {
+            transform: translateY(1px);
           }
         }
       }
@@ -469,7 +496,7 @@
 
         .cardBody {
           grid-column: 2;
-          padding-right: 44px; // ✅ keep gap for delete icon on tablet too
+          padding-right: 44px;
           display: grid;
           grid-template-columns: max-content max-content;
           justify-content: start;
@@ -523,6 +550,7 @@
           margin-top: 0;
           justify-self: end;
           align-self: end;
+          gap: 10px;
         }
       }
     }

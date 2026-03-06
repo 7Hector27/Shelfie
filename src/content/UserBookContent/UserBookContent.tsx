@@ -9,12 +9,14 @@ import EditBookModal from "@/components/EditBookModal";
 import ConfirmationModal from "@/components/ConfirmationModal";
 
 import { GetUserBooksResponse } from "@/util/types";
-import { apiGet, apiPatch, apiDelete } from "@/lib/api";
+import { apiGet, apiPatch, apiDelete, apiPost } from "@/lib/api"; // ✅ added apiPost
 import { formatMonthYear, redirectTo, toPossessive } from "@/util/clientUtils";
 import { useAuth } from "@/context/AuthProvider";
 
 import styles from "./UserBookContent.module.scss";
-
+type StartAiChatResponse = {
+  conversation_id: string;
+};
 const UserBookContent = () => {
   const { user: owner, loading } = useAuth();
 
@@ -111,6 +113,23 @@ const UserBookContent = () => {
     setBookToDelete(null);
   };
 
+  // ✅ AI chat handler
+  const handleStartAiChat = async (book: {
+    title: string;
+    author: string | null;
+  }) => {
+    try {
+      const res = (await apiPost("/messages/start-ai", {
+        title: book.title,
+        author: book.author ?? "Unknown",
+        description: null,
+      })) as StartAiChatResponse;
+      router.push(`/messages/${res.conversation_id}`);
+    } catch (err) {
+      console.error("Failed to start AI chat:", err);
+    }
+  };
+
   useEffect(() => {
     const el = tabsRef.current;
     if (!el) return;
@@ -148,6 +167,17 @@ const UserBookContent = () => {
 
   return (
     <Layout>
+      {/* ✅ Confirmation modal moved outside the map */}
+      <ConfirmationModal
+        isOpen={!!bookToDelete}
+        onClose={() => setBookToDelete(null)}
+        title="Remove from shelf?"
+        copy="This will remove the book from all your shelves."
+        confirmCopy="Remove"
+        cancelCopy="Cancel"
+        onConfirm={handleDeleteBook}
+      />
+
       {selectedBook && (
         <EditBookModal
           isOpen={isEditOpen}
@@ -223,7 +253,9 @@ const UserBookContent = () => {
                     query: { favorite: true, page: 1 },
                   })
                 }
-                className={`${styles.tab} ${router.query.favorite ? styles.active : ""}`}
+                className={`${styles.tab} ${
+                  router.query.favorite ? styles.active : ""
+                }`}
               >
                 <span className={styles.icon}>⭐</span>
                 <span>Favorites ({counts?.favorites || 0})</span>
@@ -252,15 +284,6 @@ const UserBookContent = () => {
 
                 return (
                   <div key={book_id} className={styles.bookCard}>
-                    <ConfirmationModal
-                      isOpen={!!bookToDelete}
-                      onClose={() => setBookToDelete(null)}
-                      title="Remove from shelf?"
-                      copy="This will remove the book from all your shelves."
-                      confirmCopy="Remove"
-                      cancelCopy="Cancel"
-                      onConfirm={handleDeleteBook}
-                    />
                     {isOwner && (
                       <button
                         className={styles.deleteBtn}
@@ -337,6 +360,19 @@ const UserBookContent = () => {
                           onClick={() => openEdit(book_id)}
                         >
                           Quick Edit
+                        </button>
+
+                        {/* ✅ AI chat button */}
+                        <button
+                          className={styles.chatBtn}
+                          onClick={() =>
+                            handleStartAiChat({
+                              title,
+                              author: author ?? null,
+                            })
+                          }
+                        >
+                          💬 Chat
                         </button>
                       </div>
                     )}

@@ -71,6 +71,7 @@ export async function apiDelete<T>(
 
   return data as T;
 }
+
 export async function apiPatch<T>(
   path: string,
   body: unknown,
