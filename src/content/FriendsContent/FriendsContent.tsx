@@ -5,6 +5,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import FriendCard from "@/components/FriendCard";
 import FriendRequestsModal from "@/components/FriendRequestsModal/FriendRequestsModal";
 import ConfirmationModal from "@/components/ConfirmationModal";
+import FriendsSkeleton from "@/components/FriendsSkeleton";
 
 import { redirectTo } from "@/util/clientUtils";
 import { apiGet, apiDelete } from "@/lib/api";
@@ -23,7 +24,7 @@ const FriendsContent = () => {
     return data.requests;
   };
 
-  const { data: friendRequests = [] } = useQuery({
+  const { data: friendRequests = [], isLoading: loadingRequests } = useQuery({
     queryKey: ["friendRequests"],
     queryFn: fetchFriendRequests,
   });
@@ -33,7 +34,7 @@ const FriendsContent = () => {
     return data.friends;
   };
 
-  const { data: friendList = [] } = useQuery({
+  const { data: friendList = [], isLoading: loadingList } = useQuery({
     queryKey: ["friendList"],
     queryFn: fetchFriendList,
   });
@@ -44,6 +45,9 @@ const FriendsContent = () => {
     queryClient.invalidateQueries({ queryKey: ["friendList"] });
     setFriendToDelete(null);
   };
+
+  const isLoading = loadingRequests || loadingList;
+  if (isLoading) return <FriendsSkeleton />;
 
   return (
     <div className={styles.friendsContent}>

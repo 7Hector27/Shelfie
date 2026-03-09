@@ -8,6 +8,7 @@ import { useQueryClient } from "@tanstack/react-query";
 
 import Layout from "@/components/Layout";
 import Alert from "@/components/Alert";
+import UserEditSkeleton from "@/components/UserEditSkeleton";
 
 import { useAuth } from "../../context/AuthProvider";
 import { apiPost } from "@/lib/api";
@@ -25,7 +26,7 @@ const editProfileSchema = z.object({
 type EditProfileValues = z.infer<typeof editProfileSchema>;
 
 const UserProfileEdit = () => {
-  const { user } = useAuth();
+  const { user, loading } = useAuth(); // ✅ added loading
   const queryClient = useQueryClient();
 
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -100,7 +101,6 @@ const UserProfileEdit = () => {
       });
       setAlert("Profile image updated successfully.");
       queryClient.invalidateQueries({ queryKey: ["me"] });
-
       setPreview(null);
     } finally {
       setUploading(false);
@@ -110,7 +110,6 @@ const UserProfileEdit = () => {
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-
     setPreview(URL.createObjectURL(file));
   };
 
@@ -141,7 +140,6 @@ const UserProfileEdit = () => {
 
   useEffect(() => {
     if (!user) return;
-
     reset({
       firstName: user.first_name ?? "",
       lastName: user.last_name ?? "",
@@ -150,9 +148,17 @@ const UserProfileEdit = () => {
     });
   }, [user, reset]);
 
+  /* ---------- ✅ skeleton while auth loads ---------- */
+  if (loading)
+    return (
+      <Layout>
+        <UserEditSkeleton />
+      </Layout>
+    );
+
   return (
     <Layout>
-      {alert && <Alert message={alert} onClose={() => setAlert(null)} />}{" "}
+      {alert && <Alert message={alert} onClose={() => setAlert(null)} />}
       <div className={styles.editProfile}>
         <h1 className={styles.title}>Edit Profile</h1>
         <div className={styles.editProfileSection}>
@@ -176,6 +182,7 @@ const UserProfileEdit = () => {
               onChange={handleImageChange}
             />
           </div>
+
           {preview && (
             <div className={styles.modalOverlay}>
               <div className={styles.modal}>
@@ -214,7 +221,6 @@ const UserProfileEdit = () => {
                   >
                     Cancel
                   </button>
-
                   <button
                     type="button"
                     className={styles.save}
@@ -228,7 +234,6 @@ const UserProfileEdit = () => {
             </div>
           )}
 
-          {/* form */}
           <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
             <div className={styles.name}>
               <div className={styles.firstName}>
@@ -242,6 +247,7 @@ const UserProfileEdit = () => {
                 {errors.lastName && <p>{errors.lastName.message}</p>}
               </div>
             </div>
+
             <label htmlFor="email" className={styles.label}>
               Email
             </label>
@@ -255,9 +261,11 @@ const UserProfileEdit = () => {
             <label className={styles.label}>Birthdate (MM/DD/YYYY)</label>
             <input type="date" {...register("birthdate")} />
             {errors.birthdate && <p>{errors.birthdate.message}</p>}
+
             <label className={styles.label}>About Me</label>
             <textarea {...register("bio")} placeholder="Bio" />
             {errors.bio && <p>{errors.bio.message}</p>}
+
             <button disabled={isSubmitting} className={styles.submitBtn}>
               {isSubmitting ? "Saving..." : "Save profile"}
             </button>

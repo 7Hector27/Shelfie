@@ -3,6 +3,7 @@ import Image from "next/image";
 
 import Layout from "@/components/Layout";
 import FriendCard from "@/components/FriendCard";
+import FindFriendsSkeleton from "@/components/FindFriendsSkeleton";
 
 import { apiGet, apiPost } from "@/lib/api";
 import { FriendSearchResult } from "@/util/types";
@@ -57,7 +58,11 @@ const FindFriendsContent = () => {
       setLoading(false);
     }
   };
-  console.log(results, "res");
+
+  if (loading) {
+    return <FindFriendsSkeleton />;
+  }
+
   return (
     <Layout>
       <div className={styles.findFriends}>

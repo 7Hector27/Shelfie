@@ -1,0 +1,130 @@
+@keyframes shimmer {
+  0% {
+    background-position: -600px 0;
+  }
+  100% {
+    background-position: 600px 0;
+  }
+}
+
+.shimmer {
+  border-radius: 10px;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.04) 25%,
+    rgba(255, 255, 255, 0.09) 50%,
+    rgba(255, 255, 255, 0.04) 75%
+  );
+  background-size: 600px 100%;
+  animation: shimmer 1.6s infinite linear;
+}
+
+.editProfile {
+  max-width: 640px;
+  margin: 2.5rem auto;
+  padding: 0 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.title {
+  width: 160px;
+  height: 26px;
+  border-radius: 8px;
+}
+
+.editProfileSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+  padding: 2rem;
+  border-radius: 28px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(28px);
+  box-shadow: 0 20px 56px rgba(0, 0, 0, 0.4);
+}
+
+// ── Avatar ─────────────────────────────────────────────
+.avatarSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.avatar {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+}
+
+.changePhotoBtn {
+  width: 110px;
+  height: 32px;
+  border-radius: 999px;
+}
+
+// ── Form ───────────────────────────────────────────────
+.form {
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.nameRow {
+  display: flex;
+  gap: 14px;
+  width: 100%;
+}
+
+.fieldGroup {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.label {
+  width: 80px;
+  height: 12px;
+  border-radius: 6px;
+}
+
+.input {
+  width: 100%;
+  height: 44px;
+  border-radius: 14px;
+}
+
+.textarea {
+  width: 100%;
+  height: 90px;
+  border-radius: 14px;
+}
+
+.submitBtn {
+  width: 100%;
+  height: 46px;
+  border-radius: 14px;
+  margin-top: 6px;
+}
+
+@media (min-width: 768px) {
+  .avatar {
+    width: 110px;
+    height: 110px;
+  }
+
+  .input {
+    height: 48px;
+  }
+
+  .submitBtn {
+    height: 48px;
+  }
+}

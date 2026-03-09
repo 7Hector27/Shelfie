@@ -1,0 +1,186 @@
+@keyframes shimmer {
+  0% {
+    background-position: -600px 0;
+  }
+  100% {
+    background-position: 600px 0;
+  }
+}
+
+.shimmer {
+  border-radius: 10px;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.04) 25%,
+    rgba(255, 255, 255, 0.09) 50%,
+    rgba(255, 255, 255, 0.04) 75%
+  );
+  background-size: 600px 100%;
+  animation: shimmer 1.6s infinite linear;
+}
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding: 24px 16px;
+}
+
+// ── Top section ────────────────────────────────────────
+.bookDetailsWrapper {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+.cover {
+  width: 130px;
+  height: 200px;
+  border-radius: 12px;
+  flex-shrink: 0;
+}
+
+.bookDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1;
+}
+
+.title {
+  width: 80%;
+  height: 24px;
+  border-radius: 8px;
+}
+
+.author {
+  width: 50%;
+  height: 16px;
+  border-radius: 6px;
+}
+
+.rating {
+  width: 120px;
+  height: 16px;
+  border-radius: 6px;
+}
+
+.statusBtn {
+  width: 160px;
+  height: 40px;
+  border-radius: 12px;
+  margin-top: 4px;
+}
+
+// ── Description ────────────────────────────────────────
+.descriptionBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 20px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.descLine {
+  height: 14px;
+  width: 100%;
+  border-radius: 6px;
+}
+
+.descLineShort {
+  height: 14px;
+  width: 55%;
+  border-radius: 6px;
+}
+
+// ── Shelves ────────────────────────────────────────────
+.shelves {
+  display: flex;
+  gap: 24px;
+}
+
+.shelfStat {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.statNum {
+  width: 60px;
+  height: 22px;
+  border-radius: 6px;
+}
+
+.statLabel {
+  width: 110px;
+  height: 13px;
+  border-radius: 6px;
+}
+
+// ── Author ─────────────────────────────────────────────
+.authorBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 20px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.authorHeading {
+  width: 150px;
+  height: 18px;
+  border-radius: 6px;
+}
+
+.authorDetails {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+}
+
+.authorPhoto {
+  width: 60px;
+  height: 90px;
+  border-radius: 10px;
+  flex-shrink: 0;
+}
+
+.authorMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.authorName {
+  width: 130px;
+  height: 15px;
+  border-radius: 6px;
+}
+
+.authorDate {
+  width: 90px;
+  height: 13px;
+  border-radius: 6px;
+}
+
+@media (min-width: 768px) {
+  .wrapper {
+    padding: 28px 24px;
+  }
+
+  .cover {
+    width: 160px;
+    height: 240px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .wrapper {
+    max-width: 860px;
+    margin: 0 auto;
+  }
+}

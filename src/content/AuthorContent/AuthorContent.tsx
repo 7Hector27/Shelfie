@@ -4,13 +4,12 @@ import { useRouter } from "next/router";
 import { useQuery } from "@tanstack/react-query";
 
 import Layout from "@/components/Layout";
+import AuthorSkeleton from "@/components/AuthorSkeleton";
+
 import { apiGet } from "@/lib/api";
-import styles from "./AuthorContent.module.scss";
 import { redirectTo } from "@/util/clientUtils";
 
-/* =========================
-   TYPES
-========================= */
+import styles from "./AuthorContent.module.scss";
 
 export interface OpenLibraryAuthor {
   name: string;
@@ -103,7 +102,7 @@ const AuthorPage = () => {
     queryFn: () => fetchAuthorWorks(id as string, 100, 0),
     enabled: !!id,
   });
-  console.log(authorWorksData);
+
   /* -------------------------
      DERIVED DATA
   ------------------------- */
@@ -148,7 +147,14 @@ const AuthorPage = () => {
      LOADING / ERROR
   ------------------------- */
 
-  if (isLoading) return <Layout>Loading author...</Layout>;
+  // with:
+  if (isLoading)
+    return (
+      <Layout>
+        <AuthorSkeleton />
+      </Layout>
+    );
+
   if (isError || !authorData) return <Layout>Author not found</Layout>;
 
   /* =========================

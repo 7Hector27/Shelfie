@@ -2,12 +2,11 @@ import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-
-import { redirectTo } from "@/util/clientUtils";
-import { apiGet } from "@/lib/api";
+import { useQuery } from "@tanstack/react-query";
 
 import Layout from "@/components/Layout";
+import UserProfileSkeleton from "@/components/UserProfileSkeleton";
+
 import { UserProfileResponse } from "@/util/types";
 import {
   getAgeFromISO,
@@ -15,6 +14,8 @@ import {
   getBirthdayMonthDay,
 } from "@/util/clientUtils";
 import { useAuth } from "@/context/AuthProvider";
+import { redirectTo } from "@/util/clientUtils";
+import { apiGet } from "@/lib/api";
 
 import styles from "./UserProfileContent.module.scss";
 
@@ -46,7 +47,14 @@ const UserProfileContent = () => {
     user || {};
 
   const isOwner = user_id === owner?.user_id;
-  console.log(profileData, "profileData");
+
+  if (isLoading)
+    return (
+      <Layout>
+        <UserProfileSkeleton />
+      </Layout>
+    );
+
   return (
     <Layout>
       <div className={styles.userProfile}>

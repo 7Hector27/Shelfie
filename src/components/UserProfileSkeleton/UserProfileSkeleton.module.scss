@@ -1,0 +1,268 @@
+@keyframes shimmer {
+  0% {
+    background-position: -600px 0;
+  }
+  100% {
+    background-position: 600px 0;
+  }
+}
+
+.shimmer {
+  border-radius: 10px;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.04) 25%,
+    rgba(255, 255, 255, 0.09) 50%,
+    rgba(255, 255, 255, 0.04) 75%
+  );
+  background-size: 600px 100%;
+  animation: shimmer 1.6s infinite linear;
+}
+
+.userProfile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 440px;
+  padding: 18px 14px;
+  gap: 16px;
+  margin: 0 auto;
+}
+
+// ── Header ─────────────────────────────────────────────
+.header {
+  width: 100%;
+  padding: 24px 20px;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(24px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.avatar {
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.details {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.username {
+  width: 160px;
+  height: 24px;
+  border-radius: 8px;
+}
+
+.editBtn {
+  width: 100px;
+  height: 30px;
+  border-radius: 999px;
+}
+
+.joined {
+  width: 120px;
+  height: 13px;
+  border-radius: 6px;
+}
+
+.age {
+  width: 90px;
+  height: 13px;
+  border-radius: 6px;
+}
+
+.bio {
+  width: 100%;
+  height: 60px;
+  border-radius: 14px;
+  margin-top: 4px;
+}
+
+// ── Shared section card ────────────────────────────────
+.section {
+  width: 100%;
+  padding: 20px;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(24px);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.sectionHeading {
+  width: 130px;
+  height: 13px;
+  border-radius: 6px;
+}
+
+// ── Currently Reading ──────────────────────────────────
+.readingList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.readingItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.bookCover {
+  width: 50px;
+  height: 75px;
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+.bookMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.bookTitle {
+  width: 140px;
+  height: 14px;
+  border-radius: 6px;
+}
+
+.bookAuthor {
+  width: 100px;
+  height: 12px;
+  border-radius: 6px;
+}
+
+// ── Shelves ────────────────────────────────────────────
+.shelfGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.shelfCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 18px 12px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.shelfIcon {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+}
+
+.shelfCount {
+  width: 40px;
+  height: 22px;
+  border-radius: 6px;
+}
+
+.shelfLabel {
+  width: 80px;
+  height: 12px;
+  border-radius: 6px;
+}
+
+// ── Friends ────────────────────────────────────────────
+.friendsList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.friendItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.friendAvatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.friendName {
+  width: 130px;
+  height: 14px;
+  border-radius: 6px;
+}
+
+// ── Responsive ─────────────────────────────────────────
+@media (min-width: 768px) {
+  .userProfile {
+    max-width: 900px;
+    padding: 28px 24px;
+  }
+
+  .header {
+    flex-direction: row;
+    align-items: center;
+    gap: 28px;
+    padding: 28px;
+
+    .details {
+      align-items: flex-start;
+    }
+  }
+
+  .readingList {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .shelfGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .friendsList {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .userProfile {
+    max-width: 1100px;
+    padding: 40px 32px;
+  }
+
+  .readingList {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .friendsList {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}

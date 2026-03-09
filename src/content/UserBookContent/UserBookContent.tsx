@@ -7,6 +7,7 @@ import Layout from "@/components/Layout";
 import StarRatingDisplay from "@/components/StarRatingDisplay";
 import EditBookModal from "@/components/EditBookModal";
 import ConfirmationModal from "@/components/ConfirmationModal";
+import UserBookSkeleton from "@/components/UserBookSkeleton";
 
 import { GetUserBooksResponse } from "@/util/types";
 import { apiGet, apiPatch, apiDelete, apiPost } from "@/lib/api"; // ✅ added apiPost
@@ -164,6 +165,13 @@ const UserBookContent = () => {
       el.removeEventListener("mousemove", handleMouseMove);
     };
   }, []);
+
+  if (isLoading)
+    return (
+      <Layout>
+        <UserBookSkeleton />
+      </Layout>
+    );
 
   return (
     <Layout>

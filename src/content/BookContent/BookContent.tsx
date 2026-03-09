@@ -11,6 +11,7 @@ import {
 
 import Layout from "../../components/Layout";
 import ConfirmationModal from "@/components/ConfirmationModal";
+import BookSkeleton from "@/components/BookSkeleton";
 
 import { apiGet, apiPost, apiDelete } from "@/lib/api";
 import { redirectTo } from "@/util/clientUtils";
@@ -176,7 +177,13 @@ const BookContent = () => {
      Guards
   ===================== */
 
-  if (isLoading || isLoadingAuthor) return <p>Loading…</p>;
+  // with:
+  if (isLoading || isLoadingAuthor)
+    return (
+      <Layout>
+        <BookSkeleton />
+      </Layout>
+    );
   if (isError) return <p>{(error as Error).message}</p>;
 
   const authorPhotoId = authorData?.photos?.[0];

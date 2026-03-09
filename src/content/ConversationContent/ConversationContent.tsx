@@ -3,6 +3,8 @@ import { useRouter } from "next/router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 import Layout from "@/components/Layout";
+import ConversationSkeleton from "@/components/ConversationSkeleton";
+
 import { apiGet, apiPost } from "@/lib/api";
 import { useAuth } from "@/context/AuthProvider";
 import { socket } from "../../lib/socket";
@@ -46,7 +48,7 @@ const ConversationContent = () => {
     typeof conversationId === "string" && conversationId.length > 0;
 
   /* ============================= */
-  /* FETCH CONVERSATION */
+  /* FETCH CONVERSATION            */
   /* ============================= */
 
   const fetchConversation = async (): Promise<GetConversationResponse> => {
@@ -60,7 +62,7 @@ const ConversationContent = () => {
   });
 
   /* ============================= */
-  /* FRIEND NAME */
+  /* FRIEND NAME                   */
   /* ============================= */
 
   const friendName = useMemo(() => {
@@ -69,7 +71,7 @@ const ConversationContent = () => {
   }, [data?.friend]);
 
   /* ============================= */
-  /* SCROLL */
+  /* SCROLL                        */
   /* ============================= */
 
   const scrollToBottom = (smooth = true) => {
@@ -83,7 +85,7 @@ const ConversationContent = () => {
   }, [data?.messages?.length]);
 
   /* ============================= */
-  /* MARK AS READ */
+  /* MARK AS READ                  */
   /* ============================= */
 
   const markReadMutation = useMutation({
@@ -99,7 +101,7 @@ const ConversationContent = () => {
   }, [canFetch, data]);
 
   /* ============================= */
-  /* SOCKET REAL-TIME */
+  /* SOCKET REAL-TIME              */
   /* ============================= */
 
   useEffect(() => {
@@ -143,11 +145,7 @@ const ConversationContent = () => {
         ["conversation", conversationId],
         (old) => {
           if (!old) return old;
-
-          return {
-            ...old,
-            friend_last_read_at: last_read_at,
-          };
+          return { ...old, friend_last_read_at: last_read_at };
         },
       );
     };
@@ -162,7 +160,7 @@ const ConversationContent = () => {
   }, [conversationId, currentUserId, queryClient]);
 
   /* ============================= */
-  /* SEND MESSAGE */
+  /* SEND MESSAGE                  */
   /* ============================= */
 
   const sendMessageMutation = useMutation<ConversationMessage, Error, string>({
@@ -177,7 +175,7 @@ const ConversationContent = () => {
   };
 
   /* ============================= */
-  /* SEEN LOGIC */
+  /* SEEN LOGIC                    */
   /* ============================= */
 
   const myMessages =
@@ -187,7 +185,7 @@ const ConversationContent = () => {
     myMessages.length > 0 ? myMessages[myMessages.length - 1] : null;
 
   /* ============================= */
-  /* RENDER */
+  /* RENDER                        */
   /* ============================= */
 
   return (
@@ -205,7 +203,9 @@ const ConversationContent = () => {
 
           <div className={styles.headerInfo}>
             <div className={styles.avatar}>
-              {data?.friend?.profile_image ? (
+              {isLoading ? (
+                <span className={styles.avatarFallback}>...</span>
+              ) : data?.friend?.profile_image ? (
                 <img
                   src={data.friend.profile_image}
                   alt={friendName}
@@ -219,8 +219,12 @@ const ConversationContent = () => {
             </div>
 
             <div>
-              <div className={styles.name}>{friendName}</div>
-              <div className={styles.subText}>Friends on Shelfie</div>
+              <div className={styles.name}>
+                {isLoading ? "Loading..." : friendName}
+              </div>
+              <div className={styles.subText}>
+                {isLoading ? "" : "Friends on Shelfie"}
+              </div>
             </div>
           </div>
         </div>
@@ -228,7 +232,7 @@ const ConversationContent = () => {
         {/* ================= BODY ================= */}
         <div className={styles.body} ref={messagesContainerRef}>
           {isLoading ? (
-            <p>Loading...</p>
+            <ConversationSkeleton /> // ✅ fixed condition
           ) : (
             <div className={styles.messages}>
               {data?.messages.map((m) => {

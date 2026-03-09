@@ -1,0 +1,164 @@
+@keyframes shimmer {
+  0% {
+    background-position: -600px 0;
+  }
+  100% {
+    background-position: 600px 0;
+  }
+}
+
+.shimmer {
+  border-radius: 10px;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.04) 25%,
+    rgba(255, 255, 255, 0.09) 50%,
+    rgba(255, 255, 255, 0.04) 75%
+  );
+  background-size: 600px 100%;
+  animation: shimmer 1.6s infinite linear;
+}
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+// ── Banner ─────────────────────────────────────────────
+.banner {
+  width: 100%;
+  min-height: 180px;
+  padding: 40px 28px;
+  border-radius: 0 0 28px 28px;
+  background: rgba(255, 255, 255, 0.04);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(20px);
+  display: flex;
+  align-items: center;
+}
+
+.bannerContent {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.bannerTitle {
+  width: 140px;
+  height: 28px;
+  border-radius: 8px;
+}
+
+.bannerSubtitle {
+  width: 220px;
+  height: 16px;
+  border-radius: 6px;
+}
+
+.bannerBtn {
+  width: 120px;
+  height: 36px;
+  border-radius: 12px;
+  margin-top: 4px;
+}
+
+// ── Friends list ───────────────────────────────────────
+.friendsList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 28px 16px;
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.sectionTitle {
+  width: 100px;
+  height: 16px;
+  border-radius: 6px;
+}
+
+.cards {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+// ── Friend card ────────────────────────────────────────
+.card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(20px);
+  flex-wrap: wrap;
+}
+
+.userInfo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.nameAndCurrent {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.name {
+  width: 140px;
+  height: 15px;
+  border-radius: 6px;
+}
+
+.reading {
+  width: 200px;
+  height: 12px;
+  border-radius: 6px;
+}
+
+.stats {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.stat {
+  width: 70px;
+  height: 14px;
+  border-radius: 6px;
+}
+
+@media (min-width: 768px) {
+  .friendsList {
+    padding: 32px 24px;
+  }
+
+  .reading {
+    width: 260px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .friendsList {
+    max-width: 860px;
+    margin: 0 auto;
+    width: 100%;
+  }
+}

@@ -1,0 +1,80 @@
+@keyframes shimmer {
+  0% {
+    background-position: -600px 0;
+  }
+  100% {
+    background-position: 600px 0;
+  }
+}
+
+.shimmer {
+  border-radius: 10px;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.04) 25%,
+    rgba(255, 255, 255, 0.09) 50%,
+    rgba(255, 255, 255, 0.04) 75%
+  );
+  background-size: 600px 100%;
+  animation: shimmer 1.6s infinite linear;
+}
+
+.messages {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.row {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  max-width: 80%;
+}
+
+.theirs {
+  align-self: flex-start;
+}
+
+.mine {
+  align-self: flex-end;
+  flex-direction: row-reverse;
+}
+
+.avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.bubbleStack {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.mine .bubbleStack {
+  align-items: flex-end;
+}
+
+.bubble {
+  height: 38px;
+  border-radius: 18px;
+}
+
+.bubbleSm {
+  width: 120px;
+}
+.bubbleMd {
+  width: 200px;
+}
+.bubbleLg {
+  width: 260px;
+}
+
+.meta {
+  width: 50px;
+  height: 10px;
+  border-radius: 4px;
+}
