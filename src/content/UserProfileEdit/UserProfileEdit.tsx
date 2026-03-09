@@ -148,7 +148,6 @@ const UserProfileEdit = () => {
     });
   }, [user, reset]);
 
-  /* ---------- ✅ skeleton while auth loads ---------- */
   if (loading)
     return (
       <Layout>
