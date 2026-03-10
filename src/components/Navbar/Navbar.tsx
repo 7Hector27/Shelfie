@@ -129,7 +129,6 @@ const Navbar = () => {
           {loading && <div className={styles.searchLoading}>Searching…</div>}
         </div>
 
-        {/* Profile */}
         {!user ? (
           <div className={styles.profile}>
             <Link href="/register">Sign Up</Link>
