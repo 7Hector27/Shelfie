@@ -26,23 +26,21 @@ const ActivityFeed = () => {
     queryFn: fetchFeed,
   });
 
-  if (isLoading) {
-    return <div className={styles.container}>Loading activity...</div>;
-  }
+  if (isLoading) return null;
 
-  if (isError) {
-    return <div className={styles.container}>Failed to load activity.</div>;
-  }
-
-  if (!feed.length) return null;
+  if (isError) return null;
 
   return (
     <div className={styles.container}>
       <h3 className={styles.title}>Updates</h3>
 
-      {feed.map((item) => (
-        <ActivityCard key={item.id} item={item} />
-      ))}
+      {feed.length ? (
+        feed.map((item) => <ActivityCard key={item.id} item={item} />)
+      ) : (
+        <p className={styles.empty}>
+          No activity yet — add friends to see what they`re reading!
+        </p>
+      )}
     </div>
   );
 };
