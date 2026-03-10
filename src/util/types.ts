@@ -190,3 +190,10 @@ export interface ActivityFeedItem {
   author: string;
   cover_url: string;
 }
+export type RequestType = {
+  id: string;
+  user_id: string;
+  first_name: string;
+  last_name: string;
+  profile_image: string | null;
+};
