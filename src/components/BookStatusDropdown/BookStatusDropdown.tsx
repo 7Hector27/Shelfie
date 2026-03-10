@@ -2,8 +2,11 @@ import { useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import ConfirmationModal from "@/components/ConfirmationModal";
+
 import { apiDelete, apiGet, apiPost } from "@/lib/api";
 import { Status } from "@/util/types";
+import { useAuth } from "@/context/AuthProvider";
+import { redirectTo } from "@/util/clientUtils";
 
 import styles from "./BookStatusDropdown.module.scss";
 
@@ -56,7 +59,7 @@ export default function BookStatusDropdown({
   onOpenChange,
 }: Props) {
   const queryClient = useQueryClient();
-
+  const { user } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [showRemoveModal, setShowRemoveModal] = useState(false);
 
@@ -110,10 +113,14 @@ export default function BookStatusDropdown({
   });
 
   const saveStatus = (nextStatus: Status) => {
-    toggleDropdown(false);
+    if (!user) {
+      redirectTo("/signin");
+
+      return;
+    }
+    setIsOpen(false);
     upsertUserBook.mutate(nextStatus);
   };
-
   return (
     <>
       {allowRemove && userBookStatus && showRemoveModal && (

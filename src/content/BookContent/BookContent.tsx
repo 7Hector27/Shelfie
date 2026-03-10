@@ -1,19 +1,18 @@
 import React, { useMemo, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import {
-  Status,
   OpenLibraryWork,
   OpenLibraryAuthor,
   OpenLibraryDescription,
 } from "@/util/types";
 
 import Layout from "../../components/Layout";
-import ConfirmationModal from "@/components/ConfirmationModal";
 import BookSkeleton from "@/components/BookSkeleton";
+import BookStatusDropdown from "@/components/BookStatusDropdown";
 
-import { apiGet, apiPost, apiDelete } from "@/lib/api";
+import { apiGet } from "@/lib/api";
 import { redirectTo } from "@/util/clientUtils";
 
 import styles from "./BookContent.module.scss";
@@ -39,77 +38,19 @@ const formatDescription = (
 };
 
 /* =====================
-   Status Guard (UPDATED)
-===================== */
-
-const isStatus = (value: unknown): value is Status =>
-  value === "want_to_read" ||
-  value === "reading" ||
-  value === "completed" ||
-  value === "dropped";
-
-/* =====================
    Component
 ===================== */
 
 const BookContent = () => {
   const router = useRouter();
-  const queryClient = useQueryClient();
 
-  const [isOpen, setIsOpen] = useState(false);
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
   const [isAuthorExpanded, setIsAuthorExpanded] = useState(false);
-  const [showRemoveModal, setShowRemoveModal] = useState(false);
-
-  /* =====================
-     Label Map (UPDATED)
-  ===================== */
-
-  const labelMap: Record<Status, string> = {
-    want_to_read: "Want to Read",
-    reading: "Currently Reading",
-    completed: "Read",
-    dropped: "DNF (Did Not Finish)",
-  };
 
   const id = useMemo(() => {
     const raw = router.query.id;
     return Array.isArray(raw) ? raw[0] : raw;
   }, [router.query.id]);
-
-  /* =====================
-     Fetchers
-  ===================== */
-
-  const fetchWork = async (workId: string): Promise<OpenLibraryWork> =>
-    apiGet(`/openlibrary/works/${workId}`);
-
-  const fetchAuthor = async (key: string): Promise<OpenLibraryAuthor> =>
-    apiGet(`/openlibrary/authors?key=${encodeURIComponent(key)}`);
-
-  const fetchUserBookStatus = async (
-    bookId: string,
-  ): Promise<Status | null> => {
-    try {
-      const res = await apiGet<{ status: string | null }>(
-        `/userbooks/getBookById/${bookId}`,
-      );
-      return isStatus(res.status) ? res.status : null;
-    } catch {
-      return null;
-    }
-  };
-
-  const removeUserBook = async (bookId: string) => {
-    try {
-      await apiDelete(`/userbooks/${bookId}`);
-      queryClient.invalidateQueries({
-        queryKey: ["userBookStatus", bookId],
-      });
-    } catch (error) {
-      console.error("Failed to remove book:", error);
-    }
-  };
 
   /* =====================
      Queries
@@ -122,62 +63,25 @@ const BookContent = () => {
     error,
   } = useQuery({
     queryKey: ["bookData", id],
-    queryFn: () => fetchWork(id as string),
+    queryFn: () => apiGet<OpenLibraryWork>(`/openlibrary/works/${id}`),
     enabled: typeof id === "string",
   });
+
   const authorId = bookData?.authors?.[0]?.author?.key;
+
   const { data: authorData, isLoading: isLoadingAuthor } = useQuery({
     queryKey: ["author", authorId],
-    queryFn: () => fetchAuthor(authorId as string),
+    queryFn: () =>
+      apiGet<OpenLibraryAuthor>(
+        `/openlibrary/authors?key=${encodeURIComponent(authorId as string)}`,
+      ),
     enabled: typeof authorId === "string",
   });
-
-  const { data: userBookStatus } = useQuery({
-    queryKey: ["userBookStatus", id],
-    queryFn: () => fetchUserBookStatus(id as string),
-    enabled: typeof id === "string",
-  });
-
-  const status: Status = userBookStatus ?? "want_to_read";
-
-  /* =====================
-     Mutation
-  ===================== */
-
-  const coverId = bookData?.covers?.[0];
-  const bookImageUrl = coverId
-    ? `https://covers.openlibrary.org/b/id/${coverId}-L.jpg`
-    : null;
-
-  const upsertUserBook = useMutation({
-    mutationFn: (nextStatus: Status) =>
-      apiPost("/userbooks", {
-        book_id: id,
-        external_source: "open_library",
-        status: nextStatus,
-        title: bookData?.title,
-        author: authorData?.name,
-        description: formatDescription(bookData?.description),
-        cover_url: bookImageUrl,
-        author_id: authorId,
-      }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["userBookStatus", id],
-      });
-    },
-  });
-
-  const saveStatus = (nextStatus: Status) => {
-    setIsOpen(false);
-    upsertUserBook.mutate(nextStatus);
-  };
 
   /* =====================
      Guards
   ===================== */
 
-  // with:
   if (isLoading || isLoadingAuthor)
     return (
       <Layout>
@@ -185,6 +89,11 @@ const BookContent = () => {
       </Layout>
     );
   if (isError) return <p>{(error as Error).message}</p>;
+
+  const coverId = bookData?.covers?.[0];
+  const bookImageUrl = coverId
+    ? `https://covers.openlibrary.org/b/id/${coverId}-L.jpg`
+    : null;
 
   const authorPhotoId = authorData?.photos?.[0];
   const authorImageUrl = authorPhotoId
@@ -197,21 +106,6 @@ const BookContent = () => {
 
   return (
     <Layout>
-      {showRemoveModal && (
-        <ConfirmationModal
-          isOpen={showRemoveModal}
-          onClose={() => setShowRemoveModal(false)}
-          title="Remove from shelf?"
-          copy="This will remove the book from all your shelves."
-          confirmCopy="Remove"
-          cancelCopy="Cancel"
-          onConfirm={() => {
-            removeUserBook(id as string);
-            setShowRemoveModal(false);
-          }}
-        />
-      )}
-
       <div className={styles.bookContent}>
         <div className={styles.bookDetailsWrapper}>
           <Image
@@ -225,6 +119,7 @@ const BookContent = () => {
           <div className={styles.bookDetails}>
             <h2>{bookData?.title}</h2>
             <p onClick={() => redirectTo(`${authorId}`)}>{authorData?.name}</p>
+
             <div className={styles.ratingTop}>
               <div className={styles.starsRow}>
                 <div className={styles.stars}>
@@ -237,59 +132,18 @@ const BookContent = () => {
                 <span className={styles.ratingNumber}>4.09</span>
               </div>
             </div>
-            <div className={styles.statusWrapper}>
-              <div
-                className={`${styles.status} ${
-                  userBookStatus ? styles[userBookStatus] : ""
-                }`}
-              >
-                <button
-                  className={styles.actionBtn}
-                  onClick={() => saveStatus(status)}
-                  disabled={upsertUserBook.isPending}
-                >
-                  {userBookStatus && (
-                    <span className={styles.checkmark}>✓</span>
-                  )}
-                  {labelMap[status]}
-                </button>
 
-                <button
-                  className={styles.dropdownBtn}
-                  onClick={() => setIsOpen((p) => !p)}
-                  disabled={upsertUserBook.isPending}
-                >
-                  ▼
-                </button>
-              </div>
-
-              {isOpen && (
-                <div className={styles.dropdown}>
-                  {(
-                    [
-                      "want_to_read",
-                      "reading",
-                      "completed",
-                      "dropped",
-                    ] as Status[]
-                  ).map((s) => (
-                    <button
-                      key={s}
-                      className={status === s ? styles.active : ""}
-                      onClick={() => saveStatus(s)}
-                    >
-                      {labelMap[s]}
-                    </button>
-                  ))}
-
-                  {userBookStatus && (
-                    <button onClick={() => setShowRemoveModal(true)}>
-                      Remove from my shelf
-                    </button>
-                  )}
-                </div>
-              )}
-            </div>
+            <BookStatusDropdown
+              bookId={id as string}
+              externalSource="open_library"
+              book={{
+                title: bookData?.title,
+                author: authorData?.name,
+                description: formatDescription(bookData?.description),
+                cover_url: bookImageUrl,
+                author_id: authorId,
+              }}
+            />
           </div>
         </div>
 
@@ -308,16 +162,18 @@ const BookContent = () => {
             </button>
           </div>
         )}
+
         <div className={styles.shelves}>
           <div>
             <p className={styles.count}>1248</p>
-            <p className={styles.text}>Currently Reading </p>
+            <p className={styles.text}>Currently Reading</p>
           </div>
           <div>
             <p className={styles.count}>5321</p>
             <p className={styles.text}>Want to read</p>
           </div>
         </div>
+
         {authorData?.bio && (
           <div
             className={`${styles.authorInfo} ${
