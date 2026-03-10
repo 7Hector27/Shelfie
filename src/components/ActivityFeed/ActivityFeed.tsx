@@ -3,17 +3,12 @@ import { useQuery } from "@tanstack/react-query";
 import ActivityCard from "../ActivityCard";
 
 import { ActivityFeedItem } from "@/util/types";
+import { apiGet } from "@/lib/api";
 
 import styles from "./ActivityFeed.module.scss";
 
 const fetchFeed = async (): Promise<ActivityFeedItem[]> => {
-  const res = await fetch("/api/feed");
-
-  if (!res.ok) {
-    throw new Error("Failed to fetch feed");
-  }
-
-  return res.json();
+  return apiGet("/feed");
 };
 
 const ActivityFeed = () => {
