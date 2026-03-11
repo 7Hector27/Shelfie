@@ -63,7 +63,6 @@ const SignInContent = () => {
         />
       )}
 
-      {/* Back to home */}
       <button className={styles.backBtn} onClick={() => router.push("/")}>
         ← Home
       </button>

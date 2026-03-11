@@ -1,12 +1,6 @@
-/* ─────────────────────────────────────────────────────────
-   Alert — Glassmorphism
-   Slides in from the top, frosted glass panel, auto-dismiss
-   progress bar drains across the bottom edge.
-   ───────────────────────────────────────────────────────── */
-
 .alert {
   position: fixed;
-  top: 15px; /* clears the navbar */
+  top: 55px;
   left: 50%;
   transform: translateX(-50%);
   z-index: 2000;
@@ -27,21 +21,17 @@
     inset 0 1px 0 rgba(167, 139, 250, 0.3),
     0 0 0 1px rgba(255, 255, 255, 0.04);
 
-  /* Text */
   font-size: 14px;
   font-weight: 500;
   color: rgba(255, 255, 255, 0.9);
   text-align: center;
   letter-spacing: 0.2px;
 
-  /* Slide-in */
   animation: slideDown 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 
-  /* Progress drain bar lives on the ::after pseudo */
   overflow: hidden;
 }
 
-/* Shimmer top border */
 .alert::before {
   content: "";
   position: absolute;
@@ -58,7 +48,6 @@
   );
 }
 
-/* Auto-dismiss progress bar */
 .alert::after {
   content: "";
   position: absolute;

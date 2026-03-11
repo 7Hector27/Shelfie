@@ -10,11 +10,12 @@ import ConfirmationModal from "@/components/ConfirmationModal";
 import UserBookSkeleton from "@/components/UserBookSkeleton";
 
 import { GetUserBooksResponse } from "@/util/types";
-import { apiGet, apiPatch, apiDelete, apiPost } from "@/lib/api"; // ✅ added apiPost
+import { apiGet, apiPatch, apiDelete, apiPost } from "@/lib/api";
 import { formatMonthYear, redirectTo, toPossessive } from "@/util/clientUtils";
 import { useAuth } from "@/context/AuthProvider";
 
 import styles from "./UserBookContent.module.scss";
+
 type StartAiChatResponse = {
   conversation_id: string;
 };
@@ -114,7 +115,6 @@ const UserBookContent = () => {
     setBookToDelete(null);
   };
 
-  // ✅ AI chat handler
   const handleStartAiChat = async (book: {
     title: string;
     author: string | null;
@@ -175,7 +175,6 @@ const UserBookContent = () => {
 
   return (
     <Layout>
-      {/* ✅ Confirmation modal moved outside the map */}
       <ConfirmationModal
         isOpen={!!bookToDelete}
         onClose={() => setBookToDelete(null)}
@@ -370,7 +369,6 @@ const UserBookContent = () => {
                           Quick Edit
                         </button>
 
-                        {/* ✅ AI chat button */}
                         <button
                           className={styles.chatBtn}
                           onClick={() =>

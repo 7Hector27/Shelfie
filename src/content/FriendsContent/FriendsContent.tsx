@@ -15,9 +15,9 @@ import styles from "./FriendsContent.module.scss";
 
 const FriendsContent = () => {
   const [displayModal, setDisplayModal] = useState(false);
-  const [friendToDelete, setFriendToDelete] = useState<string | null>(null); // ✅
+  const [friendToDelete, setFriendToDelete] = useState<string | null>(null);
 
-  const queryClient = useQueryClient(); // ✅
+  const queryClient = useQueryClient();
 
   const fetchFriendRequests = async () => {
     const data = await apiGet<GetRequestsResponse>("/friends/requests");
@@ -130,7 +130,7 @@ const FriendsContent = () => {
                   books={book_count}
                   friends={friend_count}
                   profilePictureUrl={profilePictureUrl}
-                  onDelete={() => setFriendToDelete(id)} // ✅
+                  onDelete={() => setFriendToDelete(id)}
                 />
               );
             })}

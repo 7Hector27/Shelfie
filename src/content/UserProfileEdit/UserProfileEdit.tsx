@@ -26,7 +26,7 @@ const editProfileSchema = z.object({
 type EditProfileValues = z.infer<typeof editProfileSchema>;
 
 const UserProfileEdit = () => {
-  const { user, loading } = useAuth(); // ✅ added loading
+  const { user, loading } = useAuth();
   const queryClient = useQueryClient();
 
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -157,8 +157,8 @@ const UserProfileEdit = () => {
 
   return (
     <Layout>
-      {alert && <Alert message={alert} onClose={() => setAlert(null)} />}
       <div className={styles.editProfile}>
+        {alert && <Alert message={alert} onClose={() => setAlert(null)} />}
         <h1 className={styles.title}>Edit Profile</h1>
         <div className={styles.editProfileSection}>
           <div className={styles.avatarSection}>

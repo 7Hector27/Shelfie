@@ -78,8 +78,6 @@ const RegisterContent = () => {
           onClose={() => setServerError(null)}
         />
       )}
-
-      {/* Back to home */}
       <button className={styles.backBtn} onClick={() => router.push("/")}>
         ← Home
       </button>

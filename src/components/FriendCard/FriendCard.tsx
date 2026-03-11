@@ -12,7 +12,7 @@ type FriendCardProps = {
   buttonCopy?: string;
   profilePictureUrl?: string;
   buttonHandler?: () => void;
-  onDelete?: () => void; // ✅ new
+  onDelete?: () => void;
 };
 
 const FriendCard = ({
@@ -24,7 +24,7 @@ const FriendCard = ({
   buttonCopy,
   profilePictureUrl,
   buttonHandler,
-  onDelete, // ✅ new
+  onDelete,
 }: FriendCardProps) => {
   const [requestStatus, setRequestStatus] = useState<
     "idle" | "pending" | "sent"
