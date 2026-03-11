@@ -16,9 +16,8 @@ const ProfileMenu = () => {
   const logout = async () => {
     try {
       await apiPost("/auth/logout", {});
-      await queryClient.invalidateQueries({ queryKey: ["me"] });
-
-      redirectTo("/signin");
+      queryClient.removeQueries({ queryKey: ["me"] });
+      redirectTo("/");
     } catch (err) {
       console.error("Logout failed", err);
     }
