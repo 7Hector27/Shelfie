@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -8,7 +9,6 @@ import { useQueryClient } from "@tanstack/react-query";
 
 import Alert from "@/components/Alert";
 import { apiPost } from "../../lib/api";
-
 import { redirectTo } from "@/util/clientUtils";
 
 import styles from "./RegisterContent.module.scss";
@@ -32,6 +32,7 @@ const RegisterContent = () => {
   const [serverError, setServerError] = useState<string | null>(null);
   const [serverSuccess, setServerSuccess] = useState<string | null>(null);
   const queryClient = useQueryClient();
+  const router = useRouter();
 
   const {
     register,
@@ -53,13 +54,11 @@ const RegisterContent = () => {
         password: data.password,
       });
 
-      // refresh authenticated user
       await queryClient.invalidateQueries({ queryKey: ["me"] });
 
-      // Show success message
       setServerSuccess("Account created successfully");
       setTimeout(() => {
-        redirectTo("/"); // or /friends etc
+        redirectTo("/");
       }, 2500);
     } catch (err) {
       if (err instanceof Error) {
@@ -79,6 +78,11 @@ const RegisterContent = () => {
           onClose={() => setServerError(null)}
         />
       )}
+
+      {/* Back to home */}
+      <button className={styles.backBtn} onClick={() => router.push("/")}>
+        ← Home
+      </button>
 
       <div className={styles.container}>
         <h1>

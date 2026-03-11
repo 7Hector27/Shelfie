@@ -1,17 +1,30 @@
 .container {
   position: relative;
   width: 100%;
-  height: 240px;
+  height: 200px;
   border-radius: 28px;
   overflow: hidden;
-  margin-bottom: 2.5rem;
-
-  filter: brightness(0.9) saturate(1.2) contrast(1);
-
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   box-shadow:
     0 32px 80px rgba(0, 0, 0, 0.55),
     inset 0 1px 0 rgba(255, 255, 255, 0.12);
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(167, 139, 250, 0.6) 30%,
+      rgba(236, 72, 153, 0.4) 70%,
+      transparent 100%
+    );
+    z-index: 10;
+  }
 }
 
 .overlay {
@@ -21,40 +34,25 @@
 
   background:
     radial-gradient(
-      ellipse 70% 100% at 0% 50%,
-      rgba(88, 28, 135, 0.75),
+      ellipse 120% 120% at 10% 50%,
+      rgba(88, 28, 135, 0.6),
       transparent
     ),
     radial-gradient(
-      ellipse 40% 80% at 100% 30%,
-      rgba(157, 23, 77, 0.45),
+      ellipse 60% 80% at 90% 20%,
+      rgba(157, 23, 77, 0.35),
+      transparent
+    ),
+    radial-gradient(
+      ellipse 50% 60% at 60% 80%,
+      rgba(6, 78, 159, 0.2),
       transparent
     ),
     linear-gradient(
-      90deg,
-      rgba(13, 6, 30, 0.88) 0%,
-      rgba(13, 6, 30, 0.7) 40%,
-      rgba(13, 6, 30, 0.4) 65%,
-      rgba(13, 6, 30, 0.15) 85%,
-      transparent 100%
+      135deg,
+      rgba(13, 6, 30, 0.95) 0%,
+      rgba(20, 10, 40, 0.85) 100%
     );
-}
-
-.container::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(167, 139, 250, 0.6) 30%,
-    rgba(236, 72, 153, 0.4) 70%,
-    transparent 100%
-  );
-  z-index: 10;
 }
 
 .inner {
@@ -65,110 +63,42 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
+  gap: 6px;
 }
 
-.copy {
-  max-width: 520px;
+.eyebrow {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: rgba(167, 139, 250, 0.6);
+  margin-bottom: 4px;
 }
 
 .title {
-  font-size: clamp(22px, 3vw, 32px);
+  font-size: clamp(24px, 3vw, 36px);
   font-weight: 700;
   font-family: var(--font-playfair);
   color: #fff;
-  margin-bottom: 0.5rem;
+  margin: 0;
   line-height: 1.2;
-
-  text-shadow: 0 0 40px rgba(167, 139, 250, 0.45);
+  text-shadow: 0 0 60px rgba(167, 139, 250, 0.3);
 }
 
 .subtitle {
   font-size: 14px;
-  color: rgba(196, 181, 253, 0.8);
+  color: rgba(196, 181, 253, 0.6);
+  margin: 0;
   letter-spacing: 0.2px;
-}
-
-.buttonGroup {
-  position: absolute;
-  bottom: 28px;
-  right: 36px;
-
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.actionBtn {
-  width: 210px;
-  height: 44px;
-  border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.14);
-
-  background: rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(16px) saturate(160%);
-  -webkit-backdrop-filter: blur(16px) saturate(160%);
-
-  color: rgba(255, 255, 255, 0.92);
-  font-size: 14px;
-  font-weight: 500;
-
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 18px;
-
-  cursor: pointer;
-
-  box-shadow:
-    0 4px 16px rgba(0, 0, 0, 0.3),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1);
-
-  transition: all 0.22s ease;
-
-  span {
-    opacity: 0.55;
-    transition:
-      transform 0.2s,
-      opacity 0.2s;
-  }
-
-  &:hover {
-    background: rgba(124, 58, 237, 0.35);
-    border-color: rgba(167, 139, 250, 0.5);
-    box-shadow:
-      0 8px 28px rgba(124, 58, 237, 0.35),
-      inset 0 1px 0 rgba(255, 255, 255, 0.15);
-    transform: translateY(-2px);
-
-    span {
-      transform: translateX(3px);
-      opacity: 1;
-    }
-  }
-
-  &:active {
-    transform: translateY(0px);
-  }
 }
 
 @media (max-width: 600px) {
   .container {
     height: auto;
-    min-height: 220px;
+    min-height: 160px;
   }
 
   .inner {
     padding: 1.5rem;
-  }
-
-  .buttonGroup {
-    position: static;
-    margin-top: 1.5rem;
-    flex-direction: row;
-    flex-wrap: wrap;
-  }
-
-  .actionBtn {
-    width: 160px;
   }
 }

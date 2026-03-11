@@ -20,15 +20,18 @@ type ConversationFriend = {
 
 type ConversationMessage = {
   id: string;
-  sender_id: string;
+  sender_id: string | null;
   body: string;
   created_at: string;
 };
 
 type GetConversationResponse = {
-  friend: ConversationFriend;
-  messages: ConversationMessage[];
+  is_ai: boolean;
+  friend: ConversationFriend | null;
   friend_last_read_at: string | null;
+  book_title: string | null;
+  book_author: string | null;
+  messages: ConversationMessage[];
 };
 
 const ConversationContent = () => {
@@ -41,6 +44,7 @@ const ConversationContent = () => {
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
 
   const [message, setMessage] = useState("");
+  const [streamingText, setStreamingText] = useState<string | null>(null);
 
   const currentUserId = user?.user_id;
 
@@ -51,24 +55,28 @@ const ConversationContent = () => {
   /* FETCH CONVERSATION            */
   /* ============================= */
 
-  const fetchConversation = async (): Promise<GetConversationResponse> => {
-    return apiGet(`/messages/${conversationId}`);
-  };
-
   const { data, isLoading } = useQuery<GetConversationResponse>({
     queryKey: ["conversation", conversationId],
-    queryFn: fetchConversation,
+    queryFn: () => apiGet(`/messages/${conversationId}`),
     enabled: canFetch,
   });
 
   /* ============================= */
-  /* FRIEND NAME                   */
+  /* DERIVED                       */
   /* ============================= */
 
-  const friendName = useMemo(() => {
+  const isAi = data?.is_ai ?? false;
+
+  const displayName = useMemo(() => {
+    if (isAi) return data?.book_title ?? "AI";
     if (!data?.friend) return "";
     return `${data.friend.first_name} ${data.friend.last_name}`;
-  }, [data?.friend]);
+  }, [data, isAi]);
+
+  const avatarFallback = isAi
+    ? "📖"
+    : (data?.friend?.first_name?.charAt(0) ?? "?");
+  const avatarImage = isAi ? null : (data?.friend?.profile_image ?? null);
 
   /* ============================= */
   /* SCROLL                        */
@@ -82,7 +90,7 @@ const ConversationContent = () => {
 
   useEffect(() => {
     scrollToBottom(true);
-  }, [data?.messages?.length]);
+  }, [data?.messages?.length, streamingText]);
 
   /* ============================= */
   /* MARK AS READ                  */
@@ -114,14 +122,9 @@ const ConversationContent = () => {
         ["conversation", conversationId],
         (old) => {
           if (!old) return old;
-
           const exists = old.messages.some((m) => m.id === newMessage.id);
           if (exists) return old;
-
-          return {
-            ...old,
-            messages: [...old.messages, newMessage],
-          };
+          return { ...old, messages: [...old.messages, newMessage] };
         },
       );
 
@@ -140,7 +143,6 @@ const ConversationContent = () => {
       last_read_at: string;
     }) => {
       if (userId === currentUserId) return;
-
       queryClient.setQueryData<GetConversationResponse>(
         ["conversation", conversationId],
         (old) => {
@@ -163,15 +165,87 @@ const ConversationContent = () => {
   /* SEND MESSAGE                  */
   /* ============================= */
 
-  const sendMessageMutation = useMutation<ConversationMessage, Error, string>({
+  const sendNormalMessage = useMutation<ConversationMessage, Error, string>({
     mutationFn: (text: string) =>
       apiPost(`/messages/${conversationId}`, { body: text }),
   });
 
+  const sendAiMessage = async (text: string) => {
+    // Optimistically add user message
+    const tempUserMsg: ConversationMessage = {
+      id: `temp-${Date.now()}`,
+      sender_id: currentUserId ?? "",
+      body: text,
+      created_at: new Date().toISOString(),
+    };
+
+    queryClient.setQueryData<GetConversationResponse>(
+      ["conversation", conversationId],
+      (old) => {
+        if (!old) return old;
+        return { ...old, messages: [...old.messages, tempUserMsg] };
+      },
+    );
+
+    setStreamingText("");
+    scrollToBottom(true);
+
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
+    const res = await fetch(`${apiUrl}/messages/${conversationId}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ body: text }),
+    });
+
+    if (!res.body) return;
+
+    const reader = res.body.getReader();
+    const decoder = new TextDecoder();
+    let fullText = "";
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      const chunk = decoder.decode(value, { stream: true });
+      fullText += chunk;
+      setStreamingText(fullText);
+      scrollToBottom(false);
+    }
+
+    // Stream done — add final AI message to query cache and clear streaming state
+    const aiMsg: ConversationMessage = {
+      id: `ai-${Date.now()}`,
+      sender_id: null,
+      body: fullText,
+      created_at: new Date().toISOString(),
+    };
+
+    queryClient.setQueryData<GetConversationResponse>(
+      ["conversation", conversationId],
+      (old) => {
+        if (!old) return old;
+        // Replace temp user message with real one + add AI message
+        const withoutTemp = old.messages.filter((m) => m.id !== tempUserMsg.id);
+        return { ...old, messages: [...withoutTemp, tempUserMsg, aiMsg] };
+      },
+    );
+
+    setStreamingText(null);
+    scrollToBottom(true);
+  };
+
   const handleSend = () => {
     if (!message.trim()) return;
-    sendMessageMutation.mutate(message.trim());
+    const text = message.trim();
     setMessage("");
+
+    if (isAi) {
+      sendAiMessage(text);
+    } else {
+      sendNormalMessage.mutate(text);
+    }
   };
 
   /* ============================= */
@@ -180,7 +254,6 @@ const ConversationContent = () => {
 
   const myMessages =
     data?.messages?.filter((m) => m.sender_id === currentUserId) ?? [];
-
   const lastSentMessage =
     myMessages.length > 0 ? myMessages[myMessages.length - 1] : null;
 
@@ -202,28 +275,30 @@ const ConversationContent = () => {
           </button>
 
           <div className={styles.headerInfo}>
-            <div className={styles.avatar}>
+            <div className={`${styles.avatar} ${isAi ? styles.aiAvatar : ""}`}>
               {isLoading ? (
                 <span className={styles.avatarFallback}>...</span>
-              ) : data?.friend?.profile_image ? (
+              ) : avatarImage ? (
                 <img
-                  src={data.friend.profile_image}
-                  alt={friendName}
+                  src={avatarImage}
+                  alt={displayName}
                   className={styles.avatarImg}
                 />
               ) : (
-                <span className={styles.avatarFallback}>
-                  {data?.friend?.first_name?.charAt(0) ?? "?"}
-                </span>
+                <span className={styles.avatarFallback}>{avatarFallback}</span>
               )}
             </div>
 
             <div>
               <div className={styles.name}>
-                {isLoading ? "Loading..." : friendName}
+                {isLoading ? "Loading..." : displayName}
               </div>
               <div className={styles.subText}>
-                {isLoading ? "" : "Friends on Shelfie"}
+                {isLoading
+                  ? ""
+                  : isAi
+                    ? `by ${data?.book_author}`
+                    : "Friends on Shelfie"}
               </div>
             </div>
           </div>
@@ -232,11 +307,12 @@ const ConversationContent = () => {
         {/* ================= BODY ================= */}
         <div className={styles.body} ref={messagesContainerRef}>
           {isLoading ? (
-            <ConversationSkeleton /> // ✅ fixed condition
+            <ConversationSkeleton />
           ) : (
             <div className={styles.messages}>
               {data?.messages.map((m) => {
                 const isMine = !!currentUserId && m.sender_id === currentUserId;
+                const isAiMessage = m.sender_id === null;
 
                 const isSeen =
                   isMine &&
@@ -250,27 +326,35 @@ const ConversationContent = () => {
                     key={m.id}
                     className={`${styles.messageRow} ${
                       isMine ? styles.mine : styles.theirs
-                    }`}
+                    } ${isAiMessage ? styles.aiMessage : ""}`}
                   >
                     <div className={styles.messageInner}>
                       {!isMine && (
-                        <div className={styles.messageAvatar}>
-                          {data?.friend?.profile_image ? (
+                        <div
+                          className={`${styles.messageAvatar} ${isAiMessage ? styles.aiAvatar : ""}`}
+                        >
+                          {isAiMessage ? (
+                            <span className={styles.avatarFallback}>📖</span>
+                          ) : avatarImage ? (
                             <img
-                              src={data.friend.profile_image}
-                              alt={friendName}
+                              src={avatarImage}
+                              alt={displayName}
                               className={styles.avatarImg}
                             />
                           ) : (
                             <span className={styles.avatarFallback}>
-                              {data?.friend?.first_name?.charAt(0) ?? "?"}
+                              {avatarFallback}
                             </span>
                           )}
                         </div>
                       )}
 
                       <div className={styles.messageContent}>
-                        <div className={styles.bubble}>{m.body}</div>
+                        <div
+                          className={`${styles.bubble} ${isAiMessage ? styles.aiBubble : ""}`}
+                        >
+                          {m.body}
+                        </div>
 
                         <div className={styles.metaRow}>
                           <span className={styles.time}>
@@ -279,7 +363,6 @@ const ConversationContent = () => {
                               minute: "2-digit",
                             })}
                           </span>
-
                           {isSeen && (
                             <span className={styles.seenIndicator}>Seen</span>
                           )}
@@ -290,6 +373,25 @@ const ConversationContent = () => {
                 );
               })}
 
+              {/* ── Streaming AI response ── */}
+              {streamingText !== null && (
+                <div className={`${styles.messageRow} ${styles.theirs}`}>
+                  <div className={styles.messageInner}>
+                    <div
+                      className={`${styles.messageAvatar} ${styles.aiAvatar}`}
+                    >
+                      <span className={styles.avatarFallback}>📖</span>
+                    </div>
+                    <div className={styles.messageContent}>
+                      <div className={`${styles.bubble} ${styles.aiBubble}`}>
+                        {streamingText}
+                        <span className={styles.cursor}>▋</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
               <div ref={bottomRef} />
             </div>
           )}
@@ -299,19 +401,20 @@ const ConversationContent = () => {
         <div className={styles.composer}>
           <input
             className={styles.input}
-            placeholder="Message..."
+            placeholder={isAi ? "Ask about this book..." : "Message..."}
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             onKeyDown={(e) => {
               if (e.key === "Enter") handleSend();
             }}
+            disabled={streamingText !== null}
           />
           <button
             className={styles.sendBtn}
-            disabled={!message.trim()}
+            disabled={!message.trim() || streamingText !== null}
             onClick={handleSend}
           >
-            Send
+            {streamingText !== null ? "..." : "Send"}
           </button>
         </div>
       </div>

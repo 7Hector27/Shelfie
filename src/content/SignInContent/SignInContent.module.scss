@@ -22,6 +22,7 @@
     ),
     linear-gradient(160deg, #0d0a1a 0%, #110d24 40%, #0a1020 100%);
   overflow: auto;
+  position: relative;
 
   .container {
     display: flex;
@@ -227,6 +228,32 @@
         color: #c4b5fd;
       }
     }
+  }
+}
+
+/* ── Back button ────────────────────────────── */
+.backBtn {
+  position: absolute;
+  top: 24px;
+  left: 24px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: var(--font-inter);
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    border-color: rgba(167, 139, 250, 0.3);
   }
 }
 

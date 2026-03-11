@@ -36,14 +36,11 @@ const Navbar = () => {
     setLoading(true);
 
     try {
-      const res = await apiGet<{
-        docs: OpenLibraryDoc[];
-      }>(`/openlibrary/search?q=${formatSearchQuery(q)}&limit=5`, {
-        silent: true,
-      });
-
-      const data: { docs: OpenLibraryDoc[] } = await res;
-      setResults(data.docs || []);
+      const res = await apiGet<{ docs: OpenLibraryDoc[] }>(
+        `/openlibrary/search?q=${formatSearchQuery(q)}&limit=5`,
+        { silent: true },
+      );
+      setResults(res.docs || []);
     } catch (err) {
       console.error("Book search failed", err);
       setResults([]);
@@ -57,15 +54,22 @@ const Navbar = () => {
     searchBooks(value);
   };
 
+  const clearSearch = () => {
+    setQuery("");
+    setResults([]);
+    setMobileSearchVisible(false);
+  };
+
   const SearchResults = ({ books }: { books: OpenLibraryDoc[] }) => (
     <div className={styles.searchResults}>
       {books.map((book) => {
-        const BookId = book.key.split("/").pop();
+        const bookId = book.key.split("/").pop();
         return (
           <Link
             key={book.key}
-            href={`/book/${BookId}`}
+            href={`/book/${bookId}`}
             className={styles.searchResultItem}
+            onClick={clearSearch}
           >
             <Image
               src={
@@ -76,6 +80,7 @@ const Navbar = () => {
               alt={book.title}
               width={40}
               height={60}
+              unoptimized
             />
             <div>
               <p>{book.title}</p>
@@ -124,14 +129,13 @@ const Navbar = () => {
             value={query}
             onChange={(e) => handleSearchChange(e.target.value)}
           />
-
           {results.length > 0 && <SearchResults books={results} />}
           {loading && <div className={styles.searchLoading}>Searching…</div>}
         </div>
 
         {!user ? (
           <div className={styles.profile}>
-            <Link href="/register">Sign Up</Link>
+            <Link href="/signin">Sign In</Link>
           </div>
         ) : (
           <div className={styles.profile}>
@@ -143,15 +147,22 @@ const Navbar = () => {
       {/* Mobile search dropdown */}
       {mobileSearchVisible && (
         <div className={styles.mobileSearchbar}>
-          <input
-            type="search"
-            placeholder="Search books..."
-            value={query}
-            onChange={(e) => handleSearchChange(e.target.value)}
-          />
-          <button onClick={() => setMobileSearchVisible(false)}>Cancel</button>
+          <div className={styles.inputRow}>
+            <input
+              type="search"
+              placeholder="Search books..."
+              value={query}
+              autoFocus
+              onChange={(e) => handleSearchChange(e.target.value)}
+            />
+            <button onClick={clearSearch}>Cancel</button>
+          </div>
 
-          {results.length > 0 && <SearchResults books={results} />}
+          {results.length > 0 && (
+            <div className={styles.mobileResults}>
+              <SearchResults books={results} />
+            </div>
+          )}
         </div>
       )}
     </>
